@@ -31,7 +31,7 @@ class _CustomDialogState extends State<CustomDialog> {
         children: [
           IconButton(
             onPressed: () {
-              Get.back();
+              Get.back(result: false);
             },
             color: primary,
             icon: const Icon(Icons.close),

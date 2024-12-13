@@ -15,6 +15,7 @@ String recipe = "/recipes";
 String item = "/items";
 String unit = "/units";
 String color = "/colors";
+String razryad = "/razryads";
 String itemType = "/itemtypes";
 
 class HttpService {

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:supervisor/services/storage_service.dart';
+import 'package:supervisor/ui/color/color_page.dart';
 import 'package:supervisor/ui/item/item_page.dart';
 import 'package:supervisor/ui/model/model_page.dart';
 import 'package:supervisor/ui/order/order_page.dart';
+import 'package:supervisor/ui/razryad/razryad_page.dart';
 
 class HomeProvider extends ChangeNotifier {
   final List<Map> menu = [
@@ -25,6 +27,16 @@ class HomeProvider extends ChangeNotifier {
       'title': 'Materiallar',
       'icon': Icons.shopping_cart,
       'view': const ItemPage(),
+    },
+    {
+      'title': 'Ranglar',
+      'icon': Icons.shopping_cart,
+      'view': const ColorPage(),
+    },
+    {
+      'title': 'Razryadlar',
+      'icon': Icons.shopping_cart,
+      'view': const RazryadPage(),
     },
   ];
 
