@@ -9,6 +9,13 @@ class ModelProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  List _colors = [];
+  List get colors => _colors;
+  set colors(List colors) {
+    _colors = colors;
+    notifyListeners();
+  }
+
   bool isLoading = false;
 
   ModelProvider() {
@@ -19,10 +26,18 @@ class ModelProvider extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
+    await getColors();
     await getModels();
 
     isLoading = false;
     notifyListeners();
+  }
+
+  Future<void> getColors() async {
+    var res = await HttpService.get(color);
+    if (res['status'] == Result.success) {
+      colors = res['data'];
+    }
   }
 
   Future<void> getModels() async {

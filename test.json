@@ -3,38 +3,19 @@
     "quantity": 100,
     "start_date": "2024-12-11",
     "end_date": "2024-12-31",
-    "models": [
-        {
-            "id": 5,
-            "name": "Model 1"
-        },
-        {
-            "id": 6,
-            "name": "Model 2",
-        },
-        {
-            "id": 7,
-            "name": "240",
-        }
-    ],
     "submodel": {
         "id": 7,
-        "name": "Shim",
-        "sizes": [
-            { "id": 2, "name": 12 },
-            { "id": 3, "name": 13 },
-            { "id": 4, "name": 14 }
-        ],
-        "model_colors": [
-            { "id": 5, "color": { "id": 7, "name": "Oq" } },
-            { "id": 6, "color": { "id": 8, "name": "Qora" } },
-            { "id": 7, "color": { "id": 9, "name": "Qizil" } },
-            { "id": 8, "color": { "id": 10, "name": "Sariq" } },
-            { "id": 9, "color": { "id": 11, "name": "Yashil" } },
-            { "id": 10, "color": { "id": 12, "name": "Jigarrang" } }
-        ]
+        "name": "Shim"
     },
-    "size": { "id": 2, "name": 12 },
-    "model_color": { "id": 6, "color": { "id": 8, "name": "Qora" } },
-    "quantity": 50
+    "size": {
+        "id": 2,
+        "name": 12
+    },
+    "model_color": {
+        "id": 6,
+        "color": {
+            "id": 8,
+            "name": "Qora"
+        }
+    }
 }

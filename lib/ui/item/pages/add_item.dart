@@ -83,9 +83,9 @@ class _AddItemState extends State<AddItem> {
       nameController.text = item['name'];
       priceController.text = item['price'];
       codeController.text = item['code'] ?? "";
-      selectedUnit = item['unit']?['id'] ?? {};
-      selectedColor = item['color']?['id'] ?? {};
-      selectedType = item['type']?['id'] ?? {};
+      selectedUnit = item['unit'] ?? {};
+      selectedColor = item['color'] ?? {};
+      selectedType = item['type'] ?? {};
       setState(() {});
     }
   }

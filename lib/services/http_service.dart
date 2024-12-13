@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 
 enum Result { success, error }
 
-String baseUrl = "192.168.94.145:8000";
+String baseUrl = "192.168.0.123:8000";
 String middle = "api";
 String login = "/login";
 String order = "/orders";

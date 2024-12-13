@@ -75,8 +75,68 @@ class _OrderPageState extends State<OrderPage> {
                                     ),
                                   ),
                                 )
-                              : const SizedBox.shrink(
-                                  child: Text("Nimadur bor!"),
+                              : GridView.builder(
+                                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 3,
+                                    crossAxisSpacing: 8,
+                                    mainAxisSpacing: 8,
+                                    mainAxisExtent: 200,
+                                  ),
+                                  itemCount: provider.orders.length,
+                                  padding: const EdgeInsets.all(12),
+                                  itemBuilder: (context, index) {
+                                    var order = provider.orders[index];
+
+                                    return Container(
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Text(
+                                                "Buyurtma №${order['id']}",
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              const Spacer(),
+                                              IconButton(
+                                                icon: const Icon(Icons.delete),
+                                                onPressed: () {},
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            "Buyurtma turi: ${order['type']}",
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            "Buyurtma sanasi: ${order['date']}",
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            "Buyurtma holati: ${order['status']}",
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
                                 ),
                     ),
                   ),

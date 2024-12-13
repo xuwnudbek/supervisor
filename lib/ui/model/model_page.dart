@@ -157,7 +157,7 @@ class _ModelPageState extends State<ModelPage> {
                                                     ),
                                                   ];
                                                 },
-                                                tooltip: "More",
+                                                tooltip: "Ko'proq",
                                                 onSelected: (value) {
                                                   if (value == "edit") {
                                                     Get.to(() => AddModel(provider: provider, model: model));
@@ -165,6 +165,10 @@ class _ModelPageState extends State<ModelPage> {
                                                     provider.deleteModel(model['id']);
                                                   }
                                                 },
+                                                color: Colors.white,
+                                                style: IconButton.styleFrom(
+                                                  backgroundColor: Colors.white,
+                                                ),
                                                 icon: Icon(
                                                   Icons.more_vert,
                                                   color: primary,
