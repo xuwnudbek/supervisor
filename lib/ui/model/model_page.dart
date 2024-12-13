@@ -90,7 +90,7 @@ class _ModelPageState extends State<ModelPage> {
                                           Get.to(() => ModelDetails(model: model));
                                         },
                                         child: Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                          padding: const EdgeInsets.only(left: 20, top: 8, right: 8, bottom: 8),
                                           decoration: BoxDecoration(
                                             color: Colors.white,
                                             borderRadius: BorderRadius.circular(8),
@@ -126,7 +126,7 @@ class _ModelPageState extends State<ModelPage> {
                                                   ],
                                                 ),
                                               ),
-                                              const SizedBox(width: 8),
+                                              const SizedBox(width: 16),
                                               PopupMenuButton(
                                                 itemBuilder: (context) {
                                                   return [

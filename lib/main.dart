@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:supervisor/ui/splash/splash_page.dart';
-import 'package:supervisor/utils/RGB.dart';
+import 'package:supervisor/utils/rgb.dart';
 
 void main() async {
   await GetStorage.init();
@@ -41,10 +41,10 @@ class MyApp extends StatelessWidget {
             fixedSize: const Size.fromHeight(40),
           ),
         ),
-        dividerTheme: DividerThemeData(
+        dividerTheme: const DividerThemeData(
           space: 0,
           thickness: 1,
-          color: primary,
+          // color: primary,
         ),
         iconButtonTheme: IconButtonThemeData(
           style: ButtonStyle(
@@ -55,6 +55,16 @@ class MyApp extends StatelessWidget {
                 borderRadius: BorderRadius.circular(150),
               ),
             ),
+          ),
+        ),
+        datePickerTheme: DatePickerThemeData(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+        dialogTheme: DialogTheme(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
           ),
         ),
       ),

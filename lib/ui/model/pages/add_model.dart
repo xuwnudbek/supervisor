@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supervisor/ui/model/providers/model_provider.dart';
+import 'package:supervisor/utils/rgb.dart';
 import 'package:supervisor/utils/widgets/custom_dialog.dart';
 import 'package:supervisor/utils/widgets/custom_input.dart';
 import 'package:supervisor/utils/widgets/custom_snackbars.dart';
@@ -51,6 +52,12 @@ class _AddModelState extends State<AddModel> {
     () async {
       if (widget.model != null) {
         nameController.text = widget.model!['name'];
+        for (var submodel in widget.model!['submodels']) {
+          submodels.add({
+            "controller": TextEditingController(text: submodel['name']),
+            "sizes": TextEditingController(text: (submodel['sizes'].map((e) => e['name'])).join(",")),
+          });
+        }
       }
       setState(() {});
     }();
@@ -81,29 +88,31 @@ class _AddModelState extends State<AddModel> {
               controller: nameController,
               hint: "Model kodi",
             ),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(
-                  style: TextButton.styleFrom(
-                    fixedSize: const Size.fromHeight(24),
+            const SizedBox(height: 16),
+            if (widget.model?['submodels'] != null)
+              Row(
+                children: [
+                  Expanded(
+                    child: Divider(
+                      color: secondary,
+                    ),
                   ),
-                  onPressed: () {
-                    addSubmodel();
-                  },
-                  child: const Row(
-                    children: [
-                      Icon(
-                        Icons.add_rounded,
-                      ),
-                      SizedBox(width: 4),
-                      Text("Submodel qo'shish"),
-                    ],
+                  const SizedBox(width: 4),
+                  Text(
+                    "Submodellar",
+                    style: TextStyle(
+                      color: dark.withOpacity(.7),
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-              ],
-            ),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Divider(
+                      color: secondary,
+                    ),
+                  ),
+                ],
+              ),
             const SizedBox(height: 8),
             Container(
               constraints: BoxConstraints(
@@ -114,20 +123,17 @@ class _AddModelState extends State<AddModel> {
                 children: [
                   ...submodels.map(
                     (submodel) => Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         CustomInput(
                           controller: submodel['controller'],
                           hint: "Submodel nomi",
+                          color: secondary.withOpacity(0.8),
                         ),
-                        const SizedBox(height: 8),
-                        // Sizes
+                        const SizedBox(height: 2),
                         CustomInput(
                           controller: submodel['sizes'],
                           hint: "O'lchamlarni `,` orqali kiriting!",
                         ),
-                        const SizedBox(height: 8),
-                        const Divider(color: Colors.black),
                         const SizedBox(height: 8),
                       ],
                     ),
@@ -135,10 +141,30 @@ class _AddModelState extends State<AddModel> {
                 ],
               ),
             ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: Divider(color: secondary),
+                ),
+                const SizedBox(width: 4),
+                IconButton(
+                  tooltip: "Submodel qo'shish",
+                  onPressed: () {
+                    addSubmodel();
+                  },
+                  icon: const Icon(Icons.add_rounded),
+                ),
+                const SizedBox(width: 4),
+                Expanded(
+                  child: Divider(color: secondary),
+                ),
+              ],
+            ),
             const SizedBox(height: 16),
             TextButton(
               onPressed: () async {
-                if (nameController.text.isEmpty) {
+                if (nameController.text.isEmpty || submodels.any((element) => element['controller'].text.isEmpty || element['sizes'].text.isEmpty)) {
                   CustomSnackbars(context).warning("Iltimos, barcha maydonlarni to'ldiring!");
                   return;
                 }
@@ -149,12 +175,13 @@ class _AddModelState extends State<AddModel> {
                     for (var submodel in submodels)
                       {
                         "name": submodel['controller'].text.trim(),
-                        "sizes": submodel['sizes'].text.split(", ").map((e) => int.parse(e)).toList(),
+                        "sizes": submodel['sizes'].text.trim().split(",").map((e) {
+                          return int.tryParse(e) ?? 0;
+                        }).toList()
+                          ..removeWhere((element) => element == 0),
                       },
                   ],
                 };
-
-                print(body);
 
                 if (widget.model != null) {
                   await widget.provider!.updateModel(widget.model!['id'], body).then((value) {

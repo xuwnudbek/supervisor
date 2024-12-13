@@ -1,271 +1,368 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
+import 'package:supervisor/ui/order/provider/add_order_provider.dart';
 import 'package:supervisor/ui/order/provider/order_provider.dart';
-import 'package:supervisor/utils/extensions/string_extension.dart';
+import 'package:supervisor/utils/extensions/datetime_extension.dart';
+import 'package:supervisor/utils/extensions/map_extension.dart';
 import 'package:supervisor/utils/rgb.dart';
 import 'package:supervisor/utils/widgets/custom_dialog.dart';
 import 'package:supervisor/utils/widgets/custom_dropdown.dart';
 import 'package:supervisor/utils/widgets/custom_input.dart';
-import 'package:supervisor/utils/widgets/custom_snackbars.dart';
 
-class AddOrder extends StatefulWidget {
+class AddOrder extends StatelessWidget {
   const AddOrder({
     super.key,
-    this.provider,
+    required this.orderProvider,
   });
 
-  final OrderProvider? provider;
-
-  @override
-  State<AddOrder> createState() => _AddOrderState();
-}
-
-class _AddOrderState extends State<AddOrder> {
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController quantityController = TextEditingController();
-
-  int counter = 0;
-
-  List<Map> models = [];
-  List<int> quantities = [];
-
-  Map selectedModel = {};
-  TextEditingController modelQuantityController = TextEditingController();
-
-  void addModelWithQuant(Map model, int quantity) {
-    setState(() {
-      models.add(model);
-      quantities.add(quantity);
-    });
-  }
-
-  void removeModelWithQuant(int index) {
-    setState(() {
-      models.removeAt(index);
-      quantities.removeAt(index);
-    });
-  }
+  final OrderProvider orderProvider;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: CustomDialog(
-        width: 500,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Buyurtma qo'shish",
-                  style: TextStyle(
-                    fontSize: 20,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: CustomInput(
-                    controller: nameController,
-                    hint: "Nomi",
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: CustomInput(
-                    controller: quantityController,
-                    hint: "Miqdori",
-                    formatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            const Row(
-              children: [
-                SizedBox(width: 6),
-                Text(
-                  "Modellar",
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Wrap(
-              children: [
-                if (models.isEmpty) ...[
-                  Row(
+    return ChangeNotifierProvider(
+      create: (_) => AddOrderProvider(orderProvider),
+      child: Consumer<AddOrderProvider>(
+        builder: (context, provider, child) {
+          return Scaffold(
+            body: CustomDialog(
+              width: Get.width * 0.7,
+              maxHeight: MediaQuery.of(context).size.height * 0.8,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const SizedBox(width: 6),
                       Text(
-                        "Model tanlanmagan",
+                        "Buyurtma qo'shish",
                         style: TextStyle(
-                          color: dark,
+                          fontSize: 20,
                         ),
                       ),
                     ],
-                  )
-                ] else
-                  ...List.generate(models.length, (index) {
-                    final model = models[index];
-                    final quantity = quantities[index];
-
-                    return Container(
-                      height: 40,
-                      margin: const EdgeInsets.all(4),
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      decoration: BoxDecoration(
-                        color: secondary.withOpacity(.8),
-                        borderRadius: BorderRadius.circular(6),
+                  ),
+                  const SizedBox(height: 16),
+                  // Order [ name, quantity, status[active], deadline [start, end] ]
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomInput(
+                          controller: provider.orderNameController,
+                          hint: "Nomi",
+                        ),
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            "${model['name']} / ${model['color']}",
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: CustomInput(
+                          controller: provider.orderQuantityController,
+                          hint: "Miqdori",
+                          formatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        // start date
+                        child: TextButton(
+                          style: TextButton.styleFrom(
+                            fixedSize: const Size.fromHeight(50),
+                            backgroundColor: Colors.grey[200],
+                            foregroundColor: Colors.black,
+                          ),
+                          onPressed: () async {
+                            final date = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime.now().subtract(const Duration(days: 365 * 10)),
+                              lastDate: provider.endDate != null ? provider.endDate! : DateTime.now().add(const Duration(days: 365 * 10)),
+                            );
+                            if (date != null) {
+                              provider.startDate = date;
+                            }
+                          },
+                          child: Text(
+                            provider.startDate != null ? provider.startDate!.format : "Boshlanish sanasi",
                             style: TextStyle(
-                              color: dark,
-                              fontWeight: FontWeight.w600,
+                              color: provider.endDate != null ? null : Colors.grey,
                             ),
                           ),
-                          const SizedBox(width: 8),
-                          Text("($quantity)"),
-                          const SizedBox(width: 8),
-                          SizedBox.square(
-                            dimension: 28,
-                            child: IconButton(
-                              style: IconButton.styleFrom(
-                                backgroundColor: danger.withOpacity(.1),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(150),
-                                ),
-                              ),
-                              padding: EdgeInsets.zero,
-                              alignment: Alignment.center,
-                              iconSize: 16,
-                              color: danger,
-                              onPressed: () {
-                                removeModelWithQuant(index);
-                              },
-                              icon: const Icon(Icons.close),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        // end date
+                        child: TextButton(
+                          style: TextButton.styleFrom(
+                            fixedSize: const Size.fromHeight(50),
+                            backgroundColor: Colors.grey[200],
+                            foregroundColor: Colors.black,
+                          ),
+                          onPressed: () async {
+                            final date = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: provider.startDate != null ? provider.startDate! : DateTime.now().subtract(const Duration(days: 365 * 10)),
+                              lastDate: DateTime.now().add(const Duration(days: 365 * 10)),
+                            );
+                            if (date != null) {
+                              provider.endDate = date;
+                            }
+                          },
+                          child: Text(
+                            provider.endDate != null ? provider.endDate!.format : "Tugash sanasi",
+                            style: TextStyle(
+                              color: provider.endDate != null ? null : Colors.grey,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  if (provider.orderModels.isEmpty) const Divider(color: Colors.grey).marginOnly(bottom: 16.0),
+                  if (provider.orderModels.isNotEmpty)
+                    SizedBox(
+                      width: double.infinity,
+                      child: DataTable(
+                        border: TableBorder.all(
+                          borderRadius: BorderRadius.circular(8),
+                          color: secondary,
+                          width: 1.5,
+                        ),
+                        columns: const [
+                          DataColumn(
+                            headingRowAlignment: MainAxisAlignment.center,
+                            label: Center(
+                              child: Text("Model"),
+                            ),
+                          ),
+                          DataColumn(
+                            headingRowAlignment: MainAxisAlignment.center,
+                            label: Center(
+                              child: Text("Submodel"),
+                            ),
+                          ),
+                          DataColumn(
+                            headingRowAlignment: MainAxisAlignment.center,
+                            label: Center(
+                              child: Text("O'lchami"),
+                            ),
+                          ),
+                          DataColumn(
+                            headingRowAlignment: MainAxisAlignment.center,
+                            label: Center(
+                              child: Text("Rangi"),
+                            ),
+                          ),
+                          DataColumn(
+                            headingRowAlignment: MainAxisAlignment.center,
+                            label: Center(
+                              child: Text("Miqdori"),
+                            ),
+                          ),
+                          DataColumn(
+                            headingRowAlignment: MainAxisAlignment.center,
+                            label: Center(
+                              child: Text("Amallar"),
                             ),
                           ),
                         ],
+                        rows: provider.orderModels.map<DataRow>((model) {
+                          return DataRow(
+                            cells: [
+                              DataCell(
+                                Center(
+                                  child: Text(
+                                    "${model['name']}",
+                                  ),
+                                ),
+                              ),
+                              DataCell(
+                                Center(
+                                  child: Text(
+                                    "${model['submodel']['name']}",
+                                  ),
+                                ),
+                              ),
+                              DataCell(
+                                Center(
+                                  child: Text(
+                                    "${model['size']['name']}",
+                                  ),
+                                ),
+                              ),
+                              DataCell(
+                                Center(
+                                  child: Text(
+                                    "${model['model_color']['color']['name']}",
+                                  ),
+                                ),
+                              ),
+                              DataCell(
+                                Center(
+                                  child: Text(
+                                    "${model['quantity']}",
+                                  ),
+                                ),
+                              ),
+                              DataCell(
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    IconButton(
+                                      style: IconButton.styleFrom(
+                                        backgroundColor: danger.withOpacity(0.1),
+                                      ),
+                                      onPressed: () {
+                                        provider.removeModelInOrder(model);
+                                      },
+                                      icon: Icon(
+                                        Icons.delete_rounded,
+                                        color: danger,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          );
+                        }).toList(),
                       ),
-                    );
-                  }),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Divider(color: secondary.withOpacity(.8)),
-            Column(children: [
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Expanded(
-                    child: CustomDropdown(
-                      items: widget.provider!.models.map((model) {
-                        return DropdownMenuItem(
-                          value: model['id'],
-                          child: Text("${model['name']}"),
-                        );
-                      }).toList(),
-                      disabledItems: models.map((model) => "${model['name']} / ${model['color']}").toList(),
-                      hint: "Model tanlang",
-                      value: selectedModel['id'],
-                      onChanged: (value) {
-                        setState(() {
-                          selectedModel = widget.provider!.models.firstWhere((model) => model['id'] == value);
-                        });
-                      },
                     ),
+                  const SizedBox(height: 16),
+                  const Spacer(),
+                  Row(
+                    children: [
+                      // dropdown model
+                      Expanded(
+                        child: CustomDropdown(
+                          hint: "Model",
+                          items: provider.models.map<DropdownMenuItem>((e) {
+                            return DropdownMenuItem(
+                              value: e['id'],
+                              child: Text(e['name']),
+                            );
+                          }).toList(),
+                          onChanged: (id) {
+                            provider.selectedModel = provider.models.firstWhere((e) => e['id'] == id);
+                          },
+                          value: provider.selectedModel?['id'],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      // dropdown submodel
+                      Expanded(
+                        child: CustomDropdown(
+                          hint: "Submodel",
+                          items: (provider.selectedModel?['submodels'] ?? []).map<DropdownMenuItem>((subModel) {
+                            return DropdownMenuItem(
+                              value: subModel['id'],
+                              child: Text(subModel['name']),
+                            );
+                          }).toList(),
+                          onChanged: (id) {
+                            provider.selectedSubModel = (provider.selectedModel?['submodels'] ?? []).firstWhere((e) => e['id'] == id);
+                          },
+                          value: provider.selectedSubModel?['id'],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      // dropdown size
+                      Expanded(
+                        child: CustomDropdown(
+                          hint: "O'lcham",
+                          items: (provider.selectedSubModel?['sizes'] ?? []).map<DropdownMenuItem>((size) {
+                            return DropdownMenuItem(
+                              value: size['id'],
+                              child: Text(size['name']),
+                            );
+                          }).toList(),
+                          onChanged: (id) {
+                            provider.selectedSize = (provider.selectedSubModel?['sizes'] ?? []).firstWhere((e) => e['id'] == id);
+                          },
+                          value: provider.selectedSize?['id'],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      // dropdown color
+                      Expanded(
+                        child: CustomDropdown(
+                          hint: "Rang",
+                          items: (provider.selectedSubModel?['model_colors'] ?? []).map<DropdownMenuItem>((modelColor) {
+                            return DropdownMenuItem(
+                              value: modelColor['id'],
+                              child: Text(modelColor['color']['name']),
+                            );
+                          }).toList(),
+                          onChanged: (id) {
+                            provider.selectedModelColor = (provider.selectedSubModel?['model_colors'] ?? []).firstWhere((e) => e['id'] == id);
+                          },
+                          value: provider.selectedModelColor?['id'],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      // add input for quantity
+                      Expanded(
+                        child: CustomInput(
+                          controller: provider.quantityController,
+                          hint: "Miqdori",
+                          formatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      IconButton(
+                        onPressed: () {
+                          if (provider.selectedModel.isNotEmptyOrNull) {
+                            provider.clearDropDowns();
+                          }
+                        },
+                        icon: Icon(
+                          Icons.clear_rounded,
+                          color: provider.selectedModel.isEmptyOrNull ? Colors.grey : null,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      IconButton(
+                        style: IconButton.styleFrom(
+                          backgroundColor: primary,
+                          foregroundColor: light,
+                        ),
+                        onPressed: () {
+                          provider.addModelToOrder(context);
+                        },
+                        icon: const Icon(Icons.add_rounded),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: CustomInput(
-                      hint: "Miqdor",
-                      controller: modelQuantityController,
-                      formatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                      ],
-                      onChanged: (value) {
-                        setState(() {
-                          modelQuantityController.text = value;
-                        });
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  IconButton(
-                    onPressed: () {
-                      setState(() {
-                        if (selectedModel.isEmpty || (modelQuantityController.text.isNotEmpty && modelQuantityController.text.toInt == 0)) {
-                          CustomSnackbars(context).warning("Iltimos, model va miqdorni tekshiring!");
-                          return;
-                        }
-
-                        addModelWithQuant(selectedModel, modelQuantityController.text.toInt);
-
-                        selectedModel = {};
-                        modelQuantityController.text = "";
-                      });
+                  const SizedBox(height: 8),
+                  TextButton(
+                    onPressed: () async {
+                      await provider.createOrder(context);
                     },
-                    icon: const Icon(Icons.add),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (provider.isLoading)
+                          const SizedBox.square(
+                            dimension: 25,
+                            child: CircularProgressIndicator(),
+                          )
+                        else
+                          const Text("Buyurtmani qo'shish"),
+                      ],
+                    ),
                   ),
                 ],
               ),
-            ]),
-            const SizedBox(height: 16),
-            TextButton(
-              onPressed: () async {
-                if (nameController.text.isEmpty || quantityController.text.isEmpty || models.isEmpty || quantities.isEmpty) {
-                  CustomSnackbars(context).warning("Iltimos, barcha maydonlarni to'ldiring!");
-                  return;
-                }
-
-                if (quantityController.text.toInt != quantities.reduce((value, element) => value + element)) {
-                  CustomSnackbars(context).warning("Model miqdori va umumiy miqdor mos kelmadi!");
-                  return;
-                }
-
-                final body = {
-                  "name": nameController.text.trim(),
-                  "quantity": quantityController.text.toInt,
-                  "models": [
-                    for (int i = 0; i < models.length; i++)
-                      {
-                        "id": models[i]['id'],
-                        "quantity": quantities[i],
-                      },
-                  ],
-                };
-
-                await widget.provider!.createOrder(body).then((value) {
-                  CustomSnackbars(context).success("Buyurtma muvaffaqiyatli qo'shildi!");
-                  Get.back();
-                });
-              },
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Qo'shish"),
-                ],
-              ),
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

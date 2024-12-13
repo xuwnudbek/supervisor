@@ -10,6 +10,7 @@ class CustomInput extends StatefulWidget {
     this.onChanged,
     this.size,
     this.padding,
+    this.color,
     super.key,
   });
 
@@ -19,6 +20,7 @@ class CustomInput extends StatefulWidget {
   final void Function(dynamic)? onChanged;
   final double? size;
   final EdgeInsetsGeometry? padding;
+  final Color? color;
 
   @override
   State<CustomInput> createState() => _CustomInputState();
@@ -30,7 +32,7 @@ class _CustomInputState extends State<CustomInput> {
     return Container(
       height: widget.size ?? 50,
       decoration: BoxDecoration(
-        color: secondary.withOpacity(0.8),
+        color: widget.color ?? secondary.withOpacity(0.8),
         borderRadius: BorderRadius.circular(6),
       ),
       alignment: Alignment.center,

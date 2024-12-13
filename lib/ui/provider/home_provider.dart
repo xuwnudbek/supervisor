@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supervisor/services/storage_service.dart';
+import 'package:supervisor/ui/item/item_page.dart';
 import 'package:supervisor/ui/model/model_page.dart';
 import 'package:supervisor/ui/order/order_page.dart';
 
@@ -19,6 +20,11 @@ class HomeProvider extends ChangeNotifier {
       'title': 'Modellar',
       'icon': Icons.shopping_cart,
       'view': const ModelPage(),
+    },
+    {
+      'title': 'Materiallar',
+      'icon': Icons.shopping_cart,
+      'view': const ItemPage(),
     },
   ];
 

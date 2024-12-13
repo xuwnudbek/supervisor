@@ -38,6 +38,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: DropdownButtonHideUnderline(
           child: DropdownButton(
+            menuMaxHeight: 300,
             isExpanded: true,
             items: widget.items,
             onChanged: (value) {
@@ -50,6 +51,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
             hint: Text(
               widget.hint ?? "",
               style: const TextStyle(
+                color: Colors.grey,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
