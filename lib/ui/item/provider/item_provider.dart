@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:supervisor/services/http_service.dart';
 
@@ -54,7 +53,7 @@ class ItemProvider extends ChangeNotifier {
     final res = await HttpService.get(item);
 
     if (res['status'] == Result.success) {
-      items = res['data'];
+      items = res['data'] ?? [];
     }
     isLoading = false;
   }
@@ -98,7 +97,7 @@ class ItemProvider extends ChangeNotifier {
     final res = await HttpService.get(unit);
 
     if (res['status'] == Result.success) {
-      units = res['data'];
+      units = res['data'] ?? [];
     }
     isLoading = false;
   }
@@ -108,7 +107,7 @@ class ItemProvider extends ChangeNotifier {
     final res = await HttpService.get(color);
 
     if (res['status'] == Result.success) {
-      colors = res['data'];
+      colors = res['data'] ?? [];
     }
     isLoading = false;
   }
@@ -118,7 +117,7 @@ class ItemProvider extends ChangeNotifier {
     final res = await HttpService.get(itemType);
 
     if (res['status'] == Result.success) {
-      itemTypes = res['data'];
+      itemTypes = res['data'] ?? [];
     }
     isLoading = false;
   }

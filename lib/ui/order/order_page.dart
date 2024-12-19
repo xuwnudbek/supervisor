@@ -88,7 +88,7 @@ class _OrderPageState extends State<OrderPage> {
                                     var order = provider.orders[index];
 
                                     return Container(
-                                      padding: const EdgeInsets.all(8),
+                                      padding: const EdgeInsets.all(16),
                                       decoration: BoxDecoration(
                                         color: Colors.white,
                                         borderRadius: BorderRadius.circular(8),
@@ -105,32 +105,101 @@ class _OrderPageState extends State<OrderPage> {
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
-                                              const Spacer(),
-                                              IconButton(
-                                                icon: const Icon(Icons.delete),
-                                                onPressed: () {},
-                                              ),
                                             ],
                                           ),
                                           const SizedBox(height: 8),
-                                          Text(
-                                            "Buyurtma turi: ${order['type']}",
-                                            style: const TextStyle(
-                                              fontSize: 14,
+                                          Text.rich(
+                                            TextSpan(
+                                              text: "Nomi:  ",
+                                              children: [
+                                                TextSpan(
+                                                  text: order['name'] ?? "Unknown",
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                )
+                                              ],
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                              ),
                                             ),
                                           ),
                                           const SizedBox(height: 8),
-                                          Text(
-                                            "Buyurtma sanasi: ${order['date']}",
-                                            style: const TextStyle(
-                                              fontSize: 14,
+                                          Text.rich(
+                                            TextSpan(
+                                              text: "B/S:  ",
+                                              children: [
+                                                TextSpan(
+                                                  text: order['start_date'].toString().split(" ").first,
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                )
+                                              ],
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                              ),
                                             ),
                                           ),
                                           const SizedBox(height: 8),
-                                          Text(
-                                            "Buyurtma holati: ${order['status']}",
-                                            style: const TextStyle(
-                                              fontSize: 14,
+                                          Text.rich(
+                                            TextSpan(
+                                              text: "T/S:  ",
+                                              children: [
+                                                TextSpan(
+                                                  text: order['end_date'].toString().split(" ").first,
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                )
+                                              ],
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text.rich(
+                                            TextSpan(
+                                              text: "Maxsulot:  ",
+                                              children: [
+                                                TextSpan(
+                                                  text: "${order['quantity']} ta",
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                )
+                                              ],
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text.rich(
+                                            TextSpan(
+                                              text: "Holat:  ",
+                                              children: [
+                                                TextSpan(
+                                                  text: order['status'] == "inactive" ? "Faol" : "Faol emas",
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                )
+                                              ],
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                              ),
                                             ),
                                           ),
                                         ],

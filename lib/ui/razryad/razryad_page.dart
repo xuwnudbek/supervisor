@@ -86,8 +86,6 @@ class _RazryadPageState extends State<RazryadPage> {
                                     spacing: 16,
                                     runSpacing: 8,
                                     children: provider.razryads.map((razryad) {
-                                      int index = provider.razryads.indexOf(razryad);
-
                                       return Container(
                                         padding: const EdgeInsets.only(left: 20, top: 8, right: 8, bottom: 8),
                                         decoration: BoxDecoration(

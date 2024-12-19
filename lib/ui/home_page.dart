@@ -7,7 +7,6 @@ import 'package:supervisor/utils/rgb.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
-
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<HomeProvider>(
@@ -33,30 +32,36 @@ class HomePage extends StatelessWidget {
                     padding: const EdgeInsets.all(8),
                     child: Column(
                       children: [
-                        ...List.generate(
-                          provider.menu.length,
-                          (index) {
-                            bool isActive = provider.selectedIndex == index;
-                            Map item = provider.menu[index];
+                        Expanded(
+                          child: ListView(
+                            shrinkWrap: true,
+                            children: [
+                              ...List.generate(
+                                provider.menu.length,
+                                (index) {
+                                  bool isActive = provider.selectedIndex == index;
+                                  Map item = provider.menu[index];
 
-                            return TextButton(
-                              style: TextButton.styleFrom(
-                                backgroundColor: isActive ? primary : primary.withOpacity(.1),
-                                foregroundColor: isActive ? Colors.white : primary,
+                                  return TextButton(
+                                    style: TextButton.styleFrom(
+                                      backgroundColor: isActive ? primary : primary.withOpacity(.1),
+                                      foregroundColor: isActive ? Colors.white : primary,
+                                    ),
+                                    onPressed: () {
+                                      provider.selectedIndex = index;
+                                    },
+                                    child: Row(
+                                      children: [
+                                        Text(item['title']),
+                                      ],
+                                    ),
+                                  ).paddingOnly(bottom: 4);
+                                },
                               ),
-                              onPressed: () {
-                                provider.selectedIndex = index;
-                              },
-                              child: Row(
-                                children: [
-                                  Text(item['title']),
-                                ],
-                              ),
-                            ).paddingOnly(bottom: 4);
-                          },
+                            ],
+                          ),
                         ),
-                        const Spacer(),
-                        // Logout
+                        const SizedBox(height: 8),
                         TextButton(
                           style: TextButton.styleFrom(
                             backgroundColor: danger.withOpacity(.1),
@@ -77,6 +82,7 @@ class HomePage extends StatelessWidget {
                       ],
                     ),
                   ),
+
                   const SizedBox(width: 16),
                   // Content
                   Expanded(

@@ -1,11 +1,37 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:supervisor/ui/splash/splash_page.dart';
 import 'package:supervisor/utils/rgb.dart';
+import 'package:window_manager/window_manager.dart';
 
 void main() async {
   await GetStorage.init();
+  await windowManager.ensureInitialized();
+
+  WindowOptions windowOptions = const WindowOptions(
+    size: Size(1200, 600),
+    center: true,
+    title: "Supervisior",
+    backgroundColor: Colors.transparent,
+    skipTaskbar: false,
+  );
+
+  windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.show();
+    await windowManager.focus();
+  });
+
+  runZonedGuarded(
+    () => runApp(const MyApp()),
+    (error, stack) {
+      print("Error: $error");
+      print("Stack: $stack");
+    },
+  );
+
   runApp(const MyApp());
 }
 

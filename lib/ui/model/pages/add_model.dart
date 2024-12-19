@@ -106,7 +106,7 @@ class _AddModelState extends State<AddModel> {
             const SizedBox(height: 8),
             Container(
               constraints: BoxConstraints(
-                maxHeight: Get.height * 0.5,
+                maxHeight: MediaQuery.of(context).size.height * 0.5,
               ),
               child: ListView.builder(
                   shrinkWrap: true,
@@ -140,6 +140,12 @@ class _AddModelState extends State<AddModel> {
                                   color: light,
                                   formatters: [
                                     FilteringTextInputFormatter.allow(RegExp(r'[0-9,]')),
+                                    TextInputFormatter.withFunction((oldValue, newValue) {
+                                      if (newValue.text.contains(",,")) {
+                                        return oldValue;
+                                      }
+                                      return newValue;
+                                    }),
                                   ],
                                 ),
                               ),
@@ -148,36 +154,37 @@ class _AddModelState extends State<AddModel> {
                           const SizedBox(height: 8),
                           Container(
                             width: Get.width * 0.4,
-                            height: 100,
                             decoration: BoxDecoration(
                               color: light,
                               borderRadius: BorderRadius.circular(6),
                             ),
                             padding: const EdgeInsets.all(8),
-                            child: Wrap(
-                              runSpacing: 8,
-                              spacing: 8,
-                              children: [
-                                ...provider.colors.map((color) {
-                                  bool isSelected = submodel['colors']?.contains(color['id']) ?? false;
+                            child: SingleChildScrollView(
+                              child: Wrap(
+                                runSpacing: 8,
+                                spacing: 8,
+                                children: [
+                                  ...provider.colors.map((color) {
+                                    bool isSelected = submodel['colors']?.contains(color['id']) ?? false;
 
-                                  return ChoiceChip(
-                                    backgroundColor: secondary,
-                                    surfaceTintColor: Colors.transparent,
-                                    selectedColor: primary,
-                                    label: Text(color['name']),
-                                    selected: isSelected,
-                                    onSelected: (value) {
-                                      if (value) {
-                                        submodel['colors'].add(color['id']);
-                                      } else {
-                                        submodel['colors'].remove(color['id']);
-                                      }
-                                      setState(() {});
-                                    },
-                                  );
-                                }),
-                              ],
+                                    return ChoiceChip(
+                                      backgroundColor: secondary,
+                                      surfaceTintColor: Colors.transparent,
+                                      selectedColor: primary,
+                                      label: Text(color['name']),
+                                      selected: isSelected,
+                                      onSelected: (value) {
+                                        if (value) {
+                                          submodel['colors'].add(color['id']);
+                                        } else {
+                                          submodel['colors'].remove(color['id']);
+                                        }
+                                        setState(() {});
+                                      },
+                                    );
+                                  }),
+                                ],
+                              ),
                             ),
                           )
                         ],

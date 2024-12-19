@@ -45,7 +45,6 @@ class AddOrder extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  // Order [ name, quantity, status[active], deadline [start, end] ]
                   Row(
                     children: [
                       Expanded(

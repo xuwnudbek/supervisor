@@ -7,12 +7,14 @@ class CustomDialog extends StatefulWidget {
     this.child,
     this.width,
     this.maxHeight,
+    this.backIconColor,
     super.key,
   });
 
   final Widget? child;
   final double? width;
   final double? maxHeight;
+  final Color? backIconColor;
 
   @override
   State<CustomDialog> createState() => _CustomDialogState();
@@ -22,6 +24,7 @@ class _CustomDialogState extends State<CustomDialog> {
   Widget? get child => widget.child;
   double? get width => widget.width;
   double? get maxHeight => widget.maxHeight;
+  Color? get backIconColor => widget.backIconColor;
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +36,9 @@ class _CustomDialogState extends State<CustomDialog> {
             onPressed: () {
               Get.back(result: false);
             },
+            style: IconButton.styleFrom(
+              backgroundColor: backIconColor ?? primary.withOpacity(0.1),
+            ),
             color: primary,
             icon: const Icon(Icons.close),
             tooltip: "Oynani yopish",

@@ -6,7 +6,8 @@ import 'package:get/get.dart';
 
 enum Result { success, error }
 
-String baseUrl = "192.168.0.123:8000";
+// String baseUrl = "192.168.94.162:8000";
+String baseUrl = "176.124.208.61:2005";
 String middle = "api";
 String login = "/login";
 String order = "/orders";
@@ -19,6 +20,11 @@ String razryad = "/razryads";
 String itemType = "/itemtypes";
 
 class HttpService {
+  static getSSL() {
+    http.Client client = http.Client();
+    return client;
+  }
+
   static Future<Map<String, dynamic>> get(
     String endpoint, {
     Map<String, String>? param,

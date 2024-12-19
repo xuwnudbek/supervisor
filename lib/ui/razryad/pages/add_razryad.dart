@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:supervisor/ui/color/provider/color_provider.dart';
 import 'package:supervisor/ui/razryad/provider/razryad_provider.dart';
 import 'package:supervisor/utils/rgb.dart';
 import 'package:supervisor/utils/widgets/custom_dialog.dart';
@@ -64,7 +63,7 @@ class _AddModelState extends State<AddRazryad> {
     return Scaffold(
       body: CustomDialog(
         width: 400,
-        maxHeight: Get.height * 0.8,
+        maxHeight: MediaQuery.of(context).size.height * 0.8,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,

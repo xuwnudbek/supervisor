@@ -113,7 +113,7 @@ class _AddItemState extends State<AddItem> {
         child: Column(
           children: [
             Text(
-              "Item${recipe.isNotEmpty ? 'ni o\'zgartirish' : ' qo\'shish'}",
+              "Material${recipe.isNotEmpty ? 'ni o\'zgartirish' : ' qo\'shish'}",
               style: const TextStyle(
                 fontSize: 20,
               ),
@@ -174,7 +174,7 @@ class _AddItemState extends State<AddItem> {
             ),
             const SizedBox(height: 8),
             CustomDropdown(
-              hint: "Item turi",
+              hint: "Material turi",
               items: provider.itemTypes
                   .map((e) => DropdownMenuItem(
                         value: e['id'],
@@ -232,7 +232,7 @@ class _AddItemState extends State<AddItem> {
                   return;
                 }
 
-                if (selectedImage == null) {
+                if (item.isEmpty && selectedImage == null) {
                   CustomSnackbars(context).warning("Rasm tanlang");
                   return;
                 }
@@ -240,34 +240,31 @@ class _AddItemState extends State<AddItem> {
                 final body = {
                   "name": nameController.text,
                   "price": priceController.text,
-                  "unit_id": selectedUnit['id'],
-                  "color_id": selectedColor['id'],
+                  "unit_id": selectedUnit['id'].toString(),
+                  "color_id": selectedColor['id'].toString(),
                   "code": codeController.text,
                   "type_id": selectedType['id'],
-                  ...{
-                    "image": selectedImage!.path,
-                  }
                 };
-
-                inspect(body);
-                // return;
 
                 if (item.isNotEmpty) {
                   var res = await provider.updateItem(item['id'], body);
 
                   if (res['status'] == Result.success) {
-                    CustomSnackbars(context).success("Item o'zgartirildi");
+                    CustomSnackbars(context).success("Material o'zgartirildi");
                     Get.back();
                   } else {
+                    inspect(res);
                     CustomSnackbars(context).error("Xatolik yuz berdi");
                   }
                   return;
                 }
 
-                var res = await provider.createItem(body);
+                var res = await provider.createItem(body..addAll({"image": selectedImage!.path}));
+
+                inspect(body);
 
                 if (res['status'] == Result.success) {
-                  CustomSnackbars(context).success("Item saqlandi");
+                  CustomSnackbars(context).success("Material saqlandi");
                   clear();
                 } else {
                   CustomSnackbars(context).error("Xatolik yuz berdi");
