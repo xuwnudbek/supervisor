@@ -12,4 +12,7 @@ extension StringExtension on String {
     }
     return const Color(0xFF000000);
   }
+
+  double get toDouble => double.tryParse(this) ?? 0.0;
+  
 }

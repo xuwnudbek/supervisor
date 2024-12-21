@@ -23,7 +23,7 @@ class ModelDetailsProvider extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    await getRecipes();
+    await getRecipe();
 
     isLoading = false;
     notifyListeners();
@@ -36,7 +36,7 @@ class ModelDetailsProvider extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    await getRecipes();
+    await getRecipe();
 
     isLoading = false;
     notifyListeners();
@@ -73,7 +73,7 @@ class ModelDetailsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getRecipes() async {
+  Future<void> getRecipe() async {
     if (selectedColor.isEmpty || selectedSize.isEmpty) return;
 
     var res = await HttpService.get(recipe, param: {
@@ -91,7 +91,7 @@ class ModelDetailsProvider extends ChangeNotifier {
     var res = await HttpService.post(recipe, data);
 
     if (res['status'] == Result.success) {
-      await getRecipes();
+      await getRecipe();
     }
   }
 
@@ -99,7 +99,7 @@ class ModelDetailsProvider extends ChangeNotifier {
     var res = await HttpService.patch("$recipe/$id", data);
 
     if (res['status'] == Result.success) {
-      await getRecipes();
+      await getRecipe();
     }
   }
 

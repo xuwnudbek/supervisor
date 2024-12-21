@@ -1,0 +1,30 @@
+{
+    "name": "Free Style",
+    "quantity": 100,
+    "start_date": "2024-12-21",
+    "end_date": "2024-12-31",
+    "models": [
+        {
+            "id": 8,
+            "name": "BMW",
+            "submodel": {
+                "id": 19,
+                "name": "E30"
+            },
+            "size": {
+                "id": 3,
+                "name": "34"
+            },
+            "model_color": {
+                "id": 43,
+                "color": {
+                    "id": 9,
+                    "name": "Red Black Red Black",
+                    "hex": "FF3600"
+                }
+            },
+            "quantity": 100
+        }
+    ],
+    "rasxod": 0.6
+}

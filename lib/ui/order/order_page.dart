@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:supervisor/ui/order/pages/add_order.dart';
 import 'package:supervisor/ui/order/provider/order_provider.dart';
 import 'package:supervisor/utils/RGB.dart';
+import 'package:supervisor/utils/widgets/custom_snackbars.dart';
 
 class OrderPage extends StatefulWidget {
   const OrderPage({super.key});
@@ -41,6 +42,10 @@ class _OrderPageState extends State<OrderPage> {
                         color: primary,
                         icon: const Icon(Icons.refresh),
                         onPressed: () {
+                          if (provider.isLoading) {
+                            CustomSnackbars(context).warning("Ma'lumotlar yuklanmoqda, iltimos kuting");
+                            return;
+                          }
                           provider.initialize();
                         },
                       ),
@@ -49,6 +54,10 @@ class _OrderPageState extends State<OrderPage> {
                         color: primary,
                         icon: const Icon(Icons.add),
                         onPressed: () async {
+                          if (provider.isLoading) {
+                            CustomSnackbars(context).warning("Ma'lumotlar yuklanmoqda, iltimos kuting");
+                            return;
+                          }
                           await Get.to(() => AddOrder(orderProvider: provider));
                         },
                       ),

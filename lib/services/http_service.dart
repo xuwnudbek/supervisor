@@ -6,13 +6,14 @@ import 'package:get/get.dart';
 
 enum Result { success, error }
 
-// String baseUrl = "192.168.94.162:8000";
-String baseUrl = "176.124.208.61:2005";
+String baseUrl = "192.168.100.189:8000";
+// String baseUrl = "176.124.208.61:2005";
 String middle = "api";
 String login = "/login";
 String order = "/orders";
 String model = "/models";
 String recipe = "/recipes";
+String showRecipe = "/getrecipes";
 String item = "/items";
 String unit = "/units";
 String color = "/colors";
