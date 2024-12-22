@@ -11,8 +11,8 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<HomeProvider>(
       create: (context) => HomeProvider(),
-      builder: (context, snapshot) {
-        return Consumer<HomeProvider>(builder: (context, provider, _) {
+      child: Consumer<HomeProvider>(
+        builder: (context, provider, _) {
           return Scaffold(
             appBar: AppBar(
               title: const Text('Super Visior'),
@@ -92,8 +92,8 @@ class HomePage extends StatelessWidget {
               ),
             ),
           );
-        });
-      },
+        },
+      ),
     );
   }
 }

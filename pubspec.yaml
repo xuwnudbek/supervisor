@@ -46,6 +46,7 @@ dependencies:
   window_manager: ^0.4.3
   flutter_colorpicker: ^1.1.0
   intl: ^0.20.1
+  dotted_line_flutter: ^0.1.6
 
 dev_dependencies:
   flutter_test:

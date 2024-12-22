@@ -44,7 +44,7 @@ String parseToCurrency(String value) {
 
     result = String.fromCharCodes(result.codeUnits.reversed);
 
-    return "$result.${rightSide}";
+    return "$result.$rightSide";
   } else {
     if (value.contains(".")) {
       return value;

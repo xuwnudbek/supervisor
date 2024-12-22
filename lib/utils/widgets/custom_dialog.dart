@@ -53,6 +53,14 @@ class _CustomDialogState extends State<CustomDialog> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(8),
+              boxShadow: [
+                BoxShadow(
+                  color: dark.withOpacity(0.15),
+                  blurRadius: 10,
+                  spreadRadius: 1,
+                  offset: const Offset(0, 5),
+                ),
+              ],
             ),
             child: widget.child,
           ),

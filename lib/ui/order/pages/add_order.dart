@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:supervisor/ui/order/provider/add_order_provider.dart';
 import 'package:supervisor/ui/order/provider/order_provider.dart';
@@ -117,7 +116,7 @@ class AddOrder extends StatelessWidget {
                                   onPressed: () async {
                                     final date = await showDatePicker(
                                       context: context,
-                                      initialDate: DateTime.now(),
+                                      initialDate: provider.startDate != null ? provider.startDate! : DateTime.now(),
                                       firstDate: provider.startDate != null ? provider.startDate! : DateTime.now().subtract(const Duration(days: 365 * 10)),
                                       lastDate: DateTime.now().add(const Duration(days: 365 * 10)),
                                     );

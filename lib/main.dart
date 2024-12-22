@@ -14,9 +14,11 @@ void main() async {
   WindowOptions windowOptions = const WindowOptions(
     size: Size(1200, 600),
     center: true,
+    fullScreen: true,
     title: "Supervisior",
     backgroundColor: Colors.transparent,
     skipTaskbar: false,
+    windowButtonVisibility: true,
   );
 
   windowManager.waitUntilReadyToShow(windowOptions, () async {
@@ -53,6 +55,7 @@ class MyApp extends StatelessWidget {
         ),
         appBarTheme: AppBarTheme(
           elevation: 20,
+          shadowColor: dark.withOpacity(0.2),
           backgroundColor: primary,
           foregroundColor: secondary,
           surfaceTintColor: Colors.transparent,
@@ -83,6 +86,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
+        shadowColor: dark.withOpacity(0.2),
         datePickerTheme: DatePickerThemeData(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
