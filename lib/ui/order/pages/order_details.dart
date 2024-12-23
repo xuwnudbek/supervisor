@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 import 'package:supervisor/ui/order/provider/order_detail_provider.dart';
+import 'package:supervisor/utils/extensions/num_extension.dart';
 import 'package:supervisor/utils/rgb.dart';
 import 'package:supervisor/utils/widgets/custom_divider.dart';
 import 'package:supervisor/utils/widgets/custom_dotted_widget.dart';
@@ -504,7 +505,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                       : Row(
                           children: [
                             Expanded(
-                              flex: 6,
+                              flex: 4,
                               child: Container(
                                 decoration: BoxDecoration(
                                   color: light,
@@ -629,7 +630,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                 ),
                                               ),
                                               Text(
-                                                provider.orderData['rasxod'].toString(),
+                                                "${provider.orderData['rasxod']}\$",
                                                 style: const TextStyle(
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.w500,
@@ -728,6 +729,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                           provider.selectedOrderModel = orderModel;
                                                         },
                                                         child: Container(
+                                                          margin: const EdgeInsets.only(right: 8),
                                                           decoration: BoxDecoration(
                                                             color: isSelected ? primary : Colors.white,
                                                             borderRadius: const BorderRadius.all(Radius.circular(6)),
@@ -918,7 +920,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                     ),
                                   ],
                                 ),
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 16),
                                 child: Column(
                                   children: [
                                     const Row(
@@ -937,95 +939,136 @@ class _OrderDetailsState extends State<OrderDetails> {
                                     Expanded(
                                       child: SingleChildScrollView(
                                         scrollDirection: Axis.vertical,
-                                        child: Table(
-                                          border: TableBorder.all(
-                                            color: secondary,
-                                          ),
-                                          columnWidths: const {
-                                            0: FlexColumnWidth(1),
-                                            1: FlexColumnWidth(5),
-                                            2: FlexColumnWidth(2),
-                                            3: FlexColumnWidth(2),
-                                            4: FlexColumnWidth(2),
-                                          },
-                                          defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                                        child: Column(
                                           children: [
-                                            const TableRow(
-                                              children: [
-                                                TableCell(
-                                                  child: Padding(
-                                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                                    child: Center(
-                                                      child: Text(
-                                                        '№',
-                                                        style: TextStyle(
-                                                          fontSize: 12,
-                                                          fontWeight: FontWeight.w500,
+                                            ...provider.collectModelsToTableRow().map((orderModelData) {
+                                              Map orderModel = orderModelData['order_model'];
+                                              List<TableRow> recipesTableRows = orderModelData['recipes_table_rows'];
+                                              return Column(
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    children: [
+                                                      const Text("Model:  "),
+                                                      Text(
+                                                        "${orderModel['model']['name']}",
+                                                        style: const TextStyle(
+                                                          fontWeight: FontWeight.bold,
                                                         ),
                                                       ),
-                                                    ),
+                                                    ],
                                                   ),
-                                                ),
-                                                TableCell(
-                                                  child: Padding(
-                                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                                    child: Center(
-                                                      child: Text(
-                                                        'Mahsulot',
-                                                        style: TextStyle(
-                                                          fontSize: 12,
-                                                          fontWeight: FontWeight.w500,
-                                                        ),
+                                                  const SizedBox(height: 8.0),
+                                                  Table(
+                                                    border: TableBorder.all(
+                                                      color: secondary,
+                                                    ),
+                                                    columnWidths: const {
+                                                      0: FlexColumnWidth(1),
+                                                      1: FlexColumnWidth(5),
+                                                      2: FlexColumnWidth(2),
+                                                      3: FlexColumnWidth(2),
+                                                      4: FlexColumnWidth(2),
+                                                    },
+                                                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                                                    children: [
+                                                      const TableRow(
+                                                        children: [
+                                                          TableCell(
+                                                            child: Padding(
+                                                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                              child: Center(
+                                                                child: Text(
+                                                                  '№',
+                                                                  style: TextStyle(
+                                                                    fontSize: 12,
+                                                                    fontWeight: FontWeight.w500,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          TableCell(
+                                                            child: Padding(
+                                                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                              child: Center(
+                                                                child: Text(
+                                                                  'Mahsulot',
+                                                                  style: TextStyle(
+                                                                    fontSize: 12,
+                                                                    fontWeight: FontWeight.w500,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          TableCell(
+                                                            child: Padding(
+                                                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                              child: Center(
+                                                                child: Text(
+                                                                  'Narxi',
+                                                                  style: TextStyle(
+                                                                    fontSize: 12,
+                                                                    fontWeight: FontWeight.w500,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          TableCell(
+                                                            child: Padding(
+                                                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                              child: Center(
+                                                                child: Text(
+                                                                  'Miqdori',
+                                                                  style: TextStyle(
+                                                                    fontSize: 12,
+                                                                    fontWeight: FontWeight.w500,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          TableCell(
+                                                            child: Padding(
+                                                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                              child: Center(
+                                                                child: Text(
+                                                                  'Umumiy summasi',
+                                                                  style: TextStyle(
+                                                                    fontSize: 12,
+                                                                    fontWeight: FontWeight.w500,
+                                                                  ),
+                                                                  textAlign: TextAlign.center,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
                                                       ),
+                                                      ...recipesTableRows
+                                                    ],
+                                                  ),
+                                                  const SizedBox(height: 16),
+                                                ],
+                                              );
+                                            }),
+                                            const SizedBox(height: 16),
+                                            Padding(
+                                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                                              child: Row(
+                                                children: [
+                                                  const Text("Umumiy summa: "),
+                                                  Text(
+                                                    "${provider.totalPrice.toCurrency.split(".").firstOrNull ?? "0"}\$",
+                                                    style: const TextStyle(
+                                                      fontWeight: FontWeight.bold,
                                                     ),
                                                   ),
-                                                ),
-                                                TableCell(
-                                                  child: Padding(
-                                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                                    child: Center(
-                                                      child: Text(
-                                                        'Narxi',
-                                                        style: TextStyle(
-                                                          fontSize: 12,
-                                                          fontWeight: FontWeight.w500,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                TableCell(
-                                                  child: Padding(
-                                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                                    child: Center(
-                                                      child: Text(
-                                                        'Miqdori',
-                                                        style: TextStyle(
-                                                          fontSize: 12,
-                                                          fontWeight: FontWeight.w500,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                TableCell(
-                                                  child: Padding(
-                                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                                    child: Center(
-                                                      child: Text(
-                                                        'Umumiy summasi',
-                                                        style: TextStyle(
-                                                          fontSize: 12,
-                                                          fontWeight: FontWeight.w500,
-                                                        ),
-                                                        textAlign: TextAlign.center,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
+                                                ],
+                                              ),
                                             ),
-                                            ...provider.collectRecipesToTableRow(),
                                           ],
                                         ),
                                       ),

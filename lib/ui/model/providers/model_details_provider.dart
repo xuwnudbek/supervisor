@@ -93,6 +93,8 @@ class ModelDetailsProvider extends ChangeNotifier {
     if (res['status'] == Result.success) {
       await getRecipe();
     }
+
+    print("AddRecipe: $res");
   }
 
   Future<void> editRecipe(int id, Map<String, dynamic> data) async {
@@ -101,6 +103,8 @@ class ModelDetailsProvider extends ChangeNotifier {
     if (res['status'] == Result.success) {
       await getRecipe();
     }
+
+    print("EditRecipe: $res");
   }
 
   Future<void> deleteRecipe(int id) async {

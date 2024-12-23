@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:supervisor/ui/model/providers/model_provider.dart';
+import 'package:supervisor/utils/formatters/currency_formatter.dart';
 import 'package:supervisor/utils/rgb.dart';
 import 'package:supervisor/utils/widgets/custom_dialog.dart';
 import 'package:supervisor/utils/widgets/custom_input.dart';
@@ -24,6 +25,7 @@ class AddModel extends StatefulWidget {
 class _AddModelState extends State<AddModel> {
   ModelProvider get provider => widget.provider;
   final TextEditingController nameController = TextEditingController();
+  final TextEditingController modelRasxodController = TextEditingController();
 
   List<Map<String, dynamic>> submodels = [];
 
@@ -61,6 +63,7 @@ class _AddModelState extends State<AddModel> {
     () async {
       if (widget.model != null) {
         nameController.text = widget.model!['name'];
+        modelRasxodController.text = widget.model!['rasxod'];
         for (var submodel in widget.model!['submodels']) {
           submodels.add({
             "controller": TextEditingController(text: submodel['name']),
@@ -99,9 +102,25 @@ class _AddModelState extends State<AddModel> {
               ],
             ),
             const SizedBox(height: 16),
-            CustomInput(
-              controller: nameController,
-              hint: "Model kodi",
+            Row(
+              children: [
+                Expanded(
+                  child: CustomInput(
+                    controller: nameController,
+                    hint: "Model kodi",
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: CustomInput(
+                    controller: modelRasxodController,
+                    formatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                    ],
+                    hint: "Model uchun rasxod",
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 8),
             Container(
@@ -223,6 +242,7 @@ class _AddModelState extends State<AddModel> {
 
                 final body = {
                   "name": nameController.text.trim(),
+                  "rasxod": double.tryParse(modelRasxodController.text.trim()) ?? 0.0,
                   "submodels": [
                     for (var submodel in submodels)
                       {

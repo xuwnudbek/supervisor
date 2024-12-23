@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:supervisor/ui/model/pages/add_recipe.dart';
 import 'package:supervisor/ui/model/providers/model_details_provider.dart';
+import 'package:supervisor/utils/extensions/string_extension.dart';
 import 'package:supervisor/utils/rgb.dart';
 import 'package:supervisor/utils/widgets/custom_dropdown.dart';
 import 'package:supervisor/utils/widgets/custom_snackbars.dart';
@@ -291,55 +292,86 @@ class ModelDetails extends StatelessWidget {
                                               ),
                                               DataCell(
                                                 Center(
-                                                  child: SizedBox.square(
-                                                    dimension: 50,
-                                                    child: true
-                                                        ? const Text("Rasm yo'q")
-                                                        : recipe['item']['image'].toString().contains("images")
-                                                            ? Image.network(
-                                                                "http://176.124.208.61:2005/storage/${recipe['item']['image']}",
-                                                                frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
-                                                                  return ClipRRect(
-                                                                    borderRadius: BorderRadius.circular(8),
-                                                                    child: child,
-                                                                  );
-                                                                },
-                                                                loadingBuilder: (context, child, loadingProgress) {
-                                                                  if (loadingProgress == null) {
-                                                                    return child;
-                                                                  } else {
-                                                                    return const SizedBox.square(
-                                                                      dimension: 50,
-                                                                      child: Center(
-                                                                        child: CircularProgressIndicator(),
-                                                                      ),
-                                                                    );
-                                                                  }
-                                                                },
-                                                              )
-                                                            : 3 > 2
-                                                                ? const SizedBox.shrink()
-                                                                : Image.network(
-                                                                    "http://176.124.208.61:2025/media/${recipe['item']['image']}",
-                                                                    frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
-                                                                      return ClipRRect(
-                                                                        borderRadius: BorderRadius.circular(8),
-                                                                        child: child,
-                                                                      );
-                                                                    },
-                                                                    loadingBuilder: (context, child, loadingProgress) {
-                                                                      if (loadingProgress == null) {
-                                                                        return child;
-                                                                      } else {
-                                                                        return const SizedBox.square(
-                                                                          dimension: 50,
-                                                                          child: Center(
-                                                                            child: CircularProgressIndicator(),
-                                                                          ),
+                                                  child: SizedBox(
+                                                    width: 160,
+                                                    child: Center(
+                                                      child: GestureDetector(
+                                                        onTap: () {
+                                                          Get.dialog(
+                                                            Dialog(
+                                                              backgroundColor: Colors.transparent,
+                                                              child: Stack(
+                                                                children: [
+                                                                  Container(
+                                                                    margin: const EdgeInsets.all(36),
+                                                                    child: Image.network(
+                                                                      recipe['item']['image'].toString().toImageUrl,
+                                                                      frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                                                                        return ClipRRect(
+                                                                          borderRadius: BorderRadius.circular(8),
+                                                                          child: child,
                                                                         );
-                                                                      }
-                                                                    },
+                                                                      },
+                                                                      errorBuilder: (context, error, stackTrace) {
+                                                                        return const Text("Rasmni yuklashda xatolik yuz berdi");
+                                                                      },
+                                                                      loadingBuilder: (context, child, loadingProgress) {
+                                                                        if (loadingProgress == null) {
+                                                                          return child;
+                                                                        } else {
+                                                                          return const SizedBox.square(
+                                                                            dimension: 50,
+                                                                            child: Center(
+                                                                              child: CircularProgressIndicator(),
+                                                                            ),
+                                                                          );
+                                                                        }
+                                                                      },
+                                                                    ),
                                                                   ),
+                                                                  Positioned(
+                                                                    right: 0,
+                                                                    child: IconButton(
+                                                                      style: IconButton.styleFrom(
+                                                                        backgroundColor: Colors.white,
+                                                                      ),
+                                                                      icon: const Icon(Icons.close),
+                                                                      onPressed: () {
+                                                                        Get.back();
+                                                                      },
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          );
+                                                        },
+                                                        child: Image.network(
+                                                          recipe['item']['image'].toString().toImageUrl,
+                                                          frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                                                            return ClipRRect(
+                                                              borderRadius: BorderRadius.circular(8),
+                                                              child: child,
+                                                            );
+                                                          },
+                                                          errorBuilder: (context, error, stackTrace) {
+                                                            return const Text("Rasmni yuklashda xatolik yuz berdi");
+                                                          },
+                                                          loadingBuilder: (context, child, loadingProgress) {
+                                                            if (loadingProgress == null) {
+                                                              return child;
+                                                            } else {
+                                                              return const SizedBox.square(
+                                                                dimension: 50,
+                                                                child: Center(
+                                                                  child: CircularProgressIndicator(),
+                                                                ),
+                                                              );
+                                                            }
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ),
                                                   ),
                                                 ),
                                               ),

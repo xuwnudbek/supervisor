@@ -51,6 +51,7 @@ class _ModelPageState extends State<ModelPage> {
                       icon: const Icon(Icons.add),
                       onPressed: () async {
                         await Get.to(() => AddModel(provider: provider));
+                        provider.initialize();
                       },
                     ),
                   ],

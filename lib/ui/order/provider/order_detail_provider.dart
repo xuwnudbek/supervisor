@@ -2,12 +2,14 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:supervisor/services/http_service.dart';
+import 'package:supervisor/utils/extensions/num_extension.dart';
 
 class OrderDetailProvider extends ChangeNotifier {
   final int orderId;
 
   Map _orderData = {};
   Map _selectedOrderModel = {};
+  double _totalPrice = 0;
 
   bool _isLoading = false;
 
@@ -33,29 +35,39 @@ class OrderDetailProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  double get totalPrice => _totalPrice;
+  set totalPrice(double value) {
+    _totalPrice = value;
+    notifyListeners();
+  }
+
   Future<void> initialize() async {
     isLoading = true;
 
     await getOrder();
+    collectModelsToTableRow();
 
     isLoading = false;
   }
 
   Future<void> getOrder() async {
-    log("$order/$orderId");
     final response = await HttpService.get('$order/$orderId');
     if (response['status'] == Result.success) {
       orderData = response['data'];
     }
   }
 
-  List<TableRow> collectRecipesToTableRow() {
-    List<TableRow> recipesTableRows = [];
+  List<Map> collectModelsToTableRow() {
+    totalPrice = 0;
+
+    List<Map> orderModels = [];
 
     for (var orderModel in orderData['order_models'] ?? []) {
+      List<TableRow> recipesTableRows = [];
       for (var submodels in orderModel?['submodels'] ?? []) {
-        for (var recipe in submodels['recipes']) {
+        for (var recipe in submodels['recipes'] ?? []) {
           int index = recipesTableRows.length;
+
           recipesTableRows.add(TableRow(children: [
             TableCell(
               child: Padding(
@@ -74,13 +86,23 @@ class OrderDetailProvider extends ChangeNotifier {
             TableCell(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                child: Center(
-                  child: Text(
-                    '${recipe['item']['name']}',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
+                child: Text(
+                  '${recipe['item']['name']}',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ),
+            TableCell(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                child: Text(
+                  "${double.parse("${recipe['item']['price']}").toCurrency}\$",
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
@@ -89,12 +111,22 @@ class OrderDetailProvider extends ChangeNotifier {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 child: Center(
-                  child: Text(
-                    '${recipe['item']['price']}',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
+                  child: Row(
+                    children: [
+                      Text(
+                        "${num.parse(recipe['quantity']).toCurrency} ",
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      Text(
+                        "/ ${recipe['item']['unit']['name']}",
+                        style: const TextStyle(
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -102,28 +134,11 @@ class OrderDetailProvider extends ChangeNotifier {
             TableCell(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                child: Center(
-                  child: Text(
-                    '${recipe['quantity']}',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            TableCell(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                child: Center(
-                  child: Text(
-                    '${recipe['quantity']} ${recipe['item']['price']}',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    textAlign: TextAlign.center,
+                child: Text(
+                  "${(double.parse("${recipe['quantity']}") * double.parse("${recipe['item']['price']}")).toCurrency}\$",
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
@@ -131,8 +146,15 @@ class OrderDetailProvider extends ChangeNotifier {
           ]));
         }
       }
+
+      totalPrice = totalPrice + double.parse("${orderModel['total_rasxod']}");
+
+      orderModels.add({
+        'order_model': orderModel,
+        'recipes_table_rows': recipesTableRows,
+      });
     }
 
-    return recipesTableRows;
+    return orderModels;
   }
 }

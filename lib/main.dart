@@ -12,9 +12,9 @@ void main() async {
   await windowManager.ensureInitialized();
 
   WindowOptions windowOptions = const WindowOptions(
-    size: Size(1200, 600),
+    size: Size(1200, 700),
     center: true,
-    fullScreen: true,
+    // fullScreen: true,
     title: "Supervisior",
     backgroundColor: Colors.transparent,
     skipTaskbar: false,

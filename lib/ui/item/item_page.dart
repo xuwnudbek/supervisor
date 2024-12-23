@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:supervisor/ui/item/pages/add_item.dart';
 import 'package:supervisor/ui/item/provider/item_provider.dart';
 import 'package:supervisor/utils/RGB.dart';
+import 'package:supervisor/utils/extensions/string_extension.dart';
 
 class ItemPage extends StatefulWidget {
   const ItemPage({super.key});
@@ -243,134 +244,87 @@ class _ItemPageState extends State<ItemPage> {
                                               ),
                                             ),
                                             DataCell(
-                                              SizedBox(
-                                                width: 160,
+                                              Container(
+                                                width: 200,
+                                                height: 200,
+                                                padding: const EdgeInsets.all(4),
                                                 child: Center(
-                                                  child: item['image'] == null || item['image'] == ""
-                                                      ? const Text("Rasm yo'q")
-                                                      : GestureDetector(
-                                                          onTap: () {
-                                                            Get.dialog(
-                                                              Dialog(
-                                                                backgroundColor: Colors.transparent,
-                                                                child: Stack(
-                                                                  children: [
-                                                                    Container(
-                                                                      margin: const EdgeInsets.all(36),
-                                                                      child: item['image'].toString().contains("images")
-                                                                          ? Image.network(
-                                                                              "http://176.124.208.61:2005/storage/${item['image']}",
-                                                                              frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
-                                                                                return ClipRRect(
-                                                                                  borderRadius: BorderRadius.circular(8),
-                                                                                  child: child,
-                                                                                );
-                                                                              },
-                                                                              loadingBuilder: (context, child, loadingProgress) {
-                                                                                if (loadingProgress == null) {
-                                                                                  return child;
-                                                                                } else {
-                                                                                  return const SizedBox.square(
-                                                                                    dimension: 50,
-                                                                                    child: Center(
-                                                                                      child: CircularProgressIndicator(),
-                                                                                    ),
-                                                                                  );
-                                                                                }
-                                                                              },
-                                                                            )
-                                                                          : 3 > 2
-                                                                              ? const SizedBox.shrink()
-                                                                              : Image.network(
-                                                                                  "http://176.124.208.61:2025/media/${item['image']}",
-                                                                                  frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
-                                                                                    return ClipRRect(
-                                                                                      borderRadius: BorderRadius.circular(8),
-                                                                                      child: child,
-                                                                                    );
-                                                                                  },
-                                                                                  loadingBuilder: (context, child, loadingProgress) {
-                                                                                    if (loadingProgress == null) {
-                                                                                      return child;
-                                                                                    } else {
-                                                                                      return const SizedBox.square(
-                                                                                        dimension: 50,
-                                                                                        child: Center(
-                                                                                          child: CircularProgressIndicator(),
-                                                                                        ),
-                                                                                      );
-                                                                                    }
-                                                                                  },
-                                                                                ),
-                                                                    ),
-                                                                    Positioned(
-                                                                      right: 0,
-                                                                      child: IconButton(
-                                                                        style: IconButton.styleFrom(
-                                                                          backgroundColor: Colors.white,
-                                                                        ),
-                                                                        icon: const Icon(Icons.close),
-                                                                        onPressed: () {
-                                                                          Get.back();
-                                                                        },
-                                                                      ),
-                                                                    ),
-                                                                  ],
+                                                  child: GestureDetector(
+                                                      onTap: () {
+                                                        print(item['image'].toString().toImageUrl);
+                                                        Get.dialog(
+                                                          Dialog(
+                                                            backgroundColor: Colors.transparent,
+                                                            child: Stack(
+                                                              children: [
+                                                                Container(
+                                                                  margin: const EdgeInsets.all(36),
+                                                                  child: Image.network(
+                                                                    item['image'].toString().toImageUrl,
+                                                                    frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                                                                      return ClipRRect(
+                                                                        borderRadius: BorderRadius.circular(8),
+                                                                        child: child,
+                                                                      );
+                                                                    },
+                                                                    errorBuilder: (context, error, stackTrace) {
+                                                                      return const Text("Rasmni yuklashda xatolik yuz berdi");
+                                                                    },
+                                                                    loadingBuilder: (context, child, loadingProgress) {
+                                                                      if (loadingProgress == null) {
+                                                                        return child;
+                                                                      } else {
+                                                                        return const SizedBox.square(
+                                                                          dimension: 50,
+                                                                          child: Center(
+                                                                            child: CircularProgressIndicator(),
+                                                                          ),
+                                                                        );
+                                                                      }
+                                                                    },
+                                                                  ),
                                                                 ),
+                                                                Positioned(
+                                                                  right: 0,
+                                                                  child: IconButton(
+                                                                    style: IconButton.styleFrom(
+                                                                      backgroundColor: Colors.white,
+                                                                    ),
+                                                                    icon: const Icon(Icons.close),
+                                                                    onPressed: () {
+                                                                      Get.back();
+                                                                    },
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
+                                                      child: Image.network(
+                                                        item['image'].toString().toImageUrl,
+                                                        frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                                                          return ClipRRect(
+                                                            borderRadius: BorderRadius.circular(8),
+                                                            child: child,
+                                                          );
+                                                        },
+                                                        errorBuilder: (context, error, stackTrace) {
+                                                          return const Text("Rasm mavjud emas");
+                                                        },
+                                                        loadingBuilder: (context, child, loadingProgress) {
+                                                          if (loadingProgress == null) {
+                                                            return child;
+                                                          } else {
+                                                            return const SizedBox.square(
+                                                              dimension: 50,
+                                                              child: Center(
+                                                                child: CircularProgressIndicator(),
                                                               ),
                                                             );
-                                                          },
-                                                          child: true
-                                                              ? const Text("Rasm yo'q")
-                                                              : item['image'].toString().contains("images")
-                                                                  ? Image.network(
-                                                                      "http://176.124.208.61:2005/storage/${item['image']}",
-                                                                      frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
-                                                                        return ClipRRect(
-                                                                          borderRadius: BorderRadius.circular(8),
-                                                                          child: child,
-                                                                        );
-                                                                      },
-                                                                      errorBuilder: (context, error, stackTrace) {
-                                                                        return const Text("Rasmni yuklashda xatolik yuz berdi");
-                                                                      },
-                                                                      loadingBuilder: (context, child, loadingProgress) {
-                                                                        if (loadingProgress == null) {
-                                                                          return child;
-                                                                        } else {
-                                                                          return const SizedBox.square(
-                                                                            dimension: 50,
-                                                                            child: Center(
-                                                                              child: CircularProgressIndicator(),
-                                                                            ),
-                                                                          );
-                                                                        }
-                                                                      },
-                                                                    )
-                                                                  : 3 > 2
-                                                                      ? const SizedBox.shrink()
-                                                                      : Image.network(
-                                                                          "http://176.124.208.61:2025/media/${item['image']}",
-                                                                          frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
-                                                                            return ClipRRect(
-                                                                              borderRadius: BorderRadius.circular(8),
-                                                                              child: child,
-                                                                            );
-                                                                          },
-                                                                          loadingBuilder: (context, child, loadingProgress) {
-                                                                            if (loadingProgress == null) {
-                                                                              return child;
-                                                                            } else {
-                                                                              return const SizedBox.square(
-                                                                                dimension: 50,
-                                                                                child: Center(
-                                                                                  child: CircularProgressIndicator(),
-                                                                                ),
-                                                                              );
-                                                                            }
-                                                                          },
-                                                                        ),
-                                                        ),
+                                                          }
+                                                        },
+                                                      )),
                                                 ),
                                               ),
                                             ),

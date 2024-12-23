@@ -681,7 +681,7 @@ class AddOrder extends StatelessWidget {
                                       child: CustomInput(
                                         controller: provider.orderRasxodController,
                                         hint: "Rasxodingizni kiriting",
-                                        color: light,
+                                        color: secondary,
                                         formatters: [
                                           CurrencyInputFormatter(),
                                           FilteringTextInputFormatter.allow(RegExp(r'[0-9\,\.]')),
