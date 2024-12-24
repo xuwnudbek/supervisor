@@ -87,7 +87,7 @@ class _ModelPageState extends State<ModelPage> {
 
                                     return GestureDetector(
                                       onTap: () {
-                                        Get.to(() => ModelDetails(model: model));
+                                        Get.to(() => ModelDetails(modelData: model));
                                       },
                                       child: Container(
                                         padding: const EdgeInsets.only(left: 20, top: 8, right: 8, bottom: 8),

@@ -1,10 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:supervisor/ui/model/providers/model_provider.dart';
-import 'package:supervisor/utils/formatters/currency_formatter.dart';
 import 'package:supervisor/utils/rgb.dart';
 import 'package:supervisor/utils/widgets/custom_dialog.dart';
+import 'package:supervisor/utils/widgets/custom_image_widget.dart';
 import 'package:supervisor/utils/widgets/custom_input.dart';
 import 'package:supervisor/utils/widgets/custom_snackbars.dart';
 
@@ -27,6 +30,7 @@ class _AddModelState extends State<AddModel> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController modelRasxodController = TextEditingController();
 
+  List<String> images = [];
   List<Map<String, dynamic>> submodels = [];
 
   void addSubmodel() {
@@ -58,27 +62,35 @@ class _AddModelState extends State<AddModel> {
     setState(() {});
   }
 
+  Future<void> showImagesPicker() async {
+    final ImagePicker picker = ImagePicker();
+    final List<XFile?> pickedImages = await picker.pickMultiImage(limit: 10);
+
+    if (pickedImages.isNotEmpty) {
+      images = pickedImages.map((e) => e!.path).toList();
+      setState(() {});
+    }
+  }
+
   @override
   void initState() {
-    () async {
-      if (widget.model != null) {
-        nameController.text = widget.model!['name'];
-        modelRasxodController.text = widget.model!['rasxod'];
-        for (var submodel in widget.model!['submodels']) {
-          submodels.add({
-            "controller": TextEditingController(text: submodel['name']),
-            "sizes": TextEditingController(text: (submodel['sizes'].map((e) => e['name'])).join(",")),
-            "colors": submodel['model_colors'].map((e) => e['color']['id']).toList(),
-          });
-        }
-        setState(() {});
-      }
-
-      if (submodels.isEmpty) {
-        addSubmodel();
-      }
-    }();
     super.initState();
+    initialize();
+  }
+
+  void initialize() {
+    if (widget.model != null) {
+      nameController.text = widget.model!['name'];
+      modelRasxodController.text = widget.model!['rasxod'] ?? "";
+      for (var submodel in widget.model!['submodels']) {
+        submodels.add({
+          "controller": TextEditingController(text: submodel['name']),
+          "sizes": TextEditingController(text: (submodel['sizes'].map((e) => e['name'])).join(",")),
+          "colors": submodel['model_colors'].map((e) => e['color']['id']).toList(),
+        });
+      }
+      setState(() {});
+    }
   }
 
   @override
@@ -232,9 +244,68 @@ class _AddModelState extends State<AddModel> {
                   ),
                 ],
               ),
+            const SizedBox(height: 8),
+            TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.grey[200],
+                fixedSize: const Size.fromHeight(100),
+                backgroundBuilder: (BuildContext context, child, Widget? background) {
+                  return Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey[200]!),
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: images.isNotEmpty
+                        ? ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: images.length,
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 4),
+                                child: InkWell(
+                                  onTap: () {
+                                    images.removeAt(index);
+                                    setState(() {});
+                                  },
+                                  child: Badge(
+                                    label: const Text("X"),
+                                    child: CustomImageWidget(
+                                      image: images[index],
+                                      source: Sources.file,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          )
+                        : const Icon(
+                            Icons.image,
+                            color: Colors.grey,
+                          ),
+                  );
+                },
+              ),
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.image,
+                    color: Colors.grey,
+                  ),
+                ],
+              ),
+              onPressed: () async {
+                await showImagesPicker();
+              },
+            ),
             const SizedBox(height: 16),
             TextButton(
               onPressed: () async {
+                if (provider.isLoading || provider.isCreatingModel || provider.isUpdatingModel) return;
+
                 if (nameController.text.isEmpty || submodels.any((element) => element['controller'].text.isEmpty || element['sizes'].text.isEmpty)) {
                   CustomSnackbars(context).warning("Iltimos, barcha maydonlarni to'ldiring!");
                   return;
@@ -243,6 +314,7 @@ class _AddModelState extends State<AddModel> {
                 final body = {
                   "name": nameController.text.trim(),
                   "rasxod": double.tryParse(modelRasxodController.text.trim()) ?? 0.0,
+                  "images": images,
                   "submodels": [
                     for (var submodel in submodels)
                       {
@@ -272,9 +344,18 @@ class _AddModelState extends State<AddModel> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    widget.model != null ? "Yangilash" : "Qo'shish",
-                  ),
+                  if (provider.isLoading || provider.isCreatingModel || provider.isUpdatingModel)
+                    const SizedBox.square(
+                      dimension: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                  else
+                    Text(
+                      widget.model != null ? "Yangilash" : "Qo'shish",
+                    ),
                 ],
               ),
             ),

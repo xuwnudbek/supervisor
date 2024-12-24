@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supervisor/services/http_service.dart';
 
 class ModelDetailsProvider extends ChangeNotifier {
-  Map model;
+  Map modelData;
 
   Map selectedSubmodel = {};
   Map selectedSize = {};
@@ -10,7 +10,7 @@ class ModelDetailsProvider extends ChangeNotifier {
   List recipes = [];
 
   void selectSubmodel(int value) {
-    selectedSubmodel = (model['submodels'] as List).firstWhere((submodel) => submodel['id'] == value);
+    selectedSubmodel = (modelData['submodels'] as List).firstWhere((submodel) => submodel['id'] == value);
     selectedSize = {};
     selectedColor = {};
     notifyListeners();
@@ -44,7 +44,7 @@ class ModelDetailsProvider extends ChangeNotifier {
 
   bool isLoading = false;
 
-  ModelDetailsProvider({required this.model}) {
+  ModelDetailsProvider({required this.modelData}) {
     initialize();
   }
 
@@ -62,10 +62,10 @@ class ModelDetailsProvider extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    var res = await HttpService.get("$model/${model['id']}");
+    var res = await HttpService.get("$model/${modelData['id']}");
 
     if (res['status'] == Result.success) {
-      model = res['data'];
+      modelData = res['data'];
       notifyListeners();
     }
 

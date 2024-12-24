@@ -3,23 +3,25 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:supervisor/ui/model/pages/add_recipe.dart';
 import 'package:supervisor/ui/model/providers/model_details_provider.dart';
+import 'package:supervisor/utils/extensions/num_extension.dart';
 import 'package:supervisor/utils/extensions/string_extension.dart';
 import 'package:supervisor/utils/rgb.dart';
 import 'package:supervisor/utils/widgets/custom_dropdown.dart';
+import 'package:supervisor/utils/widgets/custom_image_widget.dart';
 import 'package:supervisor/utils/widgets/custom_snackbars.dart';
 
 class ModelDetails extends StatelessWidget {
   const ModelDetails({
     super.key,
-    required this.model,
+    required this.modelData,
   });
 
-  final Map model;
+  final Map modelData;
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<ModelDetailsProvider>(
-      create: (context) => ModelDetailsProvider(model: model),
+      create: (context) => ModelDetailsProvider(modelData: modelData),
       child: Consumer<ModelDetailsProvider>(
         builder: (context, provider, _) {
           return Scaffold(
@@ -45,7 +47,7 @@ class ModelDetails extends StatelessWidget {
                                 text: "Model: ",
                               ),
                               TextSpan(
-                                text: provider.model['name'],
+                                text: provider.modelData['name'],
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -59,12 +61,12 @@ class ModelDetails extends StatelessWidget {
                     // dropdowns -> submodels, sizes, colors
                     Row(
                       children: [
-                        if (provider.model.isNotEmpty)
+                        if (provider.modelData.isNotEmpty)
                           SizedBox(
                             width: 200,
                             child: CustomDropdown(
                               value: provider.selectedSubmodel['id'],
-                              items: (provider.model['submodels'] as List).map((submodel) {
+                              items: (provider.modelData['submodels'] as List).map((submodel) {
                                 return DropdownMenuItem(
                                   enabled: provider.selectedSubmodel['id'] != submodel['id'],
                                   value: submodel['id'],
@@ -157,261 +159,169 @@ class ModelDetails extends StatelessWidget {
                                 : Padding(
                                     padding: const EdgeInsets.all(16.0),
                                     child: SingleChildScrollView(
-                                      child: DataTable(
-                                        border: TableBorder.all(
-                                          color: dark.withAlpha(50),
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                        headingRowHeight: 52,
-                                        dataRowMaxHeight: 52,
-                                        dataRowMinHeight: 52,
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                        columns: const [
-                                          DataColumn(
-                                            label: Text(
-                                              "#",
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                overflow: TextOverflow.ellipsis,
+                                        child: Table(
+                                      border: TableBorder.all(
+                                        color: dark.withAlpha(50),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      columnWidths: const <int, TableColumnWidth>{
+                                        0: FlexColumnWidth(1), // Adjust widths as needed
+                                        1: FlexColumnWidth(1),
+                                        2: FlexColumnWidth(3),
+                                        3: FlexColumnWidth(1),
+                                        4: FlexColumnWidth(1),
+                                        5: FlexColumnWidth(1),
+                                        6: FlexColumnWidth(1),
+                                        7: FlexColumnWidth(1),
+                                      },
+                                      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                                      children: [
+                                        // Table Header Row
+                                        TableRow(
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                          children: const [
+                                            Center(
+                                              child: Padding(
+                                                padding: EdgeInsets.all(8.0),
+                                                child: Text(
+                                                  "#",
+                                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                                ),
                                               ),
                                             ),
-                                            numeric: true,
-                                            headingRowAlignment: MainAxisAlignment.center,
-                                          ),
-                                          DataColumn(
-                                            label: Row(
-                                              children: [
-                                                Text(
-                                                  "Material Image",
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    overflow: TextOverflow.ellipsis,
-                                                  ),
+                                            Center(
+                                              child: Padding(
+                                                padding: EdgeInsets.all(8.0),
+                                                child: Text(
+                                                  "Rasm",
+                                                  style: TextStyle(fontWeight: FontWeight.bold),
                                                 ),
-                                              ],
+                                              ),
                                             ),
-                                            headingRowAlignment: MainAxisAlignment.center,
-                                          ),
-                                          DataColumn(
-                                            label: Row(
-                                              children: [
-                                                Text(
-                                                  "Material Name",
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    overflow: TextOverflow.ellipsis,
-                                                  ),
+                                            Center(
+                                              child: Padding(
+                                                padding: EdgeInsets.all(8.0),
+                                                child: Text(
+                                                  "Material nomi",
+                                                  style: TextStyle(fontWeight: FontWeight.bold),
                                                 ),
-                                              ],
+                                              ),
                                             ),
-                                            headingRowAlignment: MainAxisAlignment.center,
-                                          ),
-                                          DataColumn(
-                                            label: Row(
-                                              children: [
-                                                Text(
-                                                  "Price",
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    overflow: TextOverflow.ellipsis,
-                                                  ),
+                                            Center(
+                                              child: Padding(
+                                                padding: EdgeInsets.all(8.0),
+                                                child: Text(
+                                                  "Narxi",
+                                                  style: TextStyle(fontWeight: FontWeight.bold),
                                                 ),
-                                              ],
+                                              ),
                                             ),
-                                            headingRowAlignment: MainAxisAlignment.center,
-                                          ),
-                                          DataColumn(
-                                            label: Row(
-                                              children: [
-                                                Text(
-                                                  "Color",
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    overflow: TextOverflow.ellipsis,
-                                                  ),
+                                            Center(
+                                              child: Padding(
+                                                padding: EdgeInsets.all(8.0),
+                                                child: Text(
+                                                  "Rang",
+                                                  style: TextStyle(fontWeight: FontWeight.bold),
                                                 ),
-                                              ],
+                                              ),
                                             ),
-                                            headingRowAlignment: MainAxisAlignment.center,
-                                          ),
-                                          DataColumn(
-                                            label: Row(
-                                              children: [
-                                                Text(
-                                                  "Quantity",
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    overflow: TextOverflow.ellipsis,
-                                                  ),
+                                            Center(
+                                              child: Padding(
+                                                padding: EdgeInsets.all(8.0),
+                                                child: Text(
+                                                  "Miqdori",
+                                                  style: TextStyle(fontWeight: FontWeight.bold),
                                                 ),
-                                              ],
+                                              ),
                                             ),
-                                            headingRowAlignment: MainAxisAlignment.center,
-                                          ),
-                                          DataColumn(
-                                            label: Row(
-                                              children: [
-                                                Text(
-                                                  "Total Price",
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    overflow: TextOverflow.ellipsis,
-                                                  ),
+                                            Center(
+                                              child: Padding(
+                                                padding: EdgeInsets.all(8.0),
+                                                child: Text(
+                                                  "Jami narxi",
+                                                  style: TextStyle(fontWeight: FontWeight.bold),
                                                 ),
-                                              ],
+                                              ),
                                             ),
-                                            headingRowAlignment: MainAxisAlignment.center,
-                                          ),
-                                          DataColumn(
-                                            label: Row(
-                                              children: [
-                                                Text(
+                                            Center(
+                                              child: Padding(
+                                                padding: EdgeInsets.all(8.0),
+                                                child: Text(
                                                   "Actions",
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    overflow: TextOverflow.ellipsis,
-                                                  ),
+                                                  style: TextStyle(fontWeight: FontWeight.bold),
                                                 ),
-                                              ],
+                                              ),
                                             ),
-                                            headingRowAlignment: MainAxisAlignment.center,
-                                          ),
-                                        ],
-                                        rows: provider.recipes.map<DataRow>((recipe) {
-                                          return DataRow(
-                                            cells: [
-                                              DataCell(
-                                                Center(
+                                          ],
+                                        ),
+                                        // Data Rows
+                                        ...provider.recipes.map<TableRow>((recipe) {
+                                          return TableRow(
+                                            decoration: const BoxDecoration(
+                                              color: Colors.white,
+                                            ),
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child: Center(
                                                   child: Text(
                                                     "${provider.recipes.indexOf(recipe) + 1}",
                                                   ),
                                                 ),
                                               ),
-                                              DataCell(
-                                                Center(
+                                              Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child: Center(
                                                   child: SizedBox(
-                                                    width: 160,
-                                                    child: Center(
-                                                      child: GestureDetector(
-                                                        onTap: () {
-                                                          Get.dialog(
-                                                            Dialog(
-                                                              backgroundColor: Colors.transparent,
-                                                              child: Stack(
-                                                                children: [
-                                                                  Container(
-                                                                    margin: const EdgeInsets.all(36),
-                                                                    child: Image.network(
-                                                                      recipe['item']['image'].toString().toImageUrl,
-                                                                      frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
-                                                                        return ClipRRect(
-                                                                          borderRadius: BorderRadius.circular(8),
-                                                                          child: child,
-                                                                        );
-                                                                      },
-                                                                      errorBuilder: (context, error, stackTrace) {
-                                                                        return const Text("Rasmni yuklashda xatolik yuz berdi");
-                                                                      },
-                                                                      loadingBuilder: (context, child, loadingProgress) {
-                                                                        if (loadingProgress == null) {
-                                                                          return child;
-                                                                        } else {
-                                                                          return const SizedBox.square(
-                                                                            dimension: 50,
-                                                                            child: Center(
-                                                                              child: CircularProgressIndicator(),
-                                                                            ),
-                                                                          );
-                                                                        }
-                                                                      },
-                                                                    ),
-                                                                  ),
-                                                                  Positioned(
-                                                                    right: 0,
-                                                                    child: IconButton(
-                                                                      style: IconButton.styleFrom(
-                                                                        backgroundColor: Colors.white,
-                                                                      ),
-                                                                      icon: const Icon(Icons.close),
-                                                                      onPressed: () {
-                                                                        Get.back();
-                                                                      },
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          );
-                                                        },
-                                                        child: Image.network(
-                                                          recipe['item']['image'].toString().toImageUrl,
-                                                          frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
-                                                            return ClipRRect(
-                                                              borderRadius: BorderRadius.circular(8),
-                                                              child: child,
-                                                            );
-                                                          },
-                                                          errorBuilder: (context, error, stackTrace) {
-                                                            return const Text("Rasmni yuklashda xatolik yuz berdi");
-                                                          },
-                                                          loadingBuilder: (context, child, loadingProgress) {
-                                                            if (loadingProgress == null) {
-                                                              return child;
-                                                            } else {
-                                                              return const SizedBox.square(
-                                                                dimension: 50,
-                                                                child: Center(
-                                                                  child: CircularProgressIndicator(),
-                                                                ),
-                                                              );
-                                                            }
-                                                          },
-                                                        ),
-                                                      ),
-                                                    ),
+                                                    height: 50,
+                                                    child: CustomImageWidget(image: recipe['item']['image']),
                                                   ),
                                                 ),
                                               ),
-                                              DataCell(
-                                                Center(
+                                              Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child: Text(
+                                                  "${recipe['item']['name']}",
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child: Center(
                                                   child: Text(
-                                                    "${recipe['item']['name']}",
+                                                    "${double.parse(recipe['item']['price']).toCurrency}\$",
                                                   ),
                                                 ),
                                               ),
-                                              DataCell(
-                                                Center(
-                                                  child: Text(
-                                                    "${recipe['item']['price']}\$",
-                                                  ),
-                                                ),
-                                              ),
-                                              DataCell(
-                                                Center(
+                                              Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child: Center(
                                                   child: Text(
                                                     "${recipe['item']['color']['name']}",
                                                   ),
                                                 ),
                                               ),
-                                              DataCell(
-                                                Center(
+                                              Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child: Center(
                                                   child: Text(
-                                                    "${recipe['quantity']} ${recipe['item']['unit']['name']}",
+                                                    "${num.parse(recipe['quantity']).toCurrency} ${recipe['item']['unit']['name']}",
                                                   ),
                                                 ),
                                               ),
-                                              DataCell(
-                                                Center(
+                                              Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child: Center(
                                                   child: Text(
-                                                    "${double.parse("${double.parse(recipe['quantity']) * (double.parse(recipe['item']['price']))}").toStringAsFixed(2)}\$",
+                                                    "${(double.parse(recipe['quantity']) * double.parse(recipe['item']['price'])).toCurrency}\$",
                                                   ),
                                                 ),
                                               ),
-                                              DataCell(
-                                                Center(
+                                              Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child: Center(
                                                   child: Row(
                                                     mainAxisSize: MainAxisSize.min,
                                                     children: [
@@ -423,9 +333,6 @@ class ModelDetails extends StatelessWidget {
                                                       ),
                                                       const SizedBox(width: 8),
                                                       IconButton(
-                                                        style: ButtonStyle(
-                                                          backgroundColor: WidgetStateProperty.all(danger.withOpacity(0.1)),
-                                                        ),
                                                         color: danger,
                                                         icon: const Icon(Icons.delete),
                                                         onPressed: () async {
@@ -437,15 +344,11 @@ class ModelDetails extends StatelessWidget {
                                                                 content: const Text("Do you really want to delete this item?"),
                                                                 actions: [
                                                                   TextButton(
-                                                                    onPressed: () {
-                                                                      Get.back();
-                                                                    },
+                                                                    onPressed: () => Get.back(),
                                                                     child: const Text("No"),
                                                                   ),
                                                                   TextButton(
-                                                                    style: TextButton.styleFrom(
-                                                                      backgroundColor: danger,
-                                                                    ),
+                                                                    style: TextButton.styleFrom(backgroundColor: danger),
                                                                     onPressed: () async {
                                                                       Get.back();
                                                                       await provider.deleteRecipe(recipe['id']);
@@ -468,9 +371,9 @@ class ModelDetails extends StatelessWidget {
                                               ),
                                             ],
                                           );
-                                        }).toList(),
-                                      ),
-                                    ),
+                                        }),
+                                      ],
+                                    )),
                                   ),
                       ),
                     ),

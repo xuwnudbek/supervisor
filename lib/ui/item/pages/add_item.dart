@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +8,7 @@ import 'package:supervisor/services/http_service.dart';
 import 'package:supervisor/ui/item/provider/item_provider.dart';
 import 'package:supervisor/utils/widgets/custom_dialog.dart';
 import 'package:supervisor/utils/widgets/custom_dropdown.dart';
+import 'package:supervisor/utils/widgets/custom_image_widget.dart';
 import 'package:supervisor/utils/widgets/custom_input.dart';
 import 'package:supervisor/utils/widgets/custom_snackbars.dart';
 
@@ -102,7 +102,7 @@ class _AddItemState extends State<AddItem> {
 
   @override
   void initState() {
-    initialize();
+    // initialize();
     super.initState();
   }
 
@@ -187,53 +187,33 @@ class _AddItemState extends State<AddItem> {
               },
             ),
             const SizedBox(height: 8),
-            TextButton(
-              style: TextButton.styleFrom(
-                backgroundColor: Colors.grey[200],
-                fixedSize: const Size.fromHeight(100),
-                backgroundBuilder: (BuildContext context, child, Widget? background) {
-                  return Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey[200]!),
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: selectedImage != null
-                        ? Image.file(
-                            File(selectedImage!.path),
-                            fit: BoxFit.contain,
-                          )
+            GestureDetector(
+              onTap: showImagePicker,
+              child: Container(
+                width: double.infinity,
+                height: 150,
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    selectedImage != null
+                        ? CustomImageWidget(image: selectedImage!.path, source: Sources.file)
                         : const Icon(
                             Icons.image,
                             color: Colors.grey,
                           ),
-                  );
-                },
+                    Text("${selectedImage?.path}"),
+                  ],
+                ),
               ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.image,
-                    color: Colors.grey,
-                  ),
-                ],
-              ),
-              onPressed: () async {
-                await showImagePicker();
-              },
             ),
             const SizedBox(height: 20),
             TextButton(
               onPressed: () async {
                 if (nameController.text.isEmpty || priceController.text.isEmpty || codeController.text.isEmpty || selectedUnit.isEmpty || selectedType.isEmpty || selectedColor.isEmpty) {
                   CustomSnackbars(context).warning("Barcha maydonlarni to'ldiring");
-                  return;
-                }
-
-                if (item.isEmpty && selectedImage == null) {
-                  CustomSnackbars(context).warning("Rasm tanlang");
                   return;
                 }
 
@@ -244,6 +224,7 @@ class _AddItemState extends State<AddItem> {
                   "color_id": selectedColor['id'].toString(),
                   "code": codeController.text,
                   "type_id": selectedType['id'],
+                  "image": selectedImage?.path,
                 };
 
                 if (item.isNotEmpty) {
@@ -259,9 +240,7 @@ class _AddItemState extends State<AddItem> {
                   return;
                 }
 
-                var res = await provider.createItem(body..addAll({"image": selectedImage!.path}));
-
-                inspect(body);
+                var res = await provider.createItem(body);
 
                 if (res['status'] == Result.success) {
                   CustomSnackbars(context).success("Material saqlandi");

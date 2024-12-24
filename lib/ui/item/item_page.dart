@@ -4,7 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:supervisor/ui/item/pages/add_item.dart';
 import 'package:supervisor/ui/item/provider/item_provider.dart';
 import 'package:supervisor/utils/RGB.dart';
-import 'package:supervisor/utils/extensions/string_extension.dart';
+import 'package:supervisor/utils/extensions/num_extension.dart';
+import 'package:supervisor/utils/widgets/custom_image_widget.dart';
 
 class ItemPage extends StatefulWidget {
   const ItemPage({super.key});
@@ -228,7 +229,7 @@ class _ItemPageState extends State<ItemPage> {
                                             ),
                                             DataCell(
                                               Center(
-                                                child: Text("${item['price']}\$"),
+                                                child: Text("${num.parse(item['price']).toCurrency}\$"),
                                               ),
                                             ),
                                             DataCell(
@@ -249,82 +250,7 @@ class _ItemPageState extends State<ItemPage> {
                                                 height: 200,
                                                 padding: const EdgeInsets.all(4),
                                                 child: Center(
-                                                  child: GestureDetector(
-                                                      onTap: () {
-                                                        print(item['image'].toString().toImageUrl);
-                                                        Get.dialog(
-                                                          Dialog(
-                                                            backgroundColor: Colors.transparent,
-                                                            child: Stack(
-                                                              children: [
-                                                                Container(
-                                                                  margin: const EdgeInsets.all(36),
-                                                                  child: Image.network(
-                                                                    item['image'].toString().toImageUrl,
-                                                                    frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
-                                                                      return ClipRRect(
-                                                                        borderRadius: BorderRadius.circular(8),
-                                                                        child: child,
-                                                                      );
-                                                                    },
-                                                                    errorBuilder: (context, error, stackTrace) {
-                                                                      return const Text("Rasmni yuklashda xatolik yuz berdi");
-                                                                    },
-                                                                    loadingBuilder: (context, child, loadingProgress) {
-                                                                      if (loadingProgress == null) {
-                                                                        return child;
-                                                                      } else {
-                                                                        return const SizedBox.square(
-                                                                          dimension: 50,
-                                                                          child: Center(
-                                                                            child: CircularProgressIndicator(),
-                                                                          ),
-                                                                        );
-                                                                      }
-                                                                    },
-                                                                  ),
-                                                                ),
-                                                                Positioned(
-                                                                  right: 0,
-                                                                  child: IconButton(
-                                                                    style: IconButton.styleFrom(
-                                                                      backgroundColor: Colors.white,
-                                                                    ),
-                                                                    icon: const Icon(Icons.close),
-                                                                    onPressed: () {
-                                                                      Get.back();
-                                                                    },
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        );
-                                                      },
-                                                      child: Image.network(
-                                                        item['image'].toString().toImageUrl,
-                                                        frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
-                                                          return ClipRRect(
-                                                            borderRadius: BorderRadius.circular(8),
-                                                            child: child,
-                                                          );
-                                                        },
-                                                        errorBuilder: (context, error, stackTrace) {
-                                                          return const Text("Rasm mavjud emas");
-                                                        },
-                                                        loadingBuilder: (context, child, loadingProgress) {
-                                                          if (loadingProgress == null) {
-                                                            return child;
-                                                          } else {
-                                                            return const SizedBox.square(
-                                                              dimension: 50,
-                                                              child: Center(
-                                                                child: CircularProgressIndicator(),
-                                                              ),
-                                                            );
-                                                          }
-                                                        },
-                                                      )),
+                                                  child: CustomImageWidget(image: item['image']),
                                                 ),
                                               ),
                                             ),

@@ -3,20 +3,10 @@ import 'package:supervisor/services/http_service.dart';
 
 class ModelProvider extends ChangeNotifier {
   List _models = [];
-  List get models => _models;
-  set models(List models) {
-    _models = models;
-    notifyListeners();
-  }
-
   List _colors = [];
-  List get colors => _colors;
-  set colors(List colors) {
-    _colors = colors;
-    notifyListeners();
-  }
-
-  bool isLoading = false;
+  bool _isLoading = false;
+  bool _isCreatingModel = false;
+  bool _isUpdatingModel = false;
 
   ModelProvider() {
     initialize();
@@ -30,6 +20,36 @@ class ModelProvider extends ChangeNotifier {
     await getModels();
 
     isLoading = false;
+    notifyListeners();
+  }
+
+  List get models => _models;
+  set models(List models) {
+    _models = models;
+    notifyListeners();
+  }
+
+  List get colors => _colors;
+  set colors(List colors) {
+    _colors = colors;
+    notifyListeners();
+  }
+
+  bool get isLoading => _isLoading;
+  set isLoading(bool isLoading) {
+    _isLoading = isLoading;
+    notifyListeners();
+  }
+
+  bool get isCreatingModel => _isCreatingModel;
+  set isCreatingModel(bool isCreatingModel) {
+    _isCreatingModel = isCreatingModel;
+    notifyListeners();
+  }
+
+  bool get isUpdatingModel => _isUpdatingModel;
+  set isUpdatingModel(bool isUpdatingModel) {
+    _isUpdatingModel = isUpdatingModel;
     notifyListeners();
   }
 
@@ -48,21 +68,29 @@ class ModelProvider extends ChangeNotifier {
   }
 
   Future<void> createModel(Map<String, dynamic> data) async {
-    var res = await HttpService.post(model, data);
+    isCreatingModel = true;
+
+    var res = await HttpService.uploadWithImages(model, body: data);
 
     if (res['status'] == Result.success) {
       await getModels();
     }
+
+    isCreatingModel = false;
   }
 
   Future<void> updateModel(int id, Map<String, dynamic> data) async {
-    var res = await HttpService.patch("$model/$id", data);
+    isUpdatingModel = true;
+
+    var res = await HttpService.uploadWithImages("$model/$id", body: data, method: "patch");
 
     if (res['status'] == Result.success) {
       await getModels();
     } else {
       print(res['data']);
     }
+
+    isUpdatingModel = false;
   }
 
   Future<void> deleteModel(int id) async {

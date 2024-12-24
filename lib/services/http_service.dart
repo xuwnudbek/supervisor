@@ -47,7 +47,7 @@ class HttpService {
           'status': Result.success,
         };
       } else {
-        print("Error [GET]: ${response.body}");
+        print("Error [GET]: ${response.body}\nCode: ${response.statusCode}\nURL: $url");
         return {
           'status': Result.error,
         };
@@ -234,6 +234,54 @@ class HttpService {
       request.files.add(await http.MultipartFile.fromPath('image', body['image']));
 
       inspect(await http.MultipartFile.fromPath('image', body['image']));
+
+      var res = await request.send();
+
+      if (res.statusCode >= 200 && res.statusCode < 300) {
+        return {
+          'data': jsonDecode(await res.stream.bytesToString()),
+          'status': Result.success,
+        };
+      } else {
+        print('Error: ${await res.stream.bytesToString()}');
+        return {
+          'status': Result.error,
+        };
+      }
+    } catch (e) {
+      print('Error: $e');
+      return {
+        'status': Result.error,
+      };
+    }
+  }
+
+  static Future<Map<String, dynamic>> uploadWithImages(
+    String endpoint, {
+    required Map<String, dynamic> body,
+    String method = 'post',
+  }) async {
+    try {
+      Map<String, String> headers = {
+        'Content-Type': 'multipart/form-data',
+      }..addAllIf(StorageService.read("token") != null, {"Authorization": "Bearer ${StorageService.read("token")}"});
+
+      // API endpoint
+      final url = Uri.http(baseUrl, '$middle$endpoint');
+
+      var request = http.MultipartRequest(method, url);
+
+      request.headers.addAll(headers);
+
+      request.fields.addAll(body.map((key, value) => MapEntry(key, value.toString())));
+
+      for (var imagePath in body['images']) {
+        request.files.add(await http.MultipartFile.fromPath(
+          'images[]',
+          imagePath,
+          filename: imagePath.split('/').last,
+        ));
+      }
 
       var res = await request.send();
 
