@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supervisor/services/http_service.dart';
+import 'package:supervisor/utils/widgets/custom_snackbars.dart';
 
 class ModelDetailsProvider extends ChangeNotifier {
   Map modelData;
@@ -83,35 +84,43 @@ class ModelDetailsProvider extends ChangeNotifier {
 
     if (res['status'] == Result.success) {
       recipes = res['data'];
+      print(recipes.length);
       notifyListeners();
     }
   }
 
-  Future<void> addRecipe(Map<String, dynamic> data) async {
+  Future<void> addRecipe(Map<String, dynamic> data, {required BuildContext context}) async {
     var res = await HttpService.post(recipe, data);
 
     if (res['status'] == Result.success) {
       await getRecipe();
-    }
 
-    print("AddRecipe: $res");
+      CustomSnackbars(context).success("Retsept muvaffaqiyatli qo'shildi");
+    } else {
+      CustomSnackbars(context).error("Retsept qo'shishda xatolik yuz berdi");
+    }
   }
 
-  Future<void> editRecipe(int id, Map<String, dynamic> data) async {
+  Future<void> editRecipe(int id, Map<String, dynamic> data, {required BuildContext context}) async {
     var res = await HttpService.patch("$recipe/$id", data);
 
     if (res['status'] == Result.success) {
       await getRecipe();
-    }
 
-    print("EditRecipe: $res");
+      CustomSnackbars(context).success("Retsept muvaffaqiyatli o'zgartirildi");
+    } else {
+      CustomSnackbars(context).error("Retsept o'zgartirishda xatolik yuz berdi");
+    }
   }
 
-  Future<void> deleteRecipe(int id) async {
+  Future<void> deleteRecipe(int id, {required BuildContext context}) async {
     var res = await HttpService.delete("$recipe/$id");
 
     if (res['status'] == Result.success) {
-      await getModel();
+      await getRecipe();
+      CustomSnackbars(context).success("Retsept muvaffaqiyatli o'chirildi");
+    } else {
+      CustomSnackbars(context).error("Retsept o'chirishda xatolik yuz berdi");
     }
   }
 

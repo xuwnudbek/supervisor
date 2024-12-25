@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:supervisor/services/http_service.dart';
 import 'package:supervisor/utils/extensions/num_extension.dart';

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:supervisor/services/http_service.dart';
 
@@ -86,8 +88,6 @@ class ModelProvider extends ChangeNotifier {
 
     if (res['status'] == Result.success) {
       await getModels();
-    } else {
-      print(res['data']);
     }
 
     isUpdatingModel = false;

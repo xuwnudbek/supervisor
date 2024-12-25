@@ -102,7 +102,7 @@ class _AddItemState extends State<AddItem> {
 
   @override
   void initState() {
-    // initialize();
+    initialize();
     super.initState();
   }
 
@@ -187,31 +187,58 @@ class _AddItemState extends State<AddItem> {
               },
             ),
             const SizedBox(height: 8),
-            GestureDetector(
-              onTap: showImagePicker,
-              child: Container(
-                width: double.infinity,
-                height: 150,
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    selectedImage != null
-                        ? CustomImageWidget(image: selectedImage!.path, source: Sources.file)
-                        : const Icon(
-                            Icons.image,
-                            color: Colors.grey,
+            Container(
+              width: double.infinity,
+              height: 150,
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (selectedImage != null)
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: CustomImageWidget(
+                          image: selectedImage!.path,
+                          source: Sources.file,
+                        ),
+                      ),
+                    ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (selectedImage != null) ...[
+                        IconButton(
+                          onPressed: () {
+                            selectedImage = null;
+                          },
+                          icon: Icon(
+                            Icons.clear_rounded,
                           ),
-                    Text("${selectedImage?.path}"),
-                  ],
-                ),
+                        ),
+                        SizedBox(height: 4)
+                      ],
+                      IconButton(
+                        onPressed: () {
+                          showImagePicker();
+                        },
+                        icon: Icon(
+                          selectedImage != null ? Icons.replay_rounded : Icons.add_rounded,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(width: 8),
+                ],
               ),
             ),
             const SizedBox(height: 20),
             TextButton(
               onPressed: () async {
+                if (provider.isLoading || provider.isCreating || provider.isUpdating) return;
                 if (nameController.text.isEmpty || priceController.text.isEmpty || codeController.text.isEmpty || selectedUnit.isEmpty || selectedType.isEmpty || selectedColor.isEmpty) {
                   CustomSnackbars(context).warning("Barcha maydonlarni to'ldiring");
                   return;
@@ -234,7 +261,6 @@ class _AddItemState extends State<AddItem> {
                     CustomSnackbars(context).success("Material o'zgartirildi");
                     Get.back();
                   } else {
-                    inspect(res);
                     CustomSnackbars(context).error("Xatolik yuz berdi");
                   }
                   return;
@@ -252,9 +278,18 @@ class _AddItemState extends State<AddItem> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    item.isNotEmpty ? "O'zgartirish" : "Itemni saqlash",
-                  ),
+                  provider.isCreating || provider.isUpdating
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation(Colors.white),
+                          ),
+                        )
+                      : Text(
+                          item.isNotEmpty ? "O'zgartirish" : "Itemni saqlash",
+                        ),
                 ],
               ),
             ),

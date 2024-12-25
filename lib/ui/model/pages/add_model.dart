@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -98,18 +97,15 @@ class _AddModelState extends State<AddModel> {
     return Scaffold(
       body: CustomDialog(
         width: Get.width * 0.4,
+        maxHeight: MediaQuery.of(context).size.height - 100,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
           children: [
             const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   "Model qo'shish",
-                  style: TextStyle(
-                    fontSize: 20,
-                  ),
+                  style: TextStyle(fontSize: 20),
                 ),
               ],
             ),
@@ -135,211 +131,220 @@ class _AddModelState extends State<AddModel> {
               ],
             ),
             const SizedBox(height: 8),
-            Container(
-              constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height * 0.5,
-              ),
-              child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: submodels.length,
-                  itemBuilder: (context, index) {
-                    Map submodel = submodels[index];
-
-                    return Container(
-                      decoration: BoxDecoration(
-                        color: secondary.withOpacity(0.8),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: const EdgeInsets.all(8.0),
-                      margin: const EdgeInsets.only(bottom: 4),
-                      child: Column(
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    if (submodels.isNotEmpty)
+                      Row(
                         children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: CustomInput(
-                                  controller: submodel['controller'],
-                                  hint: "Submodel nomi",
-                                  color: light,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: CustomInput(
-                                  controller: submodel['sizes'],
-                                  hint: "O'lchamlarni `,` orqali kiriting!",
-                                  color: light,
-                                  formatters: [
-                                    FilteringTextInputFormatter.allow(RegExp(r'[0-9,]')),
-                                    TextInputFormatter.withFunction((oldValue, newValue) {
-                                      if (newValue.text.contains(",,")) {
-                                        return oldValue;
-                                      }
-                                      return newValue;
-                                    }),
-                                  ],
-                                ),
-                              ),
-                            ],
+                          Expanded(
+                            child: Divider(color: secondary),
                           ),
-                          const SizedBox(height: 8),
-                          Container(
-                            width: Get.width * 0.4,
-                            decoration: BoxDecoration(
-                              color: light,
-                              borderRadius: BorderRadius.circular(6),
+                          const SizedBox(width: 4),
+                          Text(
+                            "Submodellar",
+                            style: TextStyle(
+                              color: dark,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
                             ),
-                            padding: const EdgeInsets.all(8),
-                            child: SingleChildScrollView(
-                              child: Wrap(
-                                runSpacing: 8,
-                                spacing: 8,
-                                children: [
-                                  ...provider.colors.map((color) {
-                                    bool isSelected = submodel['colors']?.contains(color['id']) ?? false;
-
-                                    return ChoiceChip(
-                                      backgroundColor: secondary,
-                                      surfaceTintColor: Colors.transparent,
-                                      selectedColor: primary,
-                                      label: Text(color['name']),
-                                      selected: isSelected,
-                                      onSelected: (value) {
-                                        if (value) {
-                                          submodel['colors'].add(color['id']);
-                                        } else {
-                                          submodel['colors'].remove(color['id']);
-                                        }
-                                        setState(() {});
-                                      },
-                                    );
-                                  }),
-                                ],
-                              ),
-                            ),
-                          )
+                          ),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Divider(color: secondary),
+                          ),
                         ],
                       ),
-                    );
-                  }),
-            ),
-            const SizedBox(height: 8),
-            if (widget.model == null)
-              Row(
-                children: [
-                  Expanded(
-                    child: Divider(color: secondary),
-                  ),
-                  const SizedBox(width: 4),
-                  IconButton(
-                    tooltip: "Submodel qo'shish",
-                    onPressed: () {
-                      addSubmodel();
-                    },
-                    icon: const Icon(Icons.add_rounded),
-                  ),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Divider(color: secondary),
-                  ),
-                ],
-              ),
-            const SizedBox(height: 8),
-            TextButton(
-              style: TextButton.styleFrom(
-                backgroundColor: Colors.grey[200],
-                fixedSize: const Size.fromHeight(100),
-                backgroundBuilder: (BuildContext context, child, Widget? background) {
-                  return Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey[200]!),
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: images.isNotEmpty
-                        ? ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: images.length,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 4),
-                                child: InkWell(
-                                  onTap: () {
-                                    images.removeAt(index);
-                                    setState(() {});
-                                  },
-                                  child: Badge(
-                                    label: const Text("X"),
-                                    child: CustomImageWidget(
-                                      image: images[index],
-                                      source: Sources.file,
-                                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      constraints: BoxConstraints(),
+                      child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: submodels.length,
+                          itemBuilder: (context, index) {
+                            Map submodel = submodels[index];
+
+                            return Container(
+                              decoration: BoxDecoration(
+                                color: secondary.withOpacity(0.8),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              padding: const EdgeInsets.all(8.0),
+                              margin: const EdgeInsets.only(bottom: 4),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: CustomInput(
+                                          controller: submodel['controller'],
+                                          hint: "Submodel nomi",
+                                          color: light,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: CustomInput(
+                                          controller: submodel['sizes'],
+                                          hint: "O'lchamlarni `,` orqali kiriting!",
+                                          color: light,
+                                          formatters: [
+                                            FilteringTextInputFormatter.allow(RegExp(r'[0-9,]')),
+                                            TextInputFormatter.withFunction((oldValue, newValue) {
+                                              if (newValue.text.contains(",,")) {
+                                                return oldValue;
+                                              }
+                                              return newValue;
+                                            }),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                              );
-                            },
-                          )
-                        : const Icon(
-                            Icons.image,
-                            color: Colors.grey,
+                                  const SizedBox(height: 8),
+                                  Container(
+                                    width: Get.width * 0.4,
+                                    decoration: BoxDecoration(
+                                      color: light,
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    padding: const EdgeInsets.all(8),
+                                    child: SingleChildScrollView(
+                                      child: Wrap(
+                                        runSpacing: 8,
+                                        spacing: 8,
+                                        children: [
+                                          ...provider.colors.map((color) {
+                                            bool isSelected = submodel['colors']?.contains(color['id']) ?? false;
+
+                                            return ChoiceChip(
+                                              backgroundColor: secondary,
+                                              surfaceTintColor: Colors.transparent,
+                                              selectedColor: primary,
+                                              label: Text(color['name']),
+                                              selected: isSelected,
+                                              onSelected: (value) {
+                                                if (value) {
+                                                  submodel['colors'].add(color['id']);
+                                                } else {
+                                                  submodel['colors'].remove(color['id']);
+                                                }
+                                                setState(() {});
+                                              },
+                                            );
+                                          }),
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            );
+                          }),
+                    ),
+                    const SizedBox(height: 8),
+                    if (widget.model != null)
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Divider(color: secondary),
                           ),
-                  );
-                },
+                          const SizedBox(width: 4),
+                          IconButton(
+                            tooltip: "Submodel qo'shish",
+                            onPressed: () {
+                              addSubmodel();
+                            },
+                            icon: const Icon(Icons.add_rounded),
+                          ),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Divider(color: secondary),
+                          ),
+                        ],
+                      ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Divider(color: secondary),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          "Model rasmlari",
+                          style: TextStyle(
+                            color: dark,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Divider(color: secondary),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      width: double.infinity,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey[200]!),
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          if (images.isNotEmpty)
+                            Expanded(
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: images.length,
+                                itemBuilder: (context, index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                                    child: InkWell(
+                                      onTap: () {
+                                        images.removeAt(index);
+                                        setState(() {});
+                                      },
+                                      child: Badge(
+                                        label: const Text("X"),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: CustomImageWidget(
+                                            image: images[index],
+                                            source: Sources.file,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          SizedBox(width: 8),
+                          IconButton(
+                            icon: const Icon(Icons.add_rounded),
+                            onPressed: () async {
+                              await showImagesPicker();
+                            },
+                          ),
+                          SizedBox(width: 8),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.image,
-                    color: Colors.grey,
-                  ),
-                ],
-              ),
-              onPressed: () async {
-                await showImagesPicker();
-              },
             ),
             const SizedBox(height: 16),
             TextButton(
               onPressed: () async {
-                if (provider.isLoading || provider.isCreatingModel || provider.isUpdatingModel) return;
-
-                if (nameController.text.isEmpty || submodels.any((element) => element['controller'].text.isEmpty || element['sizes'].text.isEmpty)) {
-                  CustomSnackbars(context).warning("Iltimos, barcha maydonlarni to'ldiring!");
-                  return;
-                }
-
-                final body = {
-                  "name": nameController.text.trim(),
-                  "rasxod": double.tryParse(modelRasxodController.text.trim()) ?? 0.0,
-                  "images": images,
-                  "submodels": [
-                    for (var submodel in submodels)
-                      {
-                        "name": submodel['controller'].text.trim(),
-                        "sizes": submodel['sizes'].text.trim().split(",").map((e) {
-                          return int.tryParse(e) ?? 0;
-                        }).toList()
-                          ..removeWhere((element) => element == 0),
-                        "colors": submodel['colors'],
-                      },
-                  ],
-                };
-
-                if (widget.model != null) {
-                  await widget.provider.updateModel(widget.model!['id'], body).then((value) {
-                    CustomSnackbars(context).success("Model muvaffaqiyatli yangilandi!");
-                    Get.back();
-                  });
-                  return;
-                }
-
-                await widget.provider.createModel(body).then((value) {
-                  CustomSnackbars(context).success("Buyurtma muvaffaqiyatli qo'shildi!");
-                  Get.back();
-                });
+                await _updateModel();
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -363,5 +368,47 @@ class _AddModelState extends State<AddModel> {
         ),
       ),
     );
+  }
+
+  Future<void> _updateModel() async {
+    if (provider.isLoading || provider.isCreatingModel || provider.isUpdatingModel) return;
+
+    if (nameController.text.isEmpty || submodels.any((element) => element['controller'].text.isEmpty || element['sizes'].text.isEmpty)) {
+      CustomSnackbars(context).warning("Iltimos, barcha maydonlarni to'ldiring!");
+      return;
+    }
+
+    final body = {
+      "name": nameController.text.trim(),
+      "rasxod": double.tryParse(modelRasxodController.text.trim()) ?? "0.0",
+    }
+      ..addAllIf(submodels.isNotEmpty, {
+        "submodels": submodels
+            .map((submodel) => {
+                  "name": submodel['controller'].text.trim(),
+                  "sizes": submodel['sizes'].text.trim().split(",").map((e) {
+                    return int.tryParse(e) ?? 0;
+                  }).toList()
+                    ..removeWhere((element) => element == 0),
+                  "colors": submodel['colors'],
+                })
+            .toList(),
+      })
+      ..addAllIf(images.isNotEmpty, {
+        "images": images,
+      });
+
+    if (widget.model != null) {
+      await widget.provider.updateModel(widget.model!['id'], body).then((value) {
+        CustomSnackbars(context).success("Model muvaffaqiyatli yangilandi!");
+        Get.back();
+      });
+      return;
+    }
+
+    await widget.provider.createModel(body).then((value) {
+      CustomSnackbars(context).success("Buyurtma muvaffaqiyatli qo'shildi!");
+      Get.back();
+    });
   }
 }

@@ -1,10 +1,10 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:supervisor/services/http_service.dart';
 import 'package:supervisor/ui/model/providers/model_details_provider.dart';
+import 'package:supervisor/utils/rgb.dart';
 import 'package:supervisor/utils/widgets/custom_dialog.dart';
 import 'package:supervisor/utils/widgets/custom_dropdown.dart';
 import 'package:supervisor/utils/widgets/custom_input.dart';
@@ -28,12 +28,11 @@ class _AddRecipeState extends State<AddRecipe> {
   ModelDetailsProvider get provider => widget.provider;
   Map get recipe => widget.recipe ?? {};
 
-  final TextEditingController quantityController = TextEditingController();
-  Map selectedItem = {};
-
   List items = [];
+  List selectedItems = [];
 
   bool _isLoading = false;
+
   bool get isLoading => _isLoading;
   set isLoading(bool value) {
     _isLoading = value;
@@ -44,7 +43,6 @@ class _AddRecipeState extends State<AddRecipe> {
     isLoading = true;
 
     var res = await HttpService.get(item);
-    inspect(res);
     if (res['status'] == Result.success) {
       items = res['data'];
     }
@@ -53,12 +51,19 @@ class _AddRecipeState extends State<AddRecipe> {
   }
 
   Future<void> initialize() async {
-    if (recipe.isNotEmpty) {
-      selectedItem = recipe['item'] ?? {};
-      quantityController.text = recipe['quantity'].toString();
-      setState(() {});
-    }
     await getItems();
+    if (recipe.isNotEmpty) {
+      selectedItems.add({
+        "item": recipe['item'],
+        "quantity": TextEditingController(text: "${recipe['quantity']}"),
+      });
+      setState(() {});
+    } else {
+      selectedItems.add({
+        "item": {},
+        "quantity": TextEditingController(),
+      });
+    }
   }
 
   @override
@@ -71,81 +76,140 @@ class _AddRecipeState extends State<AddRecipe> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: CustomDialog(
+        width: 600,
+        maxHeight: MediaQuery.of(context).size.height - 100,
         child: Column(
           children: [
             Text(
               "Retsept${recipe.isNotEmpty ? 'ni o\'zgartirish' : ' qo\'shish'}",
-              style: const TextStyle(
-                fontSize: 20,
-              ),
+              style: const TextStyle(fontSize: 20),
             ),
             const SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  child: CustomDropdown(
-                    hint: "Mahsulotni tanlang",
-                    items: items.map((item) {
-                      return DropdownMenuItem(
-                        enabled: recipe.isEmpty,
-                        value: item['id'],
-                        child: Text(item['name']),
-                      );
-                    }).toList(),
-                    value: selectedItem['id'],
-                    onChanged: (value) {
-                      selectedItem = items.firstWhere((item) => item['id'] == value);
-                      setState(() {});
-                    },
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: CustomInput(
-                    hint: "Miqdorni kiriting",
-                    controller: quantityController,
-                    formatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                    ],
-                  ),
-                ),
-              ],
+            Expanded(
+              child: ListView.builder(
+                itemCount: selectedItems.length,
+                itemBuilder: (context, index) {
+                  Map selectedItem = selectedItems[index];
+
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: CustomDropdown(
+                            hint: "Mahsulotni tanlang",
+                            items: items.map((item) {
+                              return DropdownMenuItem(
+                                enabled: recipe.isNotEmpty
+                                    ? false
+                                    : selectedItems.any((element) => element['item']['id'] == item['id'])
+                                        ? false
+                                        : true,
+                                value: item['id'],
+                                child: Text(
+                                  item['name'],
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                              );
+                            }).toList(),
+                            value: selectedItem['item']?['id'],
+                            onChanged: (value) {
+                              Map changedItem = items.firstWhereOrNull((element) => element?['id'] == value) ?? {};
+                              selectedItems[index]['item'] = changedItem;
+                              selectedItems[index]['quantity'].text = "";
+                              setState(() {});
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          flex: 1,
+                          child: CustomInput(
+                            hint: "Miqdorni kiriting",
+                            controller: selectedItem['quantity'],
+                            formatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: SizedBox.square(
+                            dimension: 50,
+                            child: Container(
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: secondary.withOpacity(0.8),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              alignment: Alignment.center,
+                              child: Text(
+                                recipe.isNotEmpty ? selectedItems.first?['item']?['unit']['name'] ?? "" : selectedItem['item']?['unit']?['name'] ?? "",
+                                style: TextStyle(
+                                  color: dark.withOpacity(0.5),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        if (recipe.isEmpty) ...[
+                          if (index == selectedItems.length - 1)
+                            IconButton(
+                              icon: const Icon(Icons.add),
+                              onPressed: () {
+                                if (selectedItems.last['item'] == null || selectedItems.last['quantity'].text.trim().isEmpty) {
+                                  CustomSnackbars(context).warning("Barcha maydonlarni to'ldiring");
+                                  return;
+                                }
+
+                                selectedItems.add({
+                                  "item": {},
+                                  "quantity": TextEditingController(),
+                                });
+                                setState(() {});
+                              },
+                            )
+                          else
+                            IconButton(
+                              style: IconButton.styleFrom(
+                                backgroundColor: danger.withOpacity(0.1),
+                              ),
+                              icon: const Icon(Icons.delete),
+                              color: danger,
+                              onPressed: () {
+                                selectedItems.removeAt(index);
+                                setState(() {});
+                              },
+                            ),
+                        ]
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
             const SizedBox(height: 20),
             TextButton(
               onPressed: () async {
-                if (selectedItem.isEmpty || quantityController.text.isEmpty) {
-                  CustomSnackbars(context).warning("Barcha maydonlarni to'ldiring");
-                  return;
-                }
-
-                if (recipe.isNotEmpty) {
-                  var res = await provider.editRecipe(recipe['id'], {
-                    "size_id": provider.selectedSize['id'].toString(),
-                    "model_color_id": provider.selectedColor['id'].toString(),
-                    "item_id": selectedItem['id'].toString(),
-                    "quantity": quantityController.text.trim(),
-                  });
-
-                  Get.back();
-                  return;
-                }
-
-                var res = await provider.addRecipe({
-                  "size_id": provider.selectedSize['id'].toString(),
-                  "model_color_id": provider.selectedColor['id'].toString(),
-                  "item_id": selectedItem['id'].toString(),
-                  "quantity": quantityController.text.trim(),
-                });
-
-                Get.back();
+                await _addRecipe();
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    recipe.isNotEmpty ? "O'zgartirish" : "Retseptni saqlash",
-                  ),
+                  isLoading
+                      ? SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                          ),
+                        )
+                      : Text(
+                          recipe.isNotEmpty ? "O'zgartirish" : "Retseptni saqlash",
+                        ),
                 ],
               ),
             ),
@@ -153,5 +217,42 @@ class _AddRecipeState extends State<AddRecipe> {
         ),
       ),
     );
+  }
+
+  Future<void> _addRecipe() async {
+    isLoading = true;
+
+    if (selectedItems.length == 1 && (selectedItems.first['item'] == null || selectedItems.first['quantity'].text.trim().isEmpty)) {
+      CustomSnackbars(context).warning("Kamida 1 ta mahsulot tanlang!");
+      isLoading = false;
+      return;
+    }
+
+    selectedItems.removeWhere((element) => element['item'] == null || element['quantity'].text.trim().isEmpty);
+
+    if (recipe.isNotEmpty) {
+      await provider.editRecipe(context: context, recipe['id'], {
+        "size_id": provider.selectedSize['id'].toString(),
+        "model_color_id": provider.selectedColor['id'].toString(),
+        "item_id": selectedItems.first['item']['id'].toString(),
+        "quantity": selectedItems.first['quantity'].text.trim(),
+      });
+
+      isLoading = false;
+      Get.back();
+      return;
+    }
+
+    for (var selectedItem in selectedItems) {
+      await provider.addRecipe(context: context, {
+        "size_id": provider.selectedSize['id'].toString(),
+        "model_color_id": provider.selectedColor['id'].toString(),
+        "item_id": selectedItem['item']['id'].toString(),
+        "quantity": selectedItem['quantity'].text.trim(),
+      });
+    }
+
+    isLoading = false;
+    Get.back();
   }
 }

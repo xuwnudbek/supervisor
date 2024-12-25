@@ -58,26 +58,40 @@ class ItemProvider extends ChangeNotifier {
     isLoading = false;
   }
 
+  bool _isCreating = false;
+  bool get isCreating => _isCreating;
+  set isCreating(bool value) {
+    _isCreating = value;
+    notifyListeners();
+  }
+
   Future<Map> createItem(Map<String, dynamic> body) async {
-    isLoading = true;
+    isCreating = true;
     final res = await HttpService.upload(item, body: body);
 
     if (res['status'] == Result.success) {
-      getItems();
+      await getItems();
     }
-    isLoading = false;
+    isCreating = false;
 
     return res;
   }
 
+  bool _isUpdating = false;
+  bool get isUpdating => _isUpdating;
+  set isUpdating(bool value) {
+    _isUpdating = value;
+    notifyListeners();
+  }
+
   Future<Map> updateItem(int id, Map<String, dynamic> body) async {
-    isLoading = true;
-    final res = await HttpService.upload("$item/$id", body: body);
+    isUpdating = true;
+    final res = await HttpService.upload("$item/$id", body: body, method: "patch");
 
     if (res['status'] == Result.success) {
-      getItems();
+      await getItems();
     }
-    isLoading = false;
+    isUpdating = false;
 
     return res;
   }
@@ -87,7 +101,7 @@ class ItemProvider extends ChangeNotifier {
     final res = await HttpService.delete('$item/$id');
 
     if (res['status'] == Result.success) {
-      getItems();
+      await getItems();
     }
     isLoading = false;
   }

@@ -47,6 +47,7 @@ dependencies:
   flutter_colorpicker: ^1.1.0
   intl: ^0.20.1
   dotted_line_flutter: ^0.1.6
+  path_provider: ^2.1.5
 
 dev_dependencies:
   flutter_test:
@@ -75,6 +76,7 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/fonts/
+    - assets/files/
   
 
   fonts:

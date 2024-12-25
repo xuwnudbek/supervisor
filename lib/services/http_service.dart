@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:supervisor/services/storage_service.dart';
 import 'package:get/get.dart';
@@ -217,6 +218,7 @@ class HttpService {
   static Future<Map<String, dynamic>> upload(
     String endpoint, {
     required Map<String, dynamic> body,
+    String method = 'post',
   }) async {
     try {
       Map<String, String> headers = {
@@ -224,16 +226,20 @@ class HttpService {
       }..addAllIf(StorageService.read("token") != null, {"Authorization": "Bearer ${StorageService.read("token")}"});
 
       // API endpoint
-      final url = Uri.http(baseUrl, '$middle$endpoint');
+      final url = Uri.http(
+        baseUrl,
+        '$middle$endpoint',
+        {'_method': method},
+      );
 
-      var request = http.MultipartRequest('post', url);
+      var request = http.MultipartRequest("post", url);
 
       request.headers.addAll(headers);
 
-      request.fields.addAll(body.map((key, value) => MapEntry(key, value.toString())));
       request.files.add(await http.MultipartFile.fromPath('image', body['image']));
+      body.remove("image");
 
-      inspect(await http.MultipartFile.fromPath('image', body['image']));
+      request.fields['data'] = jsonEncode(body);
 
       var res = await request.send();
 
@@ -267,21 +273,31 @@ class HttpService {
       }..addAllIf(StorageService.read("token") != null, {"Authorization": "Bearer ${StorageService.read("token")}"});
 
       // API endpoint
-      final url = Uri.http(baseUrl, '$middle$endpoint');
+      final url = Uri.http(
+        baseUrl,
+        '$middle$endpoint',
+        {'_method': method},
+      );
 
-      var request = http.MultipartRequest(method, url);
+      var request = http.MultipartRequest("post", url);
 
       request.headers.addAll(headers);
 
-      request.fields.addAll(body.map((key, value) => MapEntry(key, value.toString())));
-
-      for (var imagePath in body['images']) {
-        request.files.add(await http.MultipartFile.fromPath(
-          'images[]',
-          imagePath,
-          filename: imagePath.split('/').last,
-        ));
+      if (body['images'] != null) {
+        for (var imagePath in body['images']) {
+          request.files.add(await http.MultipartFile.fromPath(
+            'images[]',
+            imagePath,
+            filename: imagePath.split('/').last,
+          ));
+        }
       }
+
+      body.remove('images');
+
+      request.fields.addAll({
+        "data": jsonEncode(body),
+      });
 
       var res = await request.send();
 
@@ -291,7 +307,7 @@ class HttpService {
           'status': Result.success,
         };
       } else {
-        print('Error: ${await res.stream.bytesToString()}');
+        log(await res.stream.bytesToString());
         return {
           'status': Result.error,
         };

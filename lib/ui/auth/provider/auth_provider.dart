@@ -21,7 +21,6 @@ class AuthProvider extends ChangeNotifier {
     });
 
     if (res['status'] == Result.success) {
-      inspect(res);
       await StorageService.write('token', res['data']['token']);
       await StorageService.write('user', res['data']['user']);
 
