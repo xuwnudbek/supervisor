@@ -1,8 +1,12 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:supervisor/services/http_service.dart';
 import 'package:supervisor/utils/widgets/custom_snackbars.dart';
 
 class ModelDetailsProvider extends ChangeNotifier {
+  bool _isImageDeleting = false;
+
   Map modelData;
 
   Map selectedSubmodel = {};
@@ -43,10 +47,22 @@ class ModelDetailsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool isLoading = false;
+  bool _isLoading = false;
 
   ModelDetailsProvider({required this.modelData}) {
     initialize();
+  }
+
+  bool get isLoading => _isLoading;
+  set isLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
+
+  bool get isImageDeleting => _isImageDeleting;
+  set isImageDeleting(bool value) {
+    _isImageDeleting = value;
+    notifyListeners();
   }
 
   void initialize() async {
@@ -122,6 +138,18 @@ class ModelDetailsProvider extends ChangeNotifier {
     } else {
       CustomSnackbars(context).error("Retsept o'chirishda xatolik yuz berdi");
     }
+  }
+
+  Future<void> deleteImage(int imageId) async {
+    isImageDeleting = true;
+
+    var res = await HttpService.delete("$model/image/$imageId");
+
+    if (res['status'] == Result.success) {
+      await getModel();
+    }
+
+    isImageDeleting = false;
   }
 
   void resetAll() {

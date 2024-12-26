@@ -70,12 +70,64 @@ class ModelDetails extends StatelessWidget {
                               width: 100,
                               child: Column(
                                 children: [
-                                  ...(provider.modelData['images'] ?? []).map((image) {
-                                    return Padding(
-                                      padding: const EdgeInsets.only(right: 8.0, bottom: 8),
-                                      child: CustomImageWidget(image: image['image']),
-                                    );
-                                  }),
+                                  if ((provider.modelData['images'] ?? []).isEmpty)
+                                    Expanded(
+                                      child: Center(
+                                        child: Text(
+                                          "Rasm yo'q",
+                                          style: TextStyle(
+                                            color: Colors.black.withOpacity(0.5),
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  else if (provider.isLoading || provider.isImageDeleting)
+                                    Expanded(
+                                      child: Center(
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                    )
+                                  else
+                                    ...(provider.modelData['images'] ?? []).map((image) {
+                                      return Padding(
+                                        padding: const EdgeInsets.only(right: 8.0, bottom: 8),
+                                        child: InkWell(
+                                          onTap: () {
+                                            Get.dialog(
+                                              AlertDialog(
+                                                title: const Text("Rasm"),
+                                                content: const Text("Rostdan ham rasmni o'chirishni hohlaysizmi?"),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () => Get.back(),
+                                                    child: const Text("Yo'q"),
+                                                  ),
+                                                  TextButton(
+                                                    style: TextButton.styleFrom(backgroundColor: danger),
+                                                    onPressed: () async {
+                                                      Get.back();
+                                                      await provider.deleteImage(image['id']);
+                                                    },
+                                                    child: const Text("Ha, albatta"),
+                                                  ),
+                                                ],
+                                              ),
+                                            ).then((value) {
+                                              if (value != null) {
+                                                CustomSnackbars(context).success("Rasm muvaffaqiyatli o'chirildi");
+                                              }
+                                            });
+                                          },
+                                          child: Badge(
+                                            label: Text("X"),
+                                            child: CustomImageWidget(
+                                              image: image['image'],
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }),
                                 ],
                               ),
                             ),
