@@ -1,3 +1,4 @@
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -112,7 +113,7 @@ class _AddItemState extends State<AddItem> {
         child: Column(
           children: [
             Text(
-              "Material${recipe.isNotEmpty ? 'ni o\'zgartirish' : ' qo\'shish'}",
+              "Material${item.isNotEmpty ? 'ni o\'zgartirish' : ' qo\'shish'}",
               style: const TextStyle(
                 fontSize: 20,
               ),
@@ -251,7 +252,7 @@ class _AddItemState extends State<AddItem> {
                   "code": codeController.text,
                   "type_id": selectedType['id'],
                   "image": selectedImage?.path,
-                };
+                }..removeWhere((key, value) => value == null);
 
                 if (item.isNotEmpty) {
                   var res = await provider.updateItem(item['id'], body);

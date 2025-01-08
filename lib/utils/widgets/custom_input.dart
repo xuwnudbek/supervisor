@@ -33,7 +33,7 @@ class _CustomInputState extends State<CustomInput> {
       height: widget.size ?? 50,
       decoration: BoxDecoration(
         color: widget.color ?? secondary.withOpacity(0.8),
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(12),
       ),
       alignment: Alignment.center,
       child: Padding(

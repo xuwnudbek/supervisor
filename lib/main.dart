@@ -14,7 +14,6 @@ void main() async {
   WindowOptions windowOptions = const WindowOptions(
     size: Size(1200, 700),
     center: true,
-    // fullScreen: true,
     title: "Supervisior",
     backgroundColor: Colors.transparent,
     skipTaskbar: false,
@@ -60,12 +59,13 @@ class MyApp extends StatelessWidget {
           foregroundColor: secondary,
           surfaceTintColor: Colors.transparent,
         ),
+        iconTheme: IconThemeData(size: 20),
         textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(
             backgroundColor: primary,
             foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(6),
+              borderRadius: BorderRadius.circular(12),
             ),
             fixedSize: const Size.fromHeight(40),
           ),

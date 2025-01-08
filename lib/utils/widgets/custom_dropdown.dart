@@ -24,15 +24,13 @@ class CustomDropdown extends StatefulWidget {
 }
 
 class _CustomDropdownState extends State<CustomDropdown> {
-  dynamic value;
-
   @override
   Widget build(BuildContext context) {
     return Container(
       height: widget.size ?? 50,
       decoration: BoxDecoration(
         color: secondary.withOpacity(0.8),
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -42,10 +40,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
             isExpanded: true,
             items: widget.items,
             onChanged: (value) {
-              widget.onChanged!(value);
-              setState(() {
-                this.value = value;
-              });
+              widget.onChanged?.call(value);
             },
             value: widget.value,
             hint: Text(

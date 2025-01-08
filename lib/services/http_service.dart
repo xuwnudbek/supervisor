@@ -8,7 +8,7 @@ enum Result { success, error }
 
 String baseUrl = "176.124.208.61:2005";
 // String baseUrl = "192.168.68.109:8000";
-String middle = "api";
+String middle = "api/supervisor";
 String login = "/login";
 String order = "/orders";
 String model = "/models";
@@ -19,6 +19,11 @@ String unit = "/units";
 String color = "/colors";
 String razryad = "/razryads";
 String itemType = "/itemtypes";
+String department = "/departments";
+String user = "/users";
+String userMaster = "/users/master";
+String userSubMaster = "/users/submaster";
+String warehouse = "/warehouses";
 
 class HttpService {
   static getSSL() {
@@ -200,61 +205,12 @@ class HttpService {
         };
       } else {
         print("Error [DELETE]: ${response.body}");
-
         return {
           'status': Result.error,
         };
       }
     } catch (e) {
       print("Error: $e");
-      return {
-        'status': Result.error,
-      };
-    }
-  }
-
-  // multipart/form-data upload image
-  static Future<Map<String, dynamic>> upload(
-    String endpoint, {
-    required Map<String, dynamic> body,
-    String method = 'post',
-  }) async {
-    try {
-      Map<String, String> headers = {
-        'Content-Type': 'multipart/form-data',
-      }..addAllIf(StorageService.read("token") != null, {"Authorization": "Bearer ${StorageService.read("token")}"});
-
-      // API endpoint
-      final url = Uri.http(
-        baseUrl,
-        '$middle$endpoint',
-        {'_method': method},
-      );
-
-      var request = http.MultipartRequest("post", url);
-
-      request.headers.addAll(headers);
-
-      request.files.add(await http.MultipartFile.fromPath('image', body['image']));
-      body.remove("image");
-
-      request.fields['data'] = jsonEncode(body);
-
-      var res = await request.send();
-
-      if (res.statusCode >= 200 && res.statusCode < 300) {
-        return {
-          'data': jsonDecode(await res.stream.bytesToString()),
-          'status': Result.success,
-        };
-      } else {
-        print('Error: ${await res.stream.bytesToString()}');
-        return {
-          'status': Result.error,
-        };
-      }
-    } catch (e) {
-      print('Error: $e');
       return {
         'status': Result.error,
       };

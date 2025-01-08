@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:supervisor/services/http_service.dart';
 
@@ -15,13 +14,11 @@ class ModelProvider extends ChangeNotifier {
 
   void initialize() async {
     isLoading = true;
-    notifyListeners();
 
     await getColors();
     await getModels();
 
     isLoading = false;
-    notifyListeners();
   }
 
   List get models => _models;

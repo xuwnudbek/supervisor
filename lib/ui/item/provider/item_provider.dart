@@ -67,7 +67,7 @@ class ItemProvider extends ChangeNotifier {
 
   Future<Map> createItem(Map<String, dynamic> body) async {
     isCreating = true;
-    final res = await HttpService.upload(item, body: body);
+    final res = await HttpService.uploadWithImages(item, body: body);
 
     if (res['status'] == Result.success) {
       await getItems();
@@ -84,9 +84,12 @@ class ItemProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<Map> updateItem(int id, Map<String, dynamic> body) async {
+  Future<Map> updateItem(
+    int id,
+    Map<String, dynamic> body,
+  ) async {
     isUpdating = true;
-    final res = await HttpService.upload("$item/$id", body: body, method: "patch");
+    final res = await HttpService.uploadWithImages("$item/$id", body: body, method: "patch");
 
     if (res['status'] == Result.success) {
       await getItems();

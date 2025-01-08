@@ -96,16 +96,12 @@ class _ItemPageState extends State<ItemPage> {
                                       ),
                                       columns: const [
                                         DataColumn(
-                                          label: Row(
-                                            children: [
-                                              Text(
-                                                "#",
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  overflow: TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                            ],
+                                          label: Text(
+                                            "#",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
                                           ),
                                           headingRowAlignment: MainAxisAlignment.center,
                                         ),
@@ -208,7 +204,6 @@ class _ItemPageState extends State<ItemPage> {
                                           headingRowAlignment: MainAxisAlignment.center,
                                         ),
                                       ],
-                                      // horizontalMargin: 16,
                                       rows: provider.items.map((item) {
                                         int index = provider.items.indexOf(item);
 
@@ -250,7 +245,7 @@ class _ItemPageState extends State<ItemPage> {
                                                 height: 200,
                                                 padding: const EdgeInsets.all(4),
                                                 child: Center(
-                                                  child: CustomImageWidget(image: item['image']),
+                                                  child: CustomImageWidget(image: item['image'] ?? ""),
                                                 ),
                                               ),
                                             ),
