@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+import 'package:supervisor/ui/warehouse/pages/add_warehouse.dart';
 import 'package:supervisor/ui/warehouse/provider/warehouse_provider.dart';
 import 'package:supervisor/utils/extensions/datetime_extension.dart';
 import 'package:supervisor/utils/extensions/num_extension.dart';
@@ -21,250 +22,286 @@ class WarehousePage extends StatelessWidget {
               color: Colors.white,
               borderRadius: BorderRadius.circular(8),
             ),
-            child: provider.isLoading
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : provider.warehouses.isEmpty
-                    ? Center(
-                        child: Text("Omborlar topilmadi"),
-                      )
-                    : Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Row(
-                            children: [
-                              const Text(
-                                "Omborlar",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                ),
-                              ),
-                              const Spacer(),
-                              IconButton(
-                                color: primary,
-                                icon: const Icon(Icons.refresh),
-                                onPressed: () async {},
-                              ),
-                              const SizedBox(width: 8),
-                              IconButton(
-                                color: primary,
-                                icon: const Icon(Icons.add),
-                                onPressed: () async {},
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Expanded(
-                            child: Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    const Text(
+                      "Omborlar",
+                      style: TextStyle(
+                        fontSize: 20,
+                      ),
+                    ),
+                    const Spacer(),
+                    IconButton(
+                      color: primary,
+                      icon: const Icon(Icons.refresh),
+                      onPressed: () async {
+                        provider.initialize();
+                      },
+                    ),
+                    const SizedBox(width: 8),
+                    IconButton(
+                      color: primary,
+                      icon: const Icon(Icons.add),
+                      onPressed: () async {
+                        await Get.to(() => AddWarehouse(provider: provider))?.then((value) {
+                          if (value == true) {
+                            provider.initialize();
+                          }
+                        });
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Expanded(
+                  child: provider.isLoading
+                      ? Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : provider.warehouses.isEmpty
+                          ? Center(
+                              child: Text("Omborlar topilmadi"),
+                            )
+                          : Container(
                               decoration: BoxDecoration(
                                 color: secondary,
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               padding: EdgeInsets.all(8),
                               child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Row(
-                                    children: [
-                                      ...provider.warehouses.map((warehouse) {
-                                        return TextButton(
-                                          onPressed: () {
-                                            provider.selectedWarehouse = warehouse;
-                                          },
-                                          child: Text("${warehouse['name']}"),
-                                        ).marginOnly(right: 8);
-                                      }),
-                                    ],
+                                  SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        ...provider.warehouses.map((warehouse) {
+                                          bool isSelected = provider.selectedWarehouse == warehouse;
+
+                                          return ChoiceChip(
+                                            label: Text(
+                                              warehouse['name'],
+                                            ),
+                                            showCheckmark: false,
+                                            labelPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                            selected: provider.selectedWarehouse == warehouse,
+                                            onSelected: (value) {
+                                              provider.selectedWarehouse = warehouse;
+                                            },
+                                            color: WidgetStatePropertyAll(isSelected ? primary : Colors.grey.shade300),
+                                          ).marginOnly(right: 8);
+                                        }),
+                                      ],
+                                    ),
                                   ),
                                   SizedBox(height: 8),
                                   Expanded(
                                     child: Container(
+                                      width: double.infinity,
                                       decoration: BoxDecoration(
                                         color: Colors.white,
                                         borderRadius: BorderRadius.circular(8),
                                       ),
-                                      child: Column(
-                                        children: [
-                                          Table(
-                                            border: TableBorder.all(
-                                              color: dark.withAlpha(50),
-                                              borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
-                                            ),
-                                            columnWidths: {
-                                              0: FixedColumnWidth(60),
-                                              1: FlexColumnWidth(1),
-                                              2: FixedColumnWidth(150),
-                                              3: FixedColumnWidth(150),
-                                              4: FixedColumnWidth(100),
-                                            },
-                                            defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                                            children: [
-                                              TableRow(children: [
-                                                TableCell(
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.all(8.0),
-                                                    child: Center(
-                                                      child: Text(
-                                                        "@",
-                                                        style: TextStyle(
-                                                          fontWeight: FontWeight.w600,
+                                      child: (provider.selectedWarehouse['stoks'] as List).isEmpty
+                                          ? Center(
+                                              child: Text("Omborda maxsulotlar topilmadi"),
+                                            )
+                                          : SingleChildScrollView(
+                                              scrollDirection: Axis.horizontal,
+                                              child: SingleChildScrollView(
+                                                scrollDirection: Axis.vertical,
+                                                child: DataTable(
+                                                  border: TableBorder.all(
+                                                    color: dark.withAlpha(50),
+                                                    borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+                                                  ),
+                                                  headingRowHeight: 46,
+                                                  columns: [
+                                                    DataColumn(
+                                                      label: Center(
+                                                        child: Text(
+                                                          "№",
+                                                          style: TextStyle(fontWeight: FontWeight.w600),
                                                         ),
                                                       ),
                                                     ),
-                                                  ),
-                                                ),
-                                                TableCell(
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.all(8.0),
-                                                    child: Text(
-                                                      "Maxsulot",
-                                                      style: TextStyle(
-                                                        fontWeight: FontWeight.w600,
+                                                    DataColumn(
+                                                      label: Text(
+                                                        "Maxsulot",
+                                                        style: TextStyle(fontWeight: FontWeight.w600),
                                                       ),
                                                     ),
-                                                  ),
-                                                ),
-                                                TableCell(
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.all(8.0),
-                                                    child: Center(
-                                                      child: Text(
-                                                        "Last updated",
-                                                        style: TextStyle(
-                                                          fontWeight: FontWeight.w600,
+                                                    DataColumn(
+                                                      headingRowAlignment: MainAxisAlignment.center,
+                                                      label: Text(
+                                                        "Kod",
+                                                        style: TextStyle(fontWeight: FontWeight.w600),
+                                                        textAlign: TextAlign.center,
+                                                      ),
+                                                    ),
+                                                    DataColumn(
+                                                      tooltip: "Miqdor bo'yicha tartiblash",
+                                                      onSort: (index, _) {
+                                                        provider.sortBy(index, 'quantity', true);
+                                                      },
+                                                      mouseCursor: WidgetStatePropertyAll(SystemMouseCursors.click),
+                                                      headingRowAlignment: MainAxisAlignment.center,
+                                                      label: Row(
+                                                        children: [
+                                                          if (provider.sortIndex == 3)
+                                                            Icon(
+                                                              provider.sortingDirections[3] ?? false ? Icons.arrow_upward_rounded : Icons.arrow_downward_rounded,
+                                                              size: 16,
+                                                            ),
+                                                          SizedBox(width: 4),
+                                                          Text(
+                                                            "Miqdor",
+                                                            style: TextStyle(fontWeight: FontWeight.w600),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    DataColumn(
+                                                      headingRowAlignment: MainAxisAlignment.center,
+                                                      label: Text(
+                                                        "O'lchov",
+                                                        style: TextStyle(fontWeight: FontWeight.w600),
+                                                      ),
+                                                    ),
+                                                    DataColumn(
+                                                      numeric: true,
+                                                      tooltip: "Ohirgi yangilanish bo'yicha tartiblash",
+                                                      onSort: (index, _) {
+                                                        provider.sortBy(index, 'last_updated', false);
+                                                      },
+                                                      label: Center(
+                                                        child: Row(
+                                                          children: [
+                                                            if (provider.sortIndex == 5)
+                                                              Icon(
+                                                                provider.sortingDirections[5] ?? false ? Icons.arrow_upward_rounded : Icons.arrow_downward_rounded,
+                                                                size: 16,
+                                                              ),
+                                                            SizedBox(width: 4),
+                                                            Text(
+                                                              "Ohirgi yangilanish",
+                                                              style: TextStyle(fontWeight: FontWeight.w600),
+                                                              textAlign: TextAlign.center,
+                                                            ),
+                                                          ],
                                                         ),
                                                       ),
                                                     ),
-                                                  ),
-                                                ),
-                                                TableCell(
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.all(8.0),
-                                                    child: Center(
-                                                      child: Text(
-                                                        "Miqdor",
-                                                        style: TextStyle(
-                                                          fontWeight: FontWeight.w600,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                TableCell(
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.all(8.0),
-                                                    child: Center(
-                                                      child: Text(
-                                                        "Unit",
-                                                        style: TextStyle(
-                                                          fontWeight: FontWeight.w600,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ]),
-                                            ],
-                                          ),
-                                          Expanded(
-                                            child: SingleChildScrollView(
-                                              child: Table(
-                                                border: TableBorder.all(
-                                                  color: dark.withAlpha(50),
-                                                ),
-                                                columnWidths: {
-                                                  0: FixedColumnWidth(60),
-                                                  // 1: FlexColumnWidth(1),
-                                                  2: FixedColumnWidth(150),
-                                                  3: FixedColumnWidth(150),
-                                                  4: FixedColumnWidth(100),
-                                                },
-                                                defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                                                children: [
-                                                  ...provider.selectedWarehouse['stoks'].map((stok) {
+                                                  ],
+                                                  rows: (provider.selectedWarehouse['stoks'] as List).map<DataRow>((stok) {
                                                     int index = provider.selectedWarehouse['stoks'].indexOf(stok);
+
                                                     Map item = stok['item'];
-                                                    double quantity = double.tryParse(stok['quantity']) ?? 0;
+                                                    num quantity = num.tryParse(stok['quantity']) ?? 0;
                                                     double minQuantity = double.tryParse(stok['min_quantity']) ?? 0;
                                                     DateTime lastUpdated = DateTime.parse(stok['last_updated']);
 
-                                                    return TableRow(children: [
-                                                      TableCell(
-                                                        child: Padding(
-                                                          padding: const EdgeInsets.all(8.0),
-                                                          child: Center(child: Text("${index + 1}")),
-                                                        ),
-                                                      ),
-                                                      TableCell(
-                                                        child: Padding(
-                                                          padding: const EdgeInsets.all(8.0),
-                                                          child: Text.rich(
-                                                            TextSpan(
-                                                              children: [
-                                                                TextSpan(
-                                                                  text: "${item['name']}",
-                                                                  style: TextStyle(
-                                                                    fontWeight: FontWeight.w600,
-                                                                  ),
-                                                                ),
-                                                                TextSpan(
-                                                                  text: " (${item['color']['name']} - ",
-                                                                  style: TextStyle(
-                                                                    color: dark.withAlpha(150),
-                                                                  ),
-                                                                ),
-                                                                TextSpan(
-                                                                  text: "${item['code']})",
-                                                                  style: TextStyle(
-                                                                    color: dark.withAlpha(150),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
+                                                    Color color = quantity.itemStatus(minQuantity);
+
+                                                    return DataRow(
+                                                      color: WidgetStateProperty.all(color),
+                                                      cells: [
+                                                        DataCell(
+                                                          Center(
+                                                            child: Text("${index + 1}"),
                                                           ),
                                                         ),
-                                                      ),
-                                                      TableCell(
-                                                        child: Padding(
-                                                          padding: const EdgeInsets.all(8.0),
-                                                          child: Center(child: Text(lastUpdated.format)),
-                                                        ),
-                                                      ),
-                                                      TableCell(
-                                                        child: Padding(
-                                                          padding: const EdgeInsets.all(8.0),
-                                                          child: Row(
-                                                            mainAxisAlignment: MainAxisAlignment.end,
+                                                        DataCell(
+                                                          Row(
+                                                            mainAxisAlignment: MainAxisAlignment.start,
                                                             children: [
-                                                              Text("$quantity"),
+                                                              Text.rich(
+                                                                TextSpan(
+                                                                  children: [
+                                                                    if (color != Colors.transparent)
+                                                                      WidgetSpan(
+                                                                        child: Tooltip(
+                                                                          message: quantity > 0 ? "Maxsulot minimal miqdordan kam!\nQolgan:  $quantity ${item['unit']['name']}\nMinimal:  $minQuantity ${item['unit']['name']}" : "Maxsulot omborda tugagan!",
+                                                                          textStyle: TextStyle(
+                                                                            fontSize: quantity > 0 ? 12 : 16,
+                                                                            color: Colors.white,
+                                                                          ),
+                                                                          decoration: BoxDecoration(
+                                                                            color: Colors.deepOrange,
+                                                                            borderRadius: BorderRadius.circular(4),
+                                                                            boxShadow: [
+                                                                              BoxShadow(
+                                                                                color: Colors.black.withOpacity(0.1),
+                                                                                blurRadius: 4,
+                                                                                offset: Offset(0, 2),
+                                                                              )
+                                                                            ],
+                                                                          ),
+                                                                          child: Icon(
+                                                                            Icons.warning_rounded,
+                                                                            color: warning,
+                                                                          ).marginOnly(right: 8),
+                                                                        ),
+                                                                      ),
+                                                                    TextSpan(
+                                                                      text: "${item['name']}",
+                                                                      style: const TextStyle(
+                                                                        fontWeight: FontWeight.w500,
+                                                                      ),
+                                                                    ),
+                                                                    TextSpan(
+                                                                      text: " (${item['color']['name']})",
+                                                                      style: TextStyle(
+                                                                        color: dark.withAlpha(150),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
                                                             ],
                                                           ),
                                                         ),
-                                                      ),
-                                                      TableCell(
-                                                        child: Padding(
-                                                          padding: const EdgeInsets.all(8.0),
-                                                          child: Center(
-                                                            child: Text(item['unit']['name'].toString().toLowerCase()),
+                                                        DataCell(
+                                                          Center(
+                                                            child: Text(
+                                                              item['code'] ?? "-",
+                                                            ),
                                                           ),
                                                         ),
-                                                      ),
-                                                    ]);
-                                                  }),
-                                                ],
+                                                        DataCell(
+                                                          Row(
+                                                            mainAxisAlignment: MainAxisAlignment.end,
+                                                            children: [
+                                                              Text(
+                                                                quantity.toCurrency,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        DataCell(
+                                                          Text(item['unit']['name'].toString().toLowerCase()),
+                                                        ),
+                                                        DataCell(
+                                                          Center(child: Text(lastUpdated.format)),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  }).toList(),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
                                     ),
-                                  ),
+                                  )
                                 ],
                               ),
                             ),
-                          ),
-                        ],
-                      ),
+                ),
+              ],
+            ),
           );
         },
       ),

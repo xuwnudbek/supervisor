@@ -23,7 +23,7 @@ String department = "/departments";
 String user = "/users";
 String userMaster = "/users/master";
 String userSubMaster = "/users/submaster";
-String warehouse = "/warehouses";
+String warehouseUrl = "/warehouses";
 
 class HttpService {
   static getSSL() {

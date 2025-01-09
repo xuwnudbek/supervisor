@@ -1,3 +1,4 @@
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:supervisor/services/http_service.dart';
@@ -106,17 +107,11 @@ class AddOrderProvider extends ChangeNotifier {
     data.addAll({'model_color': selectedModelColor} as Map);
     data.addAll({'quantity': quantityController.text} as Map);
 
-    bool hasRecipe = await getRecipe(selectedModelColor!['id'], selectedSize!['id']);
+    // bool hasRecipe = await getRecipe(selectedModelColor!['id'], selectedSize!['id']);
 
-    print(hasRecipe);
-
-    if (hasRecipe) {
-      orderModels.add(Map.from(data));
-      quantityController.clear();
-      notifyListeners();
-    } else {
-      CustomSnackbars(context).error("Retsept topilmadi!");
-    }
+    orderModels.add(Map.from(data));
+    quantityController.clear();
+    notifyListeners();
 
     isAddingModelToOrder = false;
   }
@@ -150,8 +145,6 @@ class AddOrderProvider extends ChangeNotifier {
       "rasxod": orderRasxodController.text,
     };
 
-    print("data: $data");
-
     var res = await HttpService.post(order, data);
 
     if (res['status'] == Result.success) {
@@ -179,17 +172,17 @@ class AddOrderProvider extends ChangeNotifier {
       "size_id": sizeId.toString(),
     });
 
-    print("model: $modelColorId, size: $sizeId");
+    isGettingRecipes = false;
 
     if (res['status'] == Result.success) {
+      inspect(res['data']);
       recipeData.add(res['data'] ?? {});
       recipeData.removeWhere((element) => element?.isEmpty ?? true);
       notifyListeners();
-      isGettingRecipes = false;
+
       return true;
     }
 
-    isGettingRecipes = false;
     return false;
   }
 

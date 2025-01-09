@@ -6,6 +6,7 @@ import 'package:supervisor/ui/order/provider/add_order_provider.dart';
 import 'package:supervisor/ui/order/provider/order_provider.dart';
 import 'package:supervisor/utils/extensions/datetime_extension.dart';
 import 'package:supervisor/utils/extensions/map_extension.dart';
+import 'package:supervisor/utils/extensions/num_extension.dart';
 import 'package:supervisor/utils/extensions/string_extension.dart';
 import 'package:supervisor/utils/formatters/currency_formatter.dart';
 import 'package:supervisor/utils/rgb.dart';
@@ -277,7 +278,7 @@ class AddOrder extends StatelessWidget {
                                   items: (provider.selectedModel?['submodels'] ?? []).map<DropdownMenuItem>((subModel) {
                                     return DropdownMenuItem(
                                       value: subModel['id'],
-                                      child: Text(subModel['name']),
+                                      child: Text(subModel['name'] ?? ""),
                                     );
                                   }).toList(),
                                   onChanged: (id) {
@@ -457,127 +458,47 @@ class AddOrder extends StatelessWidget {
                                                   style: const TextStyle(fontSize: 16),
                                                 ),
                                                 const SizedBox(height: 8),
-                                                Table(
-                                                  border: TableBorder.all(
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    color: light,
                                                     borderRadius: BorderRadius.circular(8),
-                                                    color: dark.withOpacity(.7),
                                                   ),
-                                                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                                                  columnWidths: const {
-                                                    0: FlexColumnWidth(1),
-                                                    1: FlexColumnWidth(3),
-                                                    2: FlexColumnWidth(2),
-                                                    3: FlexColumnWidth(2),
-                                                    4: FlexColumnWidth(2),
-                                                  },
-                                                  children: [
-                                                    const TableRow(
-                                                      children: [
-                                                        TableCell(
-                                                          child: Center(
-                                                            child: Text(
-                                                              "№",
-                                                              style: TextStyle(
-                                                                fontSize: 14,
-                                                                fontWeight: FontWeight.bold,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        TableCell(
-                                                          child: Padding(
-                                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                                            child: Center(
-                                                              child: Text(
-                                                                "Material nomi",
-                                                                style: TextStyle(
-                                                                  fontSize: 14,
-                                                                  fontWeight: FontWeight.bold,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        TableCell(
-                                                          child: Padding(
-                                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                                            child: Center(
-                                                              child: Text(
-                                                                "Narxi",
-                                                                style: TextStyle(
-                                                                  fontSize: 14,
-                                                                  fontWeight: FontWeight.bold,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        TableCell(
-                                                          child: Padding(
-                                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                                            child: Center(
-                                                              child: Text(
-                                                                "Quantity",
-                                                                style: TextStyle(
-                                                                  fontSize: 14,
-                                                                  fontWeight: FontWeight.bold,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        TableCell(
-                                                          child: Padding(
-                                                            padding: EdgeInsets.all(8.0),
-                                                            child: Center(
-                                                              child: Text(
-                                                                "Total",
-                                                                style: TextStyle(
-                                                                  fontSize: 14,
-                                                                  fontWeight: FontWeight.bold,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
+                                                  child: Table(
+                                                    border: TableBorder.all(
+                                                      borderRadius: BorderRadius.circular(8),
+                                                      color: dark.withAlpha(50),
                                                     ),
-                                                    ...data['recipes'].map((recipe) {
-                                                      int index = data['recipes'].indexOf(recipe) + 1;
-                                                      return TableRow(
+                                                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                                                    columnWidths: const {
+                                                      0: FixedColumnWidth(48),
+                                                      1: FlexColumnWidth(3),
+                                                      2: FlexColumnWidth(2),
+                                                      3: FlexColumnWidth(2),
+                                                      4: FlexColumnWidth(2),
+                                                    },
+                                                    children: [
+                                                      const TableRow(
                                                         children: [
                                                           TableCell(
-                                                            child: Padding(
-                                                              padding: const EdgeInsets.symmetric(horizontal: 8),
-                                                              child: Center(
-                                                                child: Text(
-                                                                  "$index",
-                                                                  style: const TextStyle(
-                                                                    fontSize: 14,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          TableCell(
-                                                            child: Padding(
-                                                              padding: const EdgeInsets.symmetric(horizontal: 8),
+                                                            child: Center(
                                                               child: Text(
-                                                                "${recipe['item']['name']}",
-                                                                style: const TextStyle(
+                                                                "№",
+                                                                style: TextStyle(
                                                                   fontSize: 14,
+                                                                  fontWeight: FontWeight.bold,
                                                                 ),
                                                               ),
                                                             ),
                                                           ),
                                                           TableCell(
                                                             child: Padding(
-                                                              padding: const EdgeInsets.symmetric(horizontal: 8),
+                                                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                                                               child: Center(
                                                                 child: Text(
-                                                                  "${"${recipe['item']['price']}".toDouble.toStringAsFixed(3)}\$",
-                                                                  style: const TextStyle(
-                                                                    fontSize: 14,
+                                                                  "Material nomi",
+                                                                  style: TextStyle(
+                                                                    fontSize: 12,
+                                                                    fontWeight: FontWeight.bold,
                                                                   ),
                                                                 ),
                                                               ),
@@ -585,12 +506,13 @@ class AddOrder extends StatelessWidget {
                                                           ),
                                                           TableCell(
                                                             child: Padding(
-                                                              padding: const EdgeInsets.symmetric(horizontal: 8),
+                                                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                                               child: Center(
                                                                 child: Text(
-                                                                  "${recipe['quantity']} ${recipe['item']['unit']['name']}",
-                                                                  style: const TextStyle(
-                                                                    fontSize: 14,
+                                                                  "Kerak",
+                                                                  style: TextStyle(
+                                                                    fontSize: 12,
+                                                                    fontWeight: FontWeight.bold,
                                                                   ),
                                                                 ),
                                                               ),
@@ -598,21 +520,118 @@ class AddOrder extends StatelessWidget {
                                                           ),
                                                           TableCell(
                                                             child: Padding(
-                                                              padding: const EdgeInsets.symmetric(horizontal: 8),
+                                                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                                               child: Center(
                                                                 child: Text(
-                                                                  "${"${(double.tryParse(recipe['item']['price']) ?? 0) * (double.tryParse(recipe['quantity']) ?? 0)}".toDouble.toStringAsFixed(3)}\$",
-                                                                  style: const TextStyle(
-                                                                    fontSize: 14,
+                                                                  "Mavjud",
+                                                                  style: TextStyle(
+                                                                    fontSize: 12,
+                                                                    fontWeight: FontWeight.bold,
                                                                   ),
                                                                 ),
                                                               ),
                                                             ),
                                                           ),
                                                         ],
-                                                      );
-                                                    }),
-                                                  ],
+                                                      ),
+                                                      ...data['recipes'].map((recipe) {
+                                                        int index = data['recipes'].indexOf(recipe) + 1;
+                                                        Map stok = recipe['stok'] ?? {};
+                                                        double stokQuantity = double.tryParse(stok['quantity'] ?? "0") ?? 0;
+
+                                                        Map item = recipe['item'] ?? {};
+                                                        double needQuantity = double.tryParse(recipe['quantity'] ?? "0") ?? 0;
+
+                                                        return TableRow(
+                                                          decoration: BoxDecoration(
+                                                            color: stokQuantity >= needQuantity ? Colors.green[100] : Colors.red[100],
+                                                          ),
+                                                          children: [
+                                                            TableCell(
+                                                              child: Padding(
+                                                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                                                                child: Center(
+                                                                  child: Text(
+                                                                    "$index",
+                                                                    style: const TextStyle(
+                                                                      fontSize: 12,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            TableCell(
+                                                              child: Padding(
+                                                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                                                                child: Text(
+                                                                  "${item['name']}",
+                                                                  style: const TextStyle(
+                                                                    fontSize: 12,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            TableCell(
+                                                              child: Padding(
+                                                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                                                                child: Center(
+                                                                  child: Text.rich(
+                                                                    TextSpan(
+                                                                      children: [
+                                                                        TextSpan(
+                                                                          text: needQuantity.fromNum.toCurrency,
+                                                                          style: TextStyle(
+                                                                            fontSize: 12,
+                                                                            fontWeight: FontWeight.w600,
+                                                                          ),
+                                                                        ),
+                                                                        if (stok['item']?['unit'] != null)
+                                                                          TextSpan(
+                                                                            text: "\n${stok['item']?['unit']?['name']}",
+                                                                            style: const TextStyle(
+                                                                              fontSize: 12,
+                                                                            ),
+                                                                          ),
+                                                                      ],
+                                                                    ),
+                                                                    textAlign: TextAlign.center,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            TableCell(
+                                                              child: Padding(
+                                                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                                                                child: Center(
+                                                                  child: Text.rich(
+                                                                    TextSpan(
+                                                                      children: [
+                                                                        TextSpan(
+                                                                          text: stokQuantity.fromNum.toCurrency,
+                                                                          style: TextStyle(
+                                                                            fontSize: 12,
+                                                                            fontWeight: FontWeight.w600,
+                                                                          ),
+                                                                        ),
+                                                                        if (stok['item']?['unit'] != null)
+                                                                          TextSpan(
+                                                                            text: "\n${stok['item']?['unit']?['name']}",
+                                                                            style: const TextStyle(
+                                                                              fontSize: 12,
+                                                                            ),
+                                                                          ),
+                                                                      ],
+                                                                    ),
+                                                                    textAlign: TextAlign.center,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        );
+                                                      }),
+                                                    ],
+                                                  ),
                                                 ),
                                               ],
                                             ),
@@ -655,7 +674,7 @@ class AddOrder extends StatelessWidget {
                                     text: "Jami summa: ",
                                     children: [
                                       TextSpan(
-                                        text: "${provider.recipeData.fold<double>(0, (prev, model) => prev + (model['total_sum'] ?? 0))}",
+                                        text: provider.recipeData.fold<double>(0, (prev, model) => prev + (model['total_sum'] ?? 0)).toCurrency,
                                         style: const TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w600,

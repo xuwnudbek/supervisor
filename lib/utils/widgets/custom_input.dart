@@ -42,6 +42,7 @@ class _CustomInputState extends State<CustomInput> {
           controller: widget.controller,
           inputFormatters: widget.formatters ?? [],
           decoration: InputDecoration(
+            floatingLabelAlignment: FloatingLabelAlignment.start,
             contentPadding: EdgeInsets.zero,
             border: InputBorder.none,
             hintText: widget.hint,
