@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 Color primary = const Color(0xFF7F4DFF);
-Color background = const Color.fromARGB(255, 107, 99, 255).withOpacity(.2);
+Color background = const Color.fromARGB(255, 107, 99, 255).withValues(alpha: .2);
 Color secondary = const Color.fromARGB(255, 240, 240, 240);
 Color success = const Color(0xFF00D16C);
 Color danger = const Color(0xFFFC3D39);

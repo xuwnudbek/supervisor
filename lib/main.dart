@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Super Visior',
+      title: 'Supervisior',
       theme: ThemeData(
         fontFamily: "Montserrat",
         scaffoldBackgroundColor: secondary,
@@ -54,7 +54,7 @@ class MyApp extends StatelessWidget {
         ),
         appBarTheme: AppBarTheme(
           elevation: 20,
-          shadowColor: dark.withOpacity(0.2),
+          shadowColor: dark.withValues(alpha: 0.2),
           backgroundColor: primary,
           foregroundColor: secondary,
           surfaceTintColor: Colors.transparent,
@@ -65,7 +65,7 @@ class MyApp extends StatelessWidget {
             backgroundColor: primary,
             foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(10),
             ),
             fixedSize: const Size.fromHeight(40),
           ),
@@ -77,7 +77,7 @@ class MyApp extends StatelessWidget {
         ),
         iconButtonTheme: IconButtonThemeData(
           style: ButtonStyle(
-            backgroundColor: WidgetStateProperty.all(primary.withOpacity(0.1)),
+            backgroundColor: WidgetStateProperty.all(primary.withValues(alpha: 0.1)),
             foregroundColor: WidgetStateProperty.all(primary),
             shape: WidgetStateProperty.all(
               RoundedRectangleBorder(
@@ -86,7 +86,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
-        shadowColor: dark.withOpacity(0.2),
+        shadowColor: dark.withValues(alpha: 0.2),
         datePickerTheme: DatePickerThemeData(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
@@ -97,6 +97,7 @@ class MyApp extends StatelessWidget {
             borderRadius: BorderRadius.circular(8),
           ),
         ),
+        useMaterial3: true,
       ),
       home: const SplashPage(),
     );

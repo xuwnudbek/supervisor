@@ -33,9 +33,9 @@ extension IntegerExtension on num {
   Color itemStatus(double minQuantity) {
     double p = (this / minQuantity) * 100 - 100;
 
-    if (p < -20) return Colors.red.withOpacity(0.7);
-    if (p < 0) return Colors.red..withOpacity(0.8);
-    if (p < 50) return Colors.lime.withOpacity(0.8);
+    if (p < -20) return Colors.red.withValues(alpha: 0.7);
+    if (p < 0) return Colors.red..withValues(alpha: 0.8);
+    if (p < 50) return Colors.lime.withValues(alpha: 0.8);
     return Colors.transparent;
   }
 

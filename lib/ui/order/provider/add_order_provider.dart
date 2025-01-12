@@ -89,8 +89,12 @@ class AddOrderProvider extends ChangeNotifier {
   }
 
   Future<void> addModelToOrder(BuildContext context) async {
-    if (selectedModel.isEmptyOrNull || selectedSubModel.isEmptyOrNull || selectedSize.isEmptyOrNull || selectedModelColor.isEmptyOrNull) {
-      CustomSnackbars(context).warning("Iltimos, barcha maydonlarni to'ldiring");
+    if (selectedModel.isEmptyOrNull ||
+        selectedSubModel.isEmptyOrNull ||
+        selectedSize.isEmptyOrNull ||
+        selectedModelColor.isEmptyOrNull) {
+      CustomSnackbars(context)
+          .warning("Iltimos, barcha maydonlarni to'ldiring");
       return;
     }
 
@@ -124,8 +128,13 @@ class AddOrderProvider extends ChangeNotifier {
   }
 
   Future<void> createOrder(BuildContext context) async {
-    if (orderNameController.text.isEmpty || orderQuantityController.text.isNotValidNumber || startDate == null || endDate == null || orderModels.isEmpty) {
-      CustomSnackbars(context).warning("Barcha maydonlar to'ldirilganini tekshiring!");
+    if (orderNameController.text.isEmpty ||
+        orderQuantityController.text.isNotValidNumber ||
+        startDate == null ||
+        endDate == null ||
+        orderModels.isEmpty) {
+      CustomSnackbars(context)
+          .warning("Barcha maydonlar to'ldirilganini tekshiring!");
       return;
     }
 
@@ -151,7 +160,8 @@ class AddOrderProvider extends ChangeNotifier {
       CustomSnackbars(context).success("Buyurtma muvofaqqiyatli yaratildi!");
       clearAllField();
     } else {
-      CustomSnackbars(context).error("Buyurtmani yaratishda xatolik yuz berdi!");
+      CustomSnackbars(context)
+          .error("Buyurtmani yaratishda xatolik yuz berdi!");
     }
 
     isCreatingOrder = false;

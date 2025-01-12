@@ -81,7 +81,7 @@ class _OrderPageState extends State<OrderPage> {
                                   "Hozircha hech qanday buyurtma yo'q",
                                   style: TextStyle(
                                     fontSize: 16,
-                                    color: Colors.black.withOpacity(0.5),
+                                    color: Colors.black.withValues(alpha: 0.5),
                                   ),
                                 ),
                               )
@@ -93,9 +93,10 @@ class _OrderPageState extends State<OrderPage> {
                                   mainAxisExtent: 200,
                                 ),
                                 itemCount: provider.orders.length,
-                                padding: const EdgeInsets.all(12),
+                                padding: EdgeInsets.all(8),
                                 itemBuilder: (context, index) {
                                   var order = provider.orders[index];
+                                  bool status = order['status'] == "active";
 
                                   return HoverWidget(
                                     onTap: () {
@@ -110,7 +111,7 @@ class _OrderPageState extends State<OrderPage> {
                                           boxShadow: [
                                             if (isHovered)
                                               BoxShadow(
-                                                color: dark.withOpacity(0.2),
+                                                color: dark.withValues(alpha: 0.2),
                                                 blurRadius: 4,
                                                 offset: const Offset(0, 4),
                                               ),
@@ -212,10 +213,11 @@ class _OrderPageState extends State<OrderPage> {
                                                 text: "Holat:  ",
                                                 children: [
                                                   TextSpan(
-                                                    text: order['status'] == "inactive" ? "Faol" : "Faol emas",
-                                                    style: const TextStyle(
+                                                    text: status ? "Faol" : "Faol emas",
+                                                    style: TextStyle(
                                                       fontSize: 14,
                                                       fontWeight: FontWeight.w400,
+                                                      color: status ? Colors.green : Colors.red,
                                                     ),
                                                   )
                                                 ],

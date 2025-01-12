@@ -80,12 +80,12 @@ class _DepartmentPageState extends State<DepartmentPage> {
                                       "Hech qanday departament topilmadi",
                                       style: TextStyle(
                                         fontSize: 16,
-                                        color: dark.withOpacity(0.5),
+                                        color: dark.withValues(alpha: 0.5),
                                       ),
                                     ),
                                   )
                                 : Padding(
-                                    padding: const EdgeInsets.all(16.0),
+                                    padding: const EdgeInsets.all(8.0),
                                     child: SingleChildScrollView(
                                       child: StaggeredGrid.count(
                                         crossAxisCount: 3,

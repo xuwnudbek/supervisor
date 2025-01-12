@@ -44,7 +44,7 @@ class HomePage extends StatelessWidget {
 
                                   return TextButton(
                                     style: TextButton.styleFrom(
-                                      backgroundColor: isActive ? primary : primary.withOpacity(.1),
+                                      backgroundColor: isActive ? primary : primary.withValues(alpha: .1),
                                       foregroundColor: isActive ? Colors.white : primary,
                                     ),
                                     onPressed: () {
@@ -64,16 +64,19 @@ class HomePage extends StatelessWidget {
                         const SizedBox(height: 8),
                         TextButton(
                           style: TextButton.styleFrom(
-                            backgroundColor: danger.withOpacity(.1),
+                            backgroundColor: danger.withValues(alpha: .1),
                             foregroundColor: danger,
                           ),
                           onPressed: () async {
                             await provider.logout();
                             Get.offAll(() => const SplashPage());
                           },
-                          child: const Row(
+                          child: Row(
                             children: [
-                              Icon(Icons.logout),
+                              Icon(
+                                Icons.logout,
+                                color: danger,
+                              ),
                               SizedBox(width: 8),
                               Text('Chiqish'),
                             ],

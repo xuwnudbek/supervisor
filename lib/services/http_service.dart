@@ -24,13 +24,9 @@ String user = "/users";
 String userMaster = "/users/master";
 String userSubMaster = "/users/submaster";
 String warehouseUrl = "/warehouses";
+String group = "/groups";
 
 class HttpService {
-  static getSSL() {
-    http.Client client = http.Client();
-    return client;
-  }
-
   static Future<Map<String, dynamic>> get(
     String endpoint, {
     Map<String, String>? param,
@@ -67,8 +63,9 @@ class HttpService {
 
   static Future<Map<String, dynamic>> post(
     String endpoint,
-    Map<String, dynamic> body,
-  ) async {
+    Map<String, dynamic> body, {
+    bool isAuth = false,
+  }) async {
     String token = StorageService.read("token") ?? "";
 
     Map<String, String> headers = {
@@ -79,7 +76,7 @@ class HttpService {
         {"Authorization": "Bearer $token"},
       );
 
-    Uri url = Uri.http(baseUrl, '$middle$endpoint');
+    Uri url = Uri.http(baseUrl, '${isAuth ? "api" : middle}$endpoint');
     try {
       final response = await http.post(
         url,

@@ -70,7 +70,8 @@ class AddDepartmentProvider extends ChangeNotifier {
   }
 
   void onSelectMaster(int masterId) {
-    departmentData['master'] = userMasters.firstWhere((master) => master['id'] == masterId);
+    departmentData['master'] =
+        userMasters.firstWhere((master) => master['id'] == masterId);
     notifyListeners();
   }
 
@@ -78,7 +79,8 @@ class AddDepartmentProvider extends ChangeNotifier {
     int submasterId,
     int groupIndex,
   ) {
-    Map submaster = userSubMasters.firstWhere((submaster) => submaster['id'] == submasterId);
+    Map submaster = userSubMasters
+        .firstWhere((submaster) => submaster['id'] == submasterId);
     departmentData['groups'][groupIndex]['submaster'] = submaster;
     notifyListeners();
   }

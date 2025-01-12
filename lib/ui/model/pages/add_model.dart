@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -167,7 +166,7 @@ class _AddModelState extends State<AddModel> {
 
                             return Container(
                               decoration: BoxDecoration(
-                                color: secondary.withOpacity(0.8),
+                                color: secondary.withValues(alpha: 0.8),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               padding: const EdgeInsets.all(8.0),
@@ -371,7 +370,9 @@ class _AddModelState extends State<AddModel> {
   }
 
   Future<void> _updateModel() async {
-    if (provider.isLoading || provider.isCreatingModel || provider.isUpdatingModel) return;
+    if (provider.isLoading || provider.isCreatingModel || provider.isUpdatingModel) {
+      return;
+    }
 
     if (nameController.text.isEmpty || submodels.any((element) => element['controller'].text.isEmpty || element['sizes'].text.isEmpty)) {
       CustomSnackbars(context).warning("Iltimos, barcha maydonlarni to'ldiring!");

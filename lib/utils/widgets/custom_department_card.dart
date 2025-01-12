@@ -77,7 +77,7 @@ class CustomDepartmentCard extends StatelessWidget {
                       child: Text(
                         "Hech qanday guruh topilmadi",
                         style: TextStyle(
-                          color: dark.withOpacity(0.5),
+                          color: dark.withValues(alpha: 0.5),
                         ),
                       ),
                     )
@@ -89,7 +89,7 @@ class CustomDepartmentCard extends StatelessWidget {
                           return Container(
                             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                             decoration: BoxDecoration(
-                              color: primary.withOpacity(0.2),
+                              color: primary.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(group['name'] ?? "Unknown"),

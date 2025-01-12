@@ -26,7 +26,7 @@ class LoginPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.2),
+                      color: Colors.grey.withValues(alpha: 0.2),
                       spreadRadius: 3,
                       blurRadius: 7,
                       offset: const Offset(0, 3),
@@ -37,7 +37,7 @@ class LoginPage extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'Login',
+                      'Kirish',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -47,12 +47,12 @@ class LoginPage extends StatelessWidget {
                     const SizedBox(height: 16),
                     CustomInput(
                       controller: provider.loginController,
-                      hint: 'Login',
+                      hint: 'Username',
                     ),
                     const SizedBox(height: 8),
                     CustomInput(
                       controller: provider.passwordController,
-                      hint: 'Password',
+                      hint: 'Parol',
                     ),
                     const SizedBox(height: 24),
                     TextButton(
@@ -60,7 +60,7 @@ class LoginPage extends StatelessWidget {
                         if (provider.isLoading) return;
                         if (provider.loginController.text.isEmpty || provider.passwordController.text.isEmpty) {
                           CustomSnackbars(context).warning(
-                            'Please fill all fields',
+                            'Iltimos, login va parolni kiriting',
                           );
                           return;
                         }
@@ -82,9 +82,12 @@ class LoginPage extends StatelessWidget {
                                 ),
                               ]
                             : [
-                                const Icon(Icons.login),
+                                Icon(
+                                  Icons.login,
+                                  color: light,
+                                ),
                                 const SizedBox(width: 8),
-                                const Text('Login'),
+                                const Text('Kirish'),
                               ],
                       ),
                     ),

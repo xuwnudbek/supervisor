@@ -32,8 +32,8 @@ class _CustomInputState extends State<CustomInput> {
     return Container(
       height: widget.size ?? 50,
       decoration: BoxDecoration(
-        color: widget.color ?? secondary.withOpacity(0.8),
-        borderRadius: BorderRadius.circular(12),
+        color: widget.color ?? secondary.withValues(alpha: 0.8),
+        borderRadius: BorderRadius.circular(8),
       ),
       alignment: Alignment.center,
       child: Padding(
@@ -47,7 +47,7 @@ class _CustomInputState extends State<CustomInput> {
             border: InputBorder.none,
             hintText: widget.hint,
             hintStyle: TextStyle(
-              color: dark.withOpacity(0.5),
+              color: dark.withValues(alpha: 0.5),
             ),
           ),
           cursorHeight: 20,

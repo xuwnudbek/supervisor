@@ -7,7 +7,6 @@ import 'package:supervisor/ui/order/provider/order_provider.dart';
 import 'package:supervisor/utils/extensions/datetime_extension.dart';
 import 'package:supervisor/utils/extensions/map_extension.dart';
 import 'package:supervisor/utils/extensions/num_extension.dart';
-import 'package:supervisor/utils/extensions/string_extension.dart';
 import 'package:supervisor/utils/formatters/currency_formatter.dart';
 import 'package:supervisor/utils/rgb.dart';
 import 'package:supervisor/utils/widgets/custom_dropdown.dart';
@@ -231,7 +230,7 @@ class AddOrder extends StatelessWidget {
                                               children: [
                                                 IconButton(
                                                   style: IconButton.styleFrom(
-                                                    backgroundColor: danger.withOpacity(0.1),
+                                                    backgroundColor: danger.withValues(alpha: 0.1),
                                                   ),
                                                   onPressed: () {
                                                     provider.removeModelInOrder(model);

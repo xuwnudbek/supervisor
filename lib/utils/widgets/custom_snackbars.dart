@@ -23,7 +23,7 @@ class CustomSnackbars {
   void success(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: Colors.green.withOpacity(.8),
+        backgroundColor: Colors.green.withValues(alpha: .8),
         showCloseIcon: true,
         closeIconColor: Colors.white,
         content: Text(message),

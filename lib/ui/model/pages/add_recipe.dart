@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -140,14 +139,14 @@ class _AddRecipeState extends State<AddRecipe> {
                             child: Container(
                               height: 50,
                               decoration: BoxDecoration(
-                                color: secondary.withOpacity(0.8),
+                                color: secondary.withValues(alpha: 0.8),
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               alignment: Alignment.center,
                               child: Text(
                                 recipe.isNotEmpty ? selectedItems.first?['item']?['unit']['name'] ?? "" : selectedItem['item']?['unit']?['name'] ?? "",
                                 style: TextStyle(
-                                  color: dark.withOpacity(0.5),
+                                  color: dark.withValues(alpha: 0.5),
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -175,7 +174,7 @@ class _AddRecipeState extends State<AddRecipe> {
                           else
                             IconButton(
                               style: IconButton.styleFrom(
-                                backgroundColor: danger.withOpacity(0.1),
+                                backgroundColor: danger.withValues(alpha: 0.1),
                               ),
                               icon: const Icon(Icons.delete),
                               color: danger,

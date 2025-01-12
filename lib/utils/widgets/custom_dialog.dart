@@ -37,7 +37,7 @@ class _CustomDialogState extends State<CustomDialog> {
               Get.back(result: false);
             },
             style: IconButton.styleFrom(
-              backgroundColor: backIconColor ?? primary.withOpacity(0.1),
+              backgroundColor: backIconColor ?? primary.withValues(alpha: 0.1),
             ),
             color: primary,
             icon: const Icon(Icons.close),
@@ -55,7 +55,7 @@ class _CustomDialogState extends State<CustomDialog> {
               borderRadius: BorderRadius.circular(8),
               boxShadow: [
                 BoxShadow(
-                  color: dark.withOpacity(0.15),
+                  color: dark.withValues(alpha: 0.15),
                   blurRadius: 10,
                   spreadRadius: 1,
                   offset: const Offset(0, 5),

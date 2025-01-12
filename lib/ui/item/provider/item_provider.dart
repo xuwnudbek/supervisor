@@ -89,7 +89,8 @@ class ItemProvider extends ChangeNotifier {
     Map<String, dynamic> body,
   ) async {
     isUpdating = true;
-    final res = await HttpService.uploadWithImages("$item/$id", body: body, method: "patch");
+    final res = await HttpService.uploadWithImages("$item/$id",
+        body: body, method: "patch");
 
     if (res['status'] == Result.success) {
       await getItems();

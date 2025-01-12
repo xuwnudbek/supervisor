@@ -76,7 +76,7 @@ class ModelDetails extends StatelessWidget {
                                         child: Text(
                                           "Rasm yo'q",
                                           style: TextStyle(
-                                            color: Colors.black.withOpacity(0.5),
+                                            color: Colors.black.withValues(alpha: 0.5),
                                             fontSize: 16,
                                           ),
                                         ),
@@ -233,7 +233,7 @@ class ModelDetails extends StatelessWidget {
                                                   "Hozircha hech qanday retsept yo'q",
                                                   style: TextStyle(
                                                     fontSize: 16,
-                                                    color: Colors.black.withOpacity(0.5),
+                                                    color: Colors.black.withValues(alpha: 0.5),
                                                   ),
                                                 ),
                                               )

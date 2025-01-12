@@ -131,7 +131,7 @@ class _AddModelState extends State<AddColor> {
                       else
                         IconButton(
                           style: IconButton.styleFrom(
-                            backgroundColor: danger.withOpacity(0.1),
+                            backgroundColor: danger.withValues(alpha: 0.1),
                           ),
                           icon: const Icon(Icons.delete),
                           color: danger,

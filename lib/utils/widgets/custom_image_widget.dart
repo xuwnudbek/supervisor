@@ -51,12 +51,20 @@ class CustomImageWidget extends StatelessWidget {
                             ? Image.network(
                                 image.toImageUrl,
                                 headers: {"Accept": "image/*"},
-                                loadingBuilder: (context, child, loadingProgress) {
+                                loadingBuilder:
+                                    (context, child, loadingProgress) {
                                   if (loadingProgress == null) return child;
 
                                   return Center(
                                     child: CircularProgressIndicator(
-                                      value: loadingProgress.expectedTotalBytes != null ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes! : null,
+                                      value:
+                                          loadingProgress.expectedTotalBytes !=
+                                                  null
+                                              ? loadingProgress
+                                                      .cumulativeBytesLoaded /
+                                                  loadingProgress
+                                                      .expectedTotalBytes!
+                                              : null,
                                     ),
                                   );
                                 },
@@ -112,7 +120,10 @@ class CustomImageWidget extends StatelessWidget {
 
                           return Center(
                             child: CircularProgressIndicator(
-                              value: loadingProgress.expectedTotalBytes != null ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes! : null,
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                      loadingProgress.expectedTotalBytes!
+                                  : null,
                             ),
                           );
                         },
@@ -137,7 +148,8 @@ extension UrlExtension on String? {
   String get toImageUrl {
     if (this == null) return "https://www.mykite.in/kb/NoImageFound.jpg.png";
     if (this!.contains('rasmlar')) {
-      return Uri.parse("https://omborapi.vizzano-apparel.uz:2021/media/$this").toString();
+      return Uri.parse("https://omborapi.vizzano-apparel.uz:2021/media/$this")
+          .toString();
     } else if (this!.contains('images')) {
       return Uri.parse("http://176.124.208.61:2025/$this").toString();
     }

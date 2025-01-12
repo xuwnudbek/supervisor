@@ -25,7 +25,7 @@ class _AddModelState extends State<AddWarehouse> {
   WarehouseProvider get provider => widget.provider;
   Map get warehouse => widget.warehouse ?? {};
 
-  List _selectedUsers = [];
+  final List _selectedUsers = [];
   List get selectedUsers => _selectedUsers;
 
   bool _isLoading = false;
@@ -100,7 +100,8 @@ class _AddModelState extends State<AddWarehouse> {
                       label: Text(user['employee']['name']),
                       selected: selectedUsers.contains(user),
                       onSelected: (value) => onSelectUser(user),
-                      color: WidgetStatePropertyAll(isSelected ? primary : Colors.grey.shade300),
+                      color: WidgetStatePropertyAll(
+                          isSelected ? primary : Colors.grey.shade300),
                     );
                   }),
                 ],
@@ -127,10 +128,12 @@ class _AddModelState extends State<AddWarehouse> {
                 isLoading = false;
 
                 if (res['status'] == Result.success) {
-                  CustomSnackbars(context).success("Ombor muvaffaqiyatli qo'shildi!");
+                  CustomSnackbars(context)
+                      .success("Ombor muvaffaqiyatli qo'shildi!");
                   Get.back(result: true);
                 } else {
-                  CustomSnackbars(context).error("Ombor qo'shishda xatolik yuz berdi!");
+                  CustomSnackbars(context)
+                      .error("Ombor qo'shishda xatolik yuz berdi!");
                 }
               },
               child: Row(

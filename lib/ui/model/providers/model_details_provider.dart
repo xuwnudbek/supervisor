@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:supervisor/services/http_service.dart';
 import 'package:supervisor/utils/widgets/custom_snackbars.dart';
@@ -14,14 +13,16 @@ class ModelDetailsProvider extends ChangeNotifier {
   List recipes = [];
 
   void selectSubmodel(int value) {
-    selectedSubmodel = (modelData['submodels'] as List).firstWhere((submodel) => submodel['id'] == value);
+    selectedSubmodel = (modelData['submodels'] as List)
+        .firstWhere((submodel) => submodel['id'] == value);
     selectedSize = {};
     selectedColor = {};
     notifyListeners();
   }
 
   void selectSize(int value) async {
-    selectedSize = (selectedSubmodel['sizes'] as List).firstWhere((size) => size['id'] == value);
+    selectedSize = (selectedSubmodel['sizes'] as List)
+        .firstWhere((size) => size['id'] == value);
     notifyListeners();
 
     isLoading = true;
@@ -34,7 +35,8 @@ class ModelDetailsProvider extends ChangeNotifier {
   }
 
   void selectColor(int value) async {
-    selectedColor = (selectedSubmodel['model_colors'] as List).firstWhere((color) => color['id'] == value);
+    selectedColor = (selectedSubmodel['model_colors'] as List)
+        .firstWhere((color) => color['id'] == value);
     notifyListeners();
 
     isLoading = true;
@@ -104,7 +106,8 @@ class ModelDetailsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> addRecipe(Map<String, dynamic> data, {required BuildContext context}) async {
+  Future<void> addRecipe(Map<String, dynamic> data,
+      {required BuildContext context}) async {
     var res = await HttpService.post(recipe, data);
 
     if (res['status'] == Result.success) {
@@ -116,7 +119,8 @@ class ModelDetailsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> editRecipe(int id, Map<String, dynamic> data, {required BuildContext context}) async {
+  Future<void> editRecipe(int id, Map<String, dynamic> data,
+      {required BuildContext context}) async {
     var res = await HttpService.patch("$recipe/$id", data);
 
     if (res['status'] == Result.success) {
@@ -124,7 +128,8 @@ class ModelDetailsProvider extends ChangeNotifier {
 
       CustomSnackbars(context).success("Retsept muvaffaqiyatli o'zgartirildi");
     } else {
-      CustomSnackbars(context).error("Retsept o'zgartirishda xatolik yuz berdi");
+      CustomSnackbars(context)
+          .error("Retsept o'zgartirishda xatolik yuz berdi");
     }
   }
 

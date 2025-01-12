@@ -114,7 +114,7 @@ class AddDepartment extends StatelessWidget {
                                   SizedBox(width: 8),
                                   IconButton(
                                     style: IconButton.styleFrom(
-                                      backgroundColor: danger.withOpacity(0.1),
+                                      backgroundColor: danger.withValues(alpha: 0.1),
                                       foregroundColor: danger,
                                     ),
                                     onPressed: () {

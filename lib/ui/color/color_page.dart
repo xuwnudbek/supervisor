@@ -77,12 +77,12 @@ class _ColorPageState extends State<ColorPage> {
                                   "Hozircha hech qanday rang yo'q",
                                   style: TextStyle(
                                     fontSize: 16,
-                                    color: Colors.black.withOpacity(0.5),
+                                    color: Colors.black.withValues(alpha: 0.5),
                                   ),
                                 ),
                               )
                             : Padding(
-                                padding: const EdgeInsets.all(16.0),
+                                padding: EdgeInsets.all(8),
                                 child: Wrap(
                                   spacing: 16,
                                   runSpacing: 8,

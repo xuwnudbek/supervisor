@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -150,7 +148,8 @@ class _AddItemState extends State<AddItem> {
                         .toList(),
                     value: selectedUnit['id'],
                     onChanged: (id) {
-                      selectedUnit = provider.units.firstWhere((element) => element['id'] == id);
+                      selectedUnit = provider.units
+                          .firstWhere((element) => element['id'] == id);
                     },
                   ),
                 ),
@@ -166,7 +165,8 @@ class _AddItemState extends State<AddItem> {
                         .toList(),
                     value: selectedColor['id'],
                     onChanged: (id) {
-                      selectedColor = provider.colors.firstWhere((element) => element['id'] == id);
+                      selectedColor = provider.colors
+                          .firstWhere((element) => element['id'] == id);
                     },
                   ),
                 ),
@@ -183,7 +183,8 @@ class _AddItemState extends State<AddItem> {
                   .toList(),
               value: selectedType['id'],
               onChanged: (id) {
-                selectedType = provider.itemTypes.firstWhere((element) => element['id'] == id);
+                selectedType = provider.itemTypes
+                    .firstWhere((element) => element['id'] == id);
               },
             ),
             const SizedBox(height: 8),
@@ -226,7 +227,9 @@ class _AddItemState extends State<AddItem> {
                           showImagePicker();
                         },
                         icon: Icon(
-                          selectedImage != null ? Icons.replay_rounded : Icons.add_rounded,
+                          selectedImage != null
+                              ? Icons.replay_rounded
+                              : Icons.add_rounded,
                         ),
                       ),
                     ],
@@ -238,9 +241,19 @@ class _AddItemState extends State<AddItem> {
             const SizedBox(height: 20),
             TextButton(
               onPressed: () async {
-                if (provider.isLoading || provider.isCreating || provider.isUpdating) return;
-                if (nameController.text.isEmpty || priceController.text.isEmpty || codeController.text.isEmpty || selectedUnit.isEmpty || selectedType.isEmpty || selectedColor.isEmpty) {
-                  CustomSnackbars(context).warning("Barcha maydonlarni to'ldiring");
+                if (provider.isLoading ||
+                    provider.isCreating ||
+                    provider.isUpdating) {
+                  return;
+                }
+                if (nameController.text.isEmpty ||
+                    priceController.text.isEmpty ||
+                    codeController.text.isEmpty ||
+                    selectedUnit.isEmpty ||
+                    selectedType.isEmpty ||
+                    selectedColor.isEmpty) {
+                  CustomSnackbars(context)
+                      .warning("Barcha maydonlarni to'ldiring");
                   return;
                 }
 

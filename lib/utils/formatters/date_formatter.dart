@@ -20,7 +20,8 @@ class DateInputFormatter extends TextInputFormatter {
         .replaceAll(RegExp(r'\D'), '') // Faqat raqamlarni saqlash
         .replaceAllMapped(
           RegExp(r'(\d{2})(\d{2})?(\d{4})?'),
-          (Match m) => '${m[1]}.${m[2] ?? ''}${m[2] != null && m[3] != null ? '.' : ''}${m[3] ?? ''}',
+          (Match m) =>
+              '${m[1]}.${m[2] ?? ''}${m[2] != null && m[3] != null ? '.' : ''}${m[3] ?? ''}',
         );
 
     // Maksimal uzunlik 10 belgidan oshmaydi (dd.mm.yyyy)

@@ -73,12 +73,12 @@ class _ItemPageState extends State<ItemPage> {
                                   "Hozircha hech qanday material yo'q",
                                   style: TextStyle(
                                     fontSize: 16,
-                                    color: Colors.black.withOpacity(0.5),
+                                    color: Colors.black.withValues(alpha: 0.5),
                                   ),
                                 ),
                               )
                             : Padding(
-                                padding: const EdgeInsets.all(16.0),
+                                padding: EdgeInsets.all(8),
                                 child: SingleChildScrollView(
                                   scrollDirection: Axis.horizontal,
                                   child: SingleChildScrollView(

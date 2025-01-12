@@ -26,7 +26,8 @@ class CurrencyInputFormatter extends TextInputFormatter {
 
 String parseToCurrency(String value) {
   if (value.contains(".") && value.split(".")[1].isNotEmpty) {
-    value = double.parse(value.replaceAll(",", "")).toStringAsFixed(value.split(".")[1].length <= 4 ? value.split(".")[1].length : 4);
+    value = double.parse(value.replaceAll(",", "")).toStringAsFixed(
+        value.split(".")[1].length <= 4 ? value.split(".")[1].length : 4);
 
     String leftSide = value.split(".")[0];
     String rightSide = value.split(".")[1];
