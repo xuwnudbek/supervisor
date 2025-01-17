@@ -8,15 +8,18 @@ class AddOrderProvider extends ChangeNotifier {
 
   final TextEditingController instructionTitleController = TextEditingController();
   final TextEditingController instructionBodyController = TextEditingController();
+  final TextEditingController orderCommentController = TextEditingController();
 
   List models = [];
   List submodels = [];
   List sizes = [];
+  List items = [];
   List contragents = [];
 
   List selectedSubmodels = [];
   List selectedSizes = [];
-  List<Map> instructions = [];
+  List instructions = [];
+  List recipes = [];
 
   // Private Fields
   List<DateTime> _deadline = [];
@@ -50,10 +53,6 @@ class AddOrderProvider extends ChangeNotifier {
   Map get selectedContragent => _selectedContragent;
   set selectedContragent(Map value) {
     _selectedContragent = value;
-
-    selectedSubmodels.clear();
-
-    submodels = value['submodels'] ?? [];
     notifyListeners();
   }
 
@@ -72,15 +71,52 @@ class AddOrderProvider extends ChangeNotifier {
   AddOrderProvider(OrderProvider orderProvider) {
     models = orderProvider.models;
     contragents = orderProvider.contragents;
+    items = orderProvider.items;
+  }
+
+  double getSizesQuantity() {
+    if (selectedSizes.isNotEmpty) {
+      return selectedSizes.map((e) => e['quantity']).reduce((a, b) => a + b);
+    }
+
+    return 0.0;
+  }
+
+  void addRecipe(Map submodel) {
+    recipes.add({
+      "submodel": submodel,
+      "item": {},
+      "quantity": TextEditingController(text: "0"),
+    });
+    notifyListeners();
+  }
+
+  void removeRecipe(Map recipe) {
+    recipes.removeWhere((e) => e == recipe);
+    notifyListeners();
+  }
+
+  void selectItemForRecipe({
+    required Map submodel,
+    required Map item,
+    required index,
+  }) {
+    var submodelRecipes = recipes.where((e) => e['submodel'] == submodel).toList();
+    submodelRecipes[index]['item'] = item;
+    notifyListeners();
   }
 
   void selectSubmodel(value) {
     selectedSubmodels.add(value);
+    addRecipe(value);
     notifyListeners();
   }
 
   void removeSelectedSubmodel(value) {
     selectedSubmodels.remove(value);
+
+    removeRecipe(value);
+
     notifyListeners();
   }
 
@@ -157,17 +193,5 @@ class AddOrderProvider extends ChangeNotifier {
     // }
 
     // isCreatingOrder = false;
-  }
-
-  void clearAllField() {
-    notifyListeners();
-  }
-
-  void clearDropDowns() {
-    notifyListeners();
-  }
-
-  void removeModelInOrder(Map model) {
-    notifyListeners();
   }
 }

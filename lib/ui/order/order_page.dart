@@ -45,10 +45,10 @@ class _OrderPageState extends State<OrderPage> {
                       color: primary,
                       icon: const Icon(Icons.refresh),
                       onPressed: () {
-                        if (provider.isLoading) {
-                          CustomSnackbars(context).warning("Ma'lumotlar yuklanmoqda, iltimos kuting");
-                          return;
-                        }
+                        // if (provider.isLoading) {
+                        //   CustomSnackbars(context).warning("Ma'lumotlar yuklanmoqda, iltimos kuting");
+                        //   return;
+                        // }
                         provider.initialize();
                       },
                     ),
@@ -57,10 +57,10 @@ class _OrderPageState extends State<OrderPage> {
                       color: primary,
                       icon: const Icon(Icons.add),
                       onPressed: () async {
-                        // if (provider.isLoading) {
-                        //   CustomSnackbars(context).warning("Ma'lumotlar yuklanmoqda, iltimos kuting");
-                        //   return;
-                        // }
+                        if (provider.isLoading) {
+                          CustomSnackbars(context).warning("Ma'lumotlar yuklanmoqda, iltimos kuting");
+                          return;
+                        }
                         await Get.to(
                           () => ChangeNotifierProvider.value(
                             value: context.read<OrderProvider>(),

@@ -6,6 +6,7 @@ class CustomSnackbars {
   CustomSnackbars(this.context);
 
   void error(String message) {
+    ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         backgroundColor: Colors.red,
@@ -21,6 +22,7 @@ class CustomSnackbars {
   }
 
   void success(String message) {
+    ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         backgroundColor: Colors.green.withValues(alpha: .8),
@@ -36,6 +38,7 @@ class CustomSnackbars {
   }
 
   void warning(String message) {
+    ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         backgroundColor: Colors.orange,

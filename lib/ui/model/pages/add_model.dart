@@ -143,7 +143,7 @@ class _AddModelState extends State<AddModel> {
           spacing: 8,
           children: [
             Text(
-              "Model qo'shish",
+              "Model${model != null ? "ni yangilash" : " qo'shish"}",
               style: TextTheme.of(context).titleLarge,
             ),
             Row(
@@ -197,6 +197,9 @@ class _AddModelState extends State<AddModel> {
                                 controller: newSubmodelController,
                                 color: light,
                                 hint: "submodel",
+                                onEnter: () {
+                                  addSubmodel();
+                                },
                                 onTrailingTap: () {
                                   addSubmodel();
                                 },
@@ -364,16 +367,19 @@ class _AddModelState extends State<AddModel> {
                                 alignment: Alignment.centerRight,
                                 child: GestureDetector(
                                   onTap: showImagesPicker,
-                                  child: Container(
-                                    width: 30,
-                                    decoration: BoxDecoration(
-                                      color: light,
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Center(
-                                      child: Icon(
-                                        Icons.add_rounded,
-                                        color: primary,
+                                  child: Tooltip(
+                                    message: "Yangi rasm qo'shilganda\neskilari o'chib ketadi!",
+                                    child: Container(
+                                      width: 30,
+                                      decoration: BoxDecoration(
+                                        color: light,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Center(
+                                        child: Icon(
+                                          Icons.add_rounded,
+                                          color: primary,
+                                        ),
                                       ),
                                     ),
                                   ),

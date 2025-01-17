@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:supervisor/ui/order/provider/add_order_provider.dart';
 import 'package:supervisor/ui/order/provider/order_provider.dart';
 import 'package:supervisor/utils/extensions/datetime_extension.dart';
+import 'package:supervisor/utils/extensions/list_extension.dart';
 import 'package:supervisor/utils/formatters/currency_formatter.dart';
 import 'package:supervisor/utils/themes/app_colors.dart';
 import 'package:supervisor/utils/widgets/custom_dropdown.dart';
@@ -40,24 +42,13 @@ class AddOrder extends StatelessWidget {
                           spacing: 8,
                           children: [
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "Buyurtma qo'shish",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Row(
                               spacing: 8,
                               children: [
                                 Expanded(
                                   flex: 2,
                                   child: CustomInput(
                                     controller: provider.orderNameController,
-                                    hint: "Buyurtma uchun nomi (ixtiyoriy)",
+                                    hint: "Buyurtma nomi",
                                   ),
                                 ),
                                 Expanded(
@@ -345,7 +336,10 @@ class AddOrder extends StatelessWidget {
                                   Expanded(
                                     child: Container(
                                       decoration: BoxDecoration(
-                                        color: secondary,
+                                        color: light,
+                                        border: Border.all(
+                                          color: dark.withValues(alpha: 0.2),
+                                        ),
                                         borderRadius: BorderRadius.circular(12),
                                       ),
                                       padding: EdgeInsets.all(4),
@@ -517,22 +511,32 @@ class AddOrder extends StatelessWidget {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(height: 8),
-                                  Container(
-                                    height: 100,
-                                    decoration: BoxDecoration(
-                                      color: secondary,
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    padding: EdgeInsets.all(2),
-                                    child: CustomInput(
-                                      // color: light,
-                                      hint: "Instruksiya nomi",
-                                      controller: provider.instructionTitleController,
-                                    ),
-                                  ),
                                 ],
                               ),
+                            ),
+                            TextFormField(
+                              maxLines: 3,
+                              decoration: InputDecoration(
+                                fillColor: light,
+                                hintText: "Buyurtma izohi",
+                                hintStyle: TextStyle(
+                                  color: dark.withValues(alpha: 0.2),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(
+                                    color: dark.withValues(alpha: 0.3),
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(
+                                    color: primary,
+                                    width: 1.5,
+                                  ),
+                                ),
+                              ),
+                              controller: provider.orderCommentController,
                             ),
                           ],
                         ),
@@ -542,56 +546,287 @@ class AddOrder extends StatelessWidget {
                     Flexible(
                       flex: 3,
                       child: Container(
-                        // width: double.infinity,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
                           color: light,
                         ),
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(8),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           spacing: 8,
                           children: [
+                            SizedBox(),
                             const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  "Hom ashyolar",
+                                  "Homashyolar",
                                   style: TextStyle(
                                     fontSize: 20,
                                   ),
                                 ),
                               ],
                             ),
-                            Spacer(),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text.rich(
-                                  TextSpan(
-                                    text: "Jami summa: ",
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  Table(
+                                    border: TableBorder.all(
+                                      borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
+                                      color: dark.withValues(alpha: 0.5),
+                                    ),
+                                    columnWidths: {
+                                      0: FixedColumnWidth(50),
+                                      1: IntrinsicColumnWidth(flex: 2),
+                                      2: FixedColumnWidth(100),
+                                      3: FixedColumnWidth(56),
+                                    },
+                                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                                     children: [
-                                      TextSpan(
-                                        text: "0.0",
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                      const TextSpan(
-                                        text: "\$",
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                        ),
+                                      TableRow(
+                                        children: [
+                                          TableCell(
+                                            child: Center(
+                                              child: Text(
+                                                "ID",
+                                                style: TextTheme.of(context).titleSmall,
+                                              ),
+                                            ),
+                                          ),
+                                          TableCell(
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                "Maxsulot",
+                                                style: TextTheme.of(context).titleSmall,
+                                              ),
+                                            ),
+                                          ),
+                                          TableCell(
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Center(
+                                                child: Text(
+                                                  "Miqdor",
+                                                  style: TextTheme.of(context).titleSmall,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          TableCell(
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Center(
+                                                child: Text(
+                                                  "#",
+                                                  style: TextTheme.of(context).titleSmall,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ],
+                                  ),
+                                  Expanded(
+                                    child: ListView.builder(
+                                      itemCount: provider.selectedSubmodels.length,
+                                      itemBuilder: (context, index) {
+                                        Map submodel = provider.selectedSubmodels[index];
+                                        List recipes = provider.recipes.qaysiki(['submodel'], submodel);
+
+                                        return Column(
+                                          children: [
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                border: Border(
+                                                  left: BorderSide(
+                                                    color: dark.withValues(alpha: 0.5),
+                                                  ),
+                                                  top: BorderSide(
+                                                    color: dark.withValues(alpha: 0.5),
+                                                  ),
+                                                  right: BorderSide(
+                                                    color: dark.withValues(alpha: 0.5),
+                                                  ),
+                                                ),
+                                              ),
+                                              padding: EdgeInsets.all(8),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    "${submodel['name']}",
+                                                    style: TextTheme.of(context).titleMedium,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Table(
+                                              border: TableBorder.all(
+                                                color: dark.withValues(alpha: 0.5),
+                                              ),
+                                              columnWidths: {
+                                                0: FixedColumnWidth(50),
+                                                1: IntrinsicColumnWidth(flex: 2),
+                                                2: FixedColumnWidth(100),
+                                                3: FixedColumnWidth(56),
+                                              },
+                                              defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                                              children: [
+                                                // recipes
+                                                ...recipes.map((recipe) {
+                                                  int index = recipes.indexOf(recipe);
+                                                  Map item = recipe['item'];
+
+                                                  return TableRow(
+                                                    children: [
+                                                      TableCell(
+                                                        child: Center(
+                                                          child: Text(
+                                                            "${index + 1}",
+                                                            style: TextTheme.of(context).titleSmall,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      TableCell(
+                                                        child: CustomDropdown(
+                                                          color: light,
+                                                          borderRadius: BorderRadius.circular(0),
+                                                          items: provider.items.map((e) {
+                                                            return DropdownMenuItem(
+                                                              value: e['id'],
+                                                              child: Text(e['name']),
+                                                            );
+                                                          }).toList(),
+                                                          value: item['id'],
+                                                          onChanged: (value) {
+                                                            provider.selectItemForRecipe(
+                                                              submodel: submodel,
+                                                              item: provider.items.firstWhere((e) => e['id'] == value),
+                                                              index: index,
+                                                            );
+                                                          },
+                                                        ),
+                                                      ),
+                                                      TableCell(
+                                                        child: TextFormField(
+                                                          controller: recipe['quantity'],
+                                                          inputFormatters: [
+                                                            TextInputFormatter.withFunction((oldValue, newValue) {
+                                                              if (newValue.text.startsWith(".")) {
+                                                                return newValue.copyWith(text: "0");
+                                                              }
+
+                                                              if (newValue.text.split(".").length > 2) {
+                                                                return oldValue;
+                                                              }
+
+                                                              return newValue;
+                                                            }),
+                                                            FilteringTextInputFormatter.deny("00"),
+                                                            FilteringTextInputFormatter.deny(RegExp(r"^0\d")),
+                                                            FilteringTextInputFormatter.allow(RegExp(r"[0-9.]")),
+                                                            // CurrencyInputFormatter(),
+                                                          ],
+                                                          decoration: InputDecoration(
+                                                            contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                                            hintText: "miqdor",
+                                                            hintStyle: TextStyle(
+                                                              color: dark.withValues(alpha: 0.2),
+                                                            ),
+                                                          ),
+                                                          textAlign: TextAlign.center,
+                                                        ),
+                                                      ),
+                                                      TableCell(
+                                                        child: Padding(
+                                                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                                          child: IconButton(
+                                                            style: IconButton.styleFrom(
+                                                              backgroundColor: danger.withValues(alpha: 0.1),
+                                                              foregroundColor: danger,
+                                                            ),
+                                                            onPressed: () {
+                                                              provider.removeRecipe(recipe);
+                                                            },
+                                                            icon: Icon(Icons.delete_rounded),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  );
+                                                }),
+                                              ],
+                                            ),
+                                            SizedBox(height: 4),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              children: [
+                                                Tooltip(
+                                                  message: "${submodel['name']} uchun qo'shish",
+                                                  child: InkWell(
+                                                    onTap: () {
+                                                      provider.addRecipe(submodel);
+                                                    },
+                                                    child: Container(
+                                                      width: 120,
+                                                      height: 36,
+                                                      padding: EdgeInsets.symmetric(horizontal: 8),
+                                                      decoration: BoxDecoration(
+                                                        borderRadius: BorderRadius.circular(4),
+                                                        color: Colors.green.shade700,
+                                                      ),
+                                                      alignment: Alignment.center,
+                                                      child: Row(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        children: [
+                                                          Icon(Icons.add_rounded, color: Colors.white),
+                                                          Text(
+                                                            " Qo'shish",
+                                                            style: TextTheme.of(context).titleSmall?.copyWith(
+                                                                  color: Colors.white,
+                                                                ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(height: 8),
+                                          ],
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Text.rich(
+                              TextSpan(
+                                text: "Jami summa: ",
+                                children: [
+                                  TextSpan(
+                                    text: "${00}",
                                     style: const TextStyle(
                                       fontSize: 14,
+                                      fontWeight: FontWeight.w600,
                                     ),
-                                    spellOut: true,
                                   ),
+                                  const TextSpan(
+                                    text: "\$",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                                style: const TextStyle(
+                                  fontSize: 14,
                                 ),
-                              ],
+                                spellOut: true,
+                              ),
                             ),
                           ],
                         ),

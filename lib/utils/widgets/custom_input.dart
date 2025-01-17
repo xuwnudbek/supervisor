@@ -16,6 +16,7 @@ class CustomInput extends StatefulWidget {
     this.onTrailingTap,
     this.onEnter,
     this.lines,
+    this.borderRadius,
     super.key,
   });
 
@@ -31,6 +32,7 @@ class CustomInput extends StatefulWidget {
   final Widget? trailing;
   final Function? onTrailingTap;
   final Function? onEnter;
+  final BorderRadius? borderRadius;
 
   @override
   State<CustomInput> createState() => _CustomInputState();
@@ -64,7 +66,7 @@ class _CustomInputState extends State<CustomInput> {
         height: widget.size ?? 50,
         decoration: BoxDecoration(
           color: widget.color ?? secondary.withValues(alpha: 0.8),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: widget.borderRadius ?? BorderRadius.circular(8),
         ),
         alignment: Alignment.center,
         padding: EdgeInsets.symmetric(horizontal: 1),
@@ -73,12 +75,15 @@ class _CustomInputState extends State<CustomInput> {
           children: [
             Expanded(
               child: TextFormField(
+                focusNode: focusNode, // Fokus tugmasi ulandi
                 controller: widget.controller,
                 inputFormatters: widget.formatters ?? [],
+                textInputAction: TextInputAction.done,
                 onFieldSubmitted: (_) {
                   widget.onEnter?.call();
-                  focusNode.attach(context);
+                  focusNode.requestFocus();
                 },
+                maxLines: widget.lines,
                 decoration: InputDecoration(
                   floatingLabelAlignment: FloatingLabelAlignment.start,
                   contentPadding: widget.padding ?? EdgeInsets.symmetric(horizontal: 16, vertical: 0.0),
@@ -99,7 +104,7 @@ class _CustomInputState extends State<CustomInput> {
                   hoverColor: primary,
                   hintText: widget.hint,
                   hintStyle: TextStyle(
-                    color: dark.withValues(alpha: 0.3),
+                    color: dark.withValues(alpha: 0.35),
                   ),
                 ),
                 cursorHeight: 20,
@@ -119,7 +124,7 @@ class _CustomInputState extends State<CustomInput> {
                     child: widget.trailing!,
                   ),
                 ),
-              )
+              ),
           ],
         ),
       ),

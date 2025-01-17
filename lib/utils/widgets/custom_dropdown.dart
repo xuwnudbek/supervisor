@@ -11,6 +11,7 @@ class CustomDropdown extends StatefulWidget {
     this.onChanged,
     this.value,
     this.size,
+    this.borderRadius,
     this.color,
     super.key,
   });
@@ -23,6 +24,7 @@ class CustomDropdown extends StatefulWidget {
   final dynamic value;
   final void Function(dynamic)? onChanged;
   final double? size;
+  final BorderRadius? borderRadius;
   final Color? color;
 
   @override
@@ -39,7 +41,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
         height: widget.size ?? 50,
         decoration: BoxDecoration(
           color: widget.color ?? secondary.withValues(alpha: 0.8),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: widget.borderRadius ?? BorderRadius.circular(8),
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
