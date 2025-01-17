@@ -1,10 +1,11 @@
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:supervisor/services/storage_service.dart';
 import 'package:supervisor/ui/auth/login_page.dart';
 import 'package:supervisor/ui/home_page.dart';
-import 'package:supervisor/utils/rgb.dart';
+import 'package:supervisor/utils/themes/app_colors.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -18,7 +19,7 @@ class _SplashPageState extends State<SplashPage> {
     await Future.delayed(const Duration(milliseconds: 0));
 
     String token = StorageService.read('token') ?? '';
-    dynamic user = StorageService.read('user') ?? {};
+    Map user = StorageService.read('user') ?? {};
 
     bool isLogged = token.isNotEmpty && user.isNotEmpty;
 

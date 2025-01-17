@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supervisor/ui/color/provider/color_provider.dart';
-import 'package:supervisor/utils/rgb.dart';
+import 'package:supervisor/utils/themes/app_colors.dart';
 import 'package:supervisor/utils/widgets/custom_color_picker.dart';
 import 'package:supervisor/utils/widgets/custom_dialog.dart';
 import 'package:supervisor/utils/widgets/custom_input.dart';
@@ -41,7 +41,8 @@ class _AddModelState extends State<AddColor> {
 
   void addNewColor() {
     if (colors.last['name'].text.isEmpty || colors.last['hex'].isEmpty) {
-      CustomSnackbars(context).warning("Malumotlar to'liq kiritilganini tekshiring!");
+      CustomSnackbars(context)
+          .warning("Malumotlar to'liq kiritilganini tekshiring!");
       return;
     }
 
@@ -149,7 +150,8 @@ class _AddModelState extends State<AddColor> {
             TextButton(
               onPressed: () async {
                 if (colors.length == 1 && colors.first['name'].text.isEmpty) {
-                  CustomSnackbars(context).error("Iltimos, rang nomini kiriting");
+                  CustomSnackbars(context)
+                      .error("Iltimos, rang nomini kiriting");
                   return;
                 }
 
@@ -165,7 +167,8 @@ class _AddModelState extends State<AddColor> {
                 }
 
                 for (var color in colors) {
-                  if (color['name'].text.isNotEmpty && color['hex'].isNotEmpty) {
+                  if (color['name'].text.isNotEmpty &&
+                      color['hex'].isNotEmpty) {
                     await provider.createColor({
                       "name": color['name'].text,
                       "hex": color['hex'],

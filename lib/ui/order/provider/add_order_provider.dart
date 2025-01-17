@@ -1,229 +1,173 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:supervisor/services/http_service.dart';
 import 'package:supervisor/ui/order/provider/order_provider.dart';
-import 'package:supervisor/utils/extensions/map_extension.dart';
-import 'package:supervisor/utils/extensions/string_extension.dart';
 import 'package:supervisor/utils/widgets/custom_snackbars.dart';
 
 class AddOrderProvider extends ChangeNotifier {
-  final TextEditingController orderRasxodController = TextEditingController();
-  List orderModels = [];
-
   final TextEditingController orderNameController = TextEditingController();
-  final TextEditingController orderQuantityController = TextEditingController();
+  final TextEditingController orderRasxodController = TextEditingController();
 
-  DateTime? _startDate;
-  DateTime? get startDate => _startDate;
-  set startDate(DateTime? startDate) {
-    _startDate = startDate;
-    notifyListeners();
-  }
-
-  DateTime? _endDate;
-  DateTime? get endDate => _endDate;
-  set endDate(DateTime? endDate) {
-    _endDate = endDate;
-    notifyListeners();
-  }
+  final TextEditingController instructionTitleController = TextEditingController();
+  final TextEditingController instructionBodyController = TextEditingController();
 
   List models = [];
+  List submodels = [];
+  List sizes = [];
+  List contragents = [];
 
-  // Selected models's recipes
-  List recipeData = [];
+  List selectedSubmodels = [];
+  List selectedSizes = [];
+  List<Map> instructions = [];
 
-  // Models
-  Map? _selectedModel;
-  Map? get selectedModel => _selectedModel;
-  set selectedModel(Map? value) {
-    _selectedModel = value;
-    selectedSubModel = {};
-    selectedSize = {};
-    selectedModelColor = {};
-
-    notifyListeners();
-  }
-
-  Map? _selectedSubModel;
-  Map? get selectedSubModel => _selectedSubModel;
-  set selectedSubModel(Map? value) {
-    _selectedSubModel = value;
-    selectedSize = {};
-    selectedModelColor = {};
-    notifyListeners();
-  }
-
-  Map? _selectedSize;
-  Map? get selectedSize => _selectedSize;
-  set selectedSize(Map? value) {
-    _selectedSize = value;
-    notifyListeners();
-  }
-
-  Map? _selectedModelColor;
-  Map? get selectedModelColor => _selectedModelColor;
-  set selectedModelColor(Map? value) {
-    _selectedModelColor = value;
-    notifyListeners();
-  }
-
-  final TextEditingController quantityController = TextEditingController();
+  // Private Fields
+  List<DateTime> _deadline = [];
+  Map _selectedModel = {};
+  Map _selectedContragent = {};
 
   bool _isLoading = false;
+  bool _isCreatingOrder = false;
+
+  // Getters and Setters
+  List<DateTime> get deadline => _deadline;
+  set deadline(List<DateTime> value) {
+    _deadline = value;
+    notifyListeners();
+  }
+
+  // Models
+  Map get selectedModel => _selectedModel;
+  set selectedModel(Map value) {
+    _selectedModel = value;
+
+    selectedSubmodels.clear();
+    selectedSizes.clear();
+
+    submodels = value['submodels'] ?? [];
+    sizes = value['sizes'] ?? [];
+    notifyListeners();
+  }
+
+  // Models
+  Map get selectedContragent => _selectedContragent;
+  set selectedContragent(Map value) {
+    _selectedContragent = value;
+
+    selectedSubmodels.clear();
+
+    submodels = value['submodels'] ?? [];
+    notifyListeners();
+  }
+
   bool get isLoading => _isLoading;
   set isLoading(value) {
     _isLoading = value;
     notifyListeners();
   }
 
-  AddOrderProvider(OrderProvider orderProvider) {
-    models = orderProvider.models;
-  }
-
-  bool _isAddingModelToOrder = false;
-  bool get isAddingModelToOrder => _isAddingModelToOrder;
-  set isAddingModelToOrder(value) {
-    _isAddingModelToOrder = value;
-    notifyListeners();
-  }
-
-  Future<void> addModelToOrder(BuildContext context) async {
-    if (selectedModel.isEmptyOrNull ||
-        selectedSubModel.isEmptyOrNull ||
-        selectedSize.isEmptyOrNull ||
-        selectedModelColor.isEmptyOrNull) {
-      CustomSnackbars(context)
-          .warning("Iltimos, barcha maydonlarni to'ldiring");
-      return;
-    }
-
-    if (quantityController.text.isNotValidNumber) {
-      CustomSnackbars(context).warning("Iltimos, to'g'ri miqdor belgilang!");
-      return;
-    }
-
-    isAddingModelToOrder = true;
-
-    Map data = selectedModel!;
-    data.addAll({"submodel": selectedSubModel} as Map);
-    data.addAll({'size': selectedSize} as Map);
-    data.addAll({'model_color': selectedModelColor} as Map);
-    data.addAll({'quantity': quantityController.text} as Map);
-
-    // bool hasRecipe = await getRecipe(selectedModelColor!['id'], selectedSize!['id']);
-
-    orderModels.add(Map.from(data));
-    quantityController.clear();
-    notifyListeners();
-
-    isAddingModelToOrder = false;
-  }
-
-  bool _isCreatingOrder = false;
   bool get isCreatingOrder => _isCreatingOrder;
   set isCreatingOrder(value) {
     _isCreatingOrder = value;
     notifyListeners();
   }
 
-  Future<void> createOrder(BuildContext context) async {
-    if (orderNameController.text.isEmpty ||
-        orderQuantityController.text.isNotValidNumber ||
-        startDate == null ||
-        endDate == null ||
-        orderModels.isEmpty) {
-      CustomSnackbars(context)
-          .warning("Barcha maydonlar to'ldirilganini tekshiring!");
-      return;
-    }
-
-    if (orderRasxodController.text.isEmpty) {
-      CustomSnackbars(context).warning("Iltimos, rasxodni kiriting!");
-      return;
-    }
-
-    isCreatingOrder = true;
-
-    Map<String, dynamic> data = {
-      "name": orderNameController.text,
-      "quantity": orderQuantityController.text,
-      "start_date": startDate!.toIso8601String().split("T").first,
-      "end_date": endDate!.toIso8601String().split("T").first,
-      "models": orderModels,
-      "rasxod": orderRasxodController.text,
-    };
-
-    var res = await HttpService.post(order, data);
-
-    if (res['status'] == Result.success) {
-      CustomSnackbars(context).success("Buyurtma muvofaqqiyatli yaratildi!");
-      clearAllField();
-    } else {
-      CustomSnackbars(context)
-          .error("Buyurtmani yaratishda xatolik yuz berdi!");
-    }
-
-    isCreatingOrder = false;
+  AddOrderProvider(OrderProvider orderProvider) {
+    models = orderProvider.models;
+    contragents = orderProvider.contragents;
   }
 
-  bool _isGettingRecipes = false;
-  bool get isGettingRecipes => _isGettingRecipes;
-  set isGettingRecipes(value) {
-    _isGettingRecipes = value;
+  void selectSubmodel(value) {
+    selectedSubmodels.add(value);
     notifyListeners();
   }
 
-  Future<bool> getRecipe(modelColorId, sizeId) async {
-    isGettingRecipes = true;
+  void removeSelectedSubmodel(value) {
+    selectedSubmodels.remove(value);
+    notifyListeners();
+  }
 
-    var res = await HttpService.get(showRecipe, param: {
-      "model_color_id": modelColorId.toString(),
-      "size_id": sizeId.toString(),
-    });
+  void selectSize(value) {
+    selectedSizes.add(value);
+    notifyListeners();
+  }
 
-    isGettingRecipes = false;
+  void removeSelectedSize(value) {
+    selectedSizes.remove(value);
+    notifyListeners();
+  }
 
-    if (res['status'] == Result.success) {
-      inspect(res['data']);
-      recipeData.add(res['data'] ?? {});
-      recipeData.removeWhere((element) => element?.isEmpty ?? true);
-      notifyListeners();
+  void addInstruction(BuildContext context) {
+    String title = instructionTitleController.text.trim();
+    String body = instructionBodyController.text.trim();
 
-      return true;
+    if (title.isEmpty || body.isEmpty) {
+      CustomSnackbars(context).warning("Instruksiyani to'liq kiriting!");
+      return;
     }
 
-    return false;
+    if (instructions.isNotEmpty && instructions.where((e) => e['title'] == title).isNotEmpty) {
+      CustomSnackbars(context).warning("Bunday instruksiya mavjud");
+      return;
+    }
+
+    instructionTitleController.clear();
+    instructionBodyController.clear();
+
+    instructions.add({
+      "title": title,
+      "body": body,
+    });
+
+    instructions = instructions.reversed.toList();
+    notifyListeners();
+  }
+
+  void removeInstruction(Map value) {
+    instructions.remove(value);
+    notifyListeners();
+  }
+
+  Future<void> createOrder(BuildContext context) async {
+    // if (orderNameController.text.isEmpty || orderQuantityController.text.isNotValidNumber || startDate == null || endDate == null || orderModels.isEmpty) {
+    //   CustomSnackbars(context).warning("Barcha maydonlar to'ldirilganini tekshiring!");
+    //   return;
+    // }
+
+    // if (orderRasxodController.text.isEmpty) {
+    //   CustomSnackbars(context).warning("Iltimos, rasxodni kiriting!");
+    //   return;
+    // }
+
+    // isCreatingOrder = true;
+
+    // Map<String, dynamic> data = {
+    //   "name": orderNameController.text,
+    //   "quantity": orderQuantityController.text,
+    //   "start_date": startDate!.toIso8601String().split("T").first,
+    //   "end_date": endDate!.toIso8601String().split("T").first,
+    //   "models": orderModels,
+    //   "rasxod": orderRasxodController.text,
+    // };
+
+    // var res = await HttpService.post(order, data);
+
+    // if (res['status'] == Result.success) {
+    //   CustomSnackbars(context).success("Buyurtma muvofaqqiyatli yaratildi!");
+    //   clearAllField();
+    // } else {
+    //   CustomSnackbars(context).error("Buyurtmani yaratishda xatolik yuz berdi!");
+    // }
+
+    // isCreatingOrder = false;
   }
 
   void clearAllField() {
-    orderNameController.clear();
-    orderQuantityController.clear();
-    startDate = null;
-    endDate = null;
-    orderModels = [];
-    selectedModel = null;
-    selectedSubModel = null;
-    selectedSize = null;
-    selectedModelColor = null;
-    quantityController.clear();
-
-    recipeData.clear();
-    orderRasxodController.clear();
     notifyListeners();
   }
 
   void clearDropDowns() {
-    selectedModel = null;
-    selectedSubModel = null;
-    selectedSize = null;
-    selectedModelColor = null;
-    quantityController.clear();
+    notifyListeners();
   }
 
   void removeModelInOrder(Map model) {
-    int index = orderModels.indexOf(model);
-    orderModels.removeAt(index);
     notifyListeners();
   }
 }

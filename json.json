@@ -1,14 +1,12 @@
-[
-    {
-        "title": "Olma",
-        "quantity": 10
-    },
-    {
-        "title": "Behi",
-        "quantity": 5
-    },
-    {
-        "title": "Anor",
-        "quantity": 7
-    }
-]
+{
+    "name": "Prezident",
+    "rasxod": 0.3,
+    "sizes": [],
+    "submodels": [
+        "Kastyum",
+        "Shim"
+    ],
+    "images": [
+        "C:\\Users\\xuwnudbek\\Downloads\\image.png"
+    ]
+}

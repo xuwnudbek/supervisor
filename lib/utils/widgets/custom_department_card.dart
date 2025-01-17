@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../rgb.dart';
+import '../themes/app_colors.dart';
 
 class CustomDepartmentCard extends StatelessWidget {
   const CustomDepartmentCard({
@@ -87,7 +87,8 @@ class CustomDepartmentCard extends StatelessWidget {
                       children: [
                         ...(department['groups'] ?? []).map((group) {
                           return Container(
-                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 4),
                             decoration: BoxDecoration(
                               color: primary.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(4),

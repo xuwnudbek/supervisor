@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:supervisor/services/http_service.dart';
 import 'package:supervisor/utils/extensions/num_extension.dart';
@@ -71,7 +69,9 @@ class OrderDetailProvider extends ChangeNotifier {
     if (response['status'] == Result.success) {
       orderData = response['data'];
       if (expansionTileControllers.isEmpty) {
-        expansionTileControllers = List.generate(orderData['order_models'].length, (index) => ExpansionTileController());
+        expansionTileControllers = List.generate(
+            orderData['order_models'].length,
+            (index) => ExpansionTileController());
         notifyListeners();
       }
 
@@ -120,7 +120,8 @@ class OrderDetailProvider extends ChangeNotifier {
               children: [
                 TableCell(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     child: Center(
                       child: Text(
                         '${index + 1}',
@@ -134,7 +135,8 @@ class OrderDetailProvider extends ChangeNotifier {
                 ),
                 TableCell(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     child: Text(
                       '${recipe['item']['name']}',
                       style: const TextStyle(
@@ -146,7 +148,8 @@ class OrderDetailProvider extends ChangeNotifier {
                 ),
                 TableCell(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -163,7 +166,8 @@ class OrderDetailProvider extends ChangeNotifier {
                 ),
                 TableCell(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -186,7 +190,8 @@ class OrderDetailProvider extends ChangeNotifier {
                 ),
                 TableCell(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -207,7 +212,8 @@ class OrderDetailProvider extends ChangeNotifier {
         }
       }
 
-      innerTotalPrice = innerTotalPrice + double.parse("${orderModel['total_rasxod']}");
+      innerTotalPrice =
+          innerTotalPrice + double.parse("${orderModel['total_rasxod']}");
 
       orderModels.add({
         'order_model': orderModel,

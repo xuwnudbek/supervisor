@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:supervisor/utils/rgb.dart';
+import 'package:supervisor/utils/themes/app_colors.dart';
 
 class CustomDialog extends StatefulWidget {
   const CustomDialog({

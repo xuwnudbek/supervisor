@@ -1,7 +1,7 @@
 import 'package:get_storage/get_storage.dart';
 
 class StorageService {
-  static final GetStorage _storage = GetStorage();
+  static final GetStorage _storage = GetStorage("supervisor");
 
   static Future<void> write(String key, dynamic value) async {
     await _storage.write(key, value);

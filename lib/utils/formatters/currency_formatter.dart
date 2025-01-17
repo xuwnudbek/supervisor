@@ -8,6 +8,10 @@ class CurrencyInputFormatter extends TextInputFormatter {
   ) {
     String newText = newValue.text;
 
+    if (newText.contains(RegExp(r'[a-z]', caseSensitive: true))) {
+      return oldValue;
+    }
+
     if (newText.isEmpty) {
       return const TextEditingValue(
         text: '',

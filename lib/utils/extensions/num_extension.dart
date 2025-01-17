@@ -5,7 +5,8 @@ extension IntegerExtension on num {
     if (runtimeType == int) {
       String leftSide = toString();
 
-      leftSide = leftSide.replaceAllMapped(RegExp(r'(\d)(?=(\d{3})+(?!\d))'), (Match match) {
+      leftSide = leftSide.replaceAllMapped(RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
+          (Match match) {
         return "${match.group(1)},";
       });
 
@@ -20,7 +21,8 @@ extension IntegerExtension on num {
       String rightSide = parts[1]; // Kasr qismi
 
       // Har uch raqamdan keyin vergul qo'shish
-      leftSide = leftSide.replaceAllMapped(RegExp(r'(\d)(?=(\d{3})+(?!\d))'), (Match match) {
+      leftSide = leftSide.replaceAllMapped(RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
+          (Match match) {
         return "${match.group(1)},";
       });
 

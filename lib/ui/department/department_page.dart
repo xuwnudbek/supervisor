@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:supervisor/ui/department/pages/add_department.dart';
 import 'package:supervisor/ui/department/provider/department_provider.dart';
-import 'package:supervisor/utils/rgb.dart';
+import 'package:supervisor/utils/themes/app_colors.dart';
 import 'package:supervisor/utils/widgets/custom_department_card.dart';
 
 class DepartmentPage extends StatefulWidget {
@@ -96,9 +96,15 @@ class _DepartmentPageState extends State<DepartmentPage> {
                                             provider.departments.length,
                                             (index) => CustomDepartmentCard(
                                               index: index,
-                                              department: provider.departments[index],
+                                              department:
+                                                  provider.departments[index],
                                               onTap: () async {
-                                                await Get.to(() => AddDepartment(department: provider.departments[index]))?.then((value) {
+                                                await Get.to(() =>
+                                                    AddDepartment(
+                                                        department: provider
+                                                                .departments[
+                                                            index]))?.then(
+                                                    (value) {
                                                   if (value) {
                                                     provider.initialize();
                                                   }

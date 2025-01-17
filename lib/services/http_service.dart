@@ -25,6 +25,7 @@ String userMaster = "/users/master";
 String userSubMaster = "/users/submaster";
 String warehouseUrl = "/warehouses";
 String group = "/groups";
+String contragent = "/contragents";
 
 class HttpService {
   static Future<Map<String, dynamic>> get(
@@ -219,6 +220,7 @@ class HttpService {
     required Map<String, dynamic> body,
     String method = 'post',
   }) async {
+    print(body);
     try {
       Map<String, String> headers = {
         'Content-Type': 'multipart/form-data',

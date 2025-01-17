@@ -1,57 +1,126 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:supervisor/utils/rgb.dart';
+import 'package:supervisor/utils/themes/app_colors.dart';
 
 class CustomInput extends StatefulWidget {
   const CustomInput({
     this.controller,
     this.hint,
+    this.tooltip,
     this.formatters,
     this.onChanged,
     this.size,
     this.padding,
     this.color,
+    this.trailing,
+    this.onTrailingTap,
+    this.onEnter,
+    this.lines,
     super.key,
   });
 
   final String? hint;
+  final String? tooltip;
   final TextEditingController? controller;
   final List<TextInputFormatter>? formatters;
   final void Function(dynamic)? onChanged;
   final double? size;
+  final int? lines;
   final EdgeInsetsGeometry? padding;
   final Color? color;
+  final Widget? trailing;
+  final Function? onTrailingTap;
+  final Function? onEnter;
 
   @override
   State<CustomInput> createState() => _CustomInputState();
 }
 
 class _CustomInputState extends State<CustomInput> {
+  bool _hasHover = false;
+  bool _hasFocus = false;
+
+  bool get hasHover => _hasHover;
+  set hasHover(value) {
+    setState(() {
+      _hasHover = value;
+    });
+  }
+
+  bool get hasFocus => _hasFocus;
+  set hasFocus(value) {
+    setState(() {
+      _hasFocus = value;
+    });
+  }
+
+  final FocusNode focusNode = FocusNode();
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: widget.size ?? 50,
-      decoration: BoxDecoration(
-        color: widget.color ?? secondary.withValues(alpha: 0.8),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      alignment: Alignment.center,
-      child: Padding(
-        padding: widget.padding ?? const EdgeInsets.symmetric(horizontal: 16),
-        child: TextField(
-          controller: widget.controller,
-          inputFormatters: widget.formatters ?? [],
-          decoration: InputDecoration(
-            floatingLabelAlignment: FloatingLabelAlignment.start,
-            contentPadding: EdgeInsets.zero,
-            border: InputBorder.none,
-            hintText: widget.hint,
-            hintStyle: TextStyle(
-              color: dark.withValues(alpha: 0.5),
+    return Tooltip(
+      message: widget.tooltip ?? "",
+      child: Container(
+        height: widget.size ?? 50,
+        decoration: BoxDecoration(
+          color: widget.color ?? secondary.withValues(alpha: 0.8),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        alignment: Alignment.center,
+        padding: EdgeInsets.symmetric(horizontal: 1),
+        child: Row(
+          spacing: 8,
+          children: [
+            Expanded(
+              child: TextFormField(
+                controller: widget.controller,
+                inputFormatters: widget.formatters ?? [],
+                onFieldSubmitted: (_) {
+                  widget.onEnter?.call();
+                  focusNode.attach(context);
+                },
+                decoration: InputDecoration(
+                  floatingLabelAlignment: FloatingLabelAlignment.start,
+                  contentPadding: widget.padding ?? EdgeInsets.symmetric(horizontal: 16, vertical: 0.0),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      color: Colors.grey.shade200,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      color: primary,
+                      width: 1.5,
+                    ),
+                  ),
+                  focusColor: primary,
+                  hoverColor: primary,
+                  hintText: widget.hint,
+                  hintStyle: TextStyle(
+                    color: dark.withValues(alpha: 0.3),
+                  ),
+                ),
+                cursorHeight: 20,
+                onChanged: widget.onChanged,
+              ),
             ),
-          ),
-          cursorHeight: 20,
-          onChanged: widget.onChanged,
+            if (widget.trailing != null)
+              Padding(
+                padding: EdgeInsets.only(right: 8),
+                child: InkWell(
+                  radius: 100,
+                  onTap: () {
+                    widget.onTrailingTap?.call();
+                  },
+                  child: SizedBox.square(
+                    dimension: 24,
+                    child: widget.trailing!,
+                  ),
+                ),
+              )
+          ],
         ),
       ),
     );

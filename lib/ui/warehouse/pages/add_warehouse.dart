@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supervisor/services/http_service.dart';
 import 'package:supervisor/ui/warehouse/provider/warehouse_provider.dart';
-import 'package:supervisor/utils/rgb.dart';
+import 'package:supervisor/utils/themes/app_colors.dart';
 import 'package:supervisor/utils/widgets/custom_dialog.dart';
 import 'package:supervisor/utils/widgets/custom_input.dart';
 import 'package:supervisor/utils/widgets/custom_snackbars.dart';

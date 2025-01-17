@@ -25,7 +25,8 @@ class AuthProvider extends ChangeNotifier {
       await StorageService.write('token', res['data']['token']);
       await StorageService.write('user', res['data']['user']);
 
-      CustomSnackbars(context).success('Tizimga kirish muvaffaqiyatli amalga oshirildi');
+      CustomSnackbars(context)
+          .success('Tizimga kirish muvaffaqiyatli amalga oshirildi');
 
       isLoading = false;
       notifyListeners();

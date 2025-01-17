@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:supervisor/ui/department/provider/add_department_provider.dart';
-import 'package:supervisor/utils/rgb.dart';
+import 'package:supervisor/utils/themes/app_colors.dart';
 import 'package:supervisor/utils/widgets/custom_dialog.dart';
 import 'package:supervisor/utils/widgets/custom_dropdown.dart';
 import 'package:supervisor/utils/widgets/custom_input.dart';
@@ -82,8 +82,11 @@ class AddDepartment extends StatelessWidget {
                       child: SingleChildScrollView(
                         child: Column(
                           children: [
-                            ...(provider.departmentData['groups'] ?? []).map((group) {
-                              int index = (provider.departmentData['groups'] ?? []).indexOf(group);
+                            ...(provider.departmentData['groups'] ?? [])
+                                .map((group) {
+                              int index =
+                                  (provider.departmentData['groups'] ?? [])
+                                      .indexOf(group);
 
                               return Row(
                                 children: [
@@ -102,19 +105,22 @@ class AddDepartment extends StatelessWidget {
                                           .map((e) => DropdownMenuItem(
                                                 value: e['id'],
                                                 child: Text(
-                                                  e['employee']['name'] ?? "Unknown",
+                                                  e['employee']['name'] ??
+                                                      "Unknown",
                                                 ),
                                               ))
                                           .toList(),
                                       onChanged: (value) {
-                                        provider.onSelectSubMaster(value, index);
+                                        provider.onSelectSubMaster(
+                                            value, index);
                                       },
                                     ),
                                   ),
                                   SizedBox(width: 8),
                                   IconButton(
                                     style: IconButton.styleFrom(
-                                      backgroundColor: danger.withValues(alpha: 0.1),
+                                      backgroundColor:
+                                          danger.withValues(alpha: 0.1),
                                       foregroundColor: danger,
                                     ),
                                     onPressed: () {
@@ -158,7 +164,11 @@ class AddDepartment extends StatelessWidget {
                     TextButton(
                       onPressed: () async {
                         if ((department ?? {}).isNotEmpty) {
-                          await provider.createDepartment(context, isCreate: false, departmentId: department!['id']).then((value) {
+                          await provider
+                              .createDepartment(context,
+                                  isCreate: false,
+                                  departmentId: department!['id'])
+                              .then((value) {
                             if (value == true) {
                               Get.back(result: true);
                             }

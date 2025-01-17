@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supervisor/ui/razryad/provider/razryad_provider.dart';
-import 'package:supervisor/utils/rgb.dart';
+import 'package:supervisor/utils/themes/app_colors.dart';
 import 'package:supervisor/utils/widgets/custom_dialog.dart';
 import 'package:supervisor/utils/widgets/custom_input.dart';
 import 'package:supervisor/utils/widgets/custom_snackbars.dart';
@@ -31,7 +31,8 @@ class _AddModelState extends State<AddRazryad> {
   ];
 
   void addRazryad() {
-    if (razryads.last['name'].text.isEmpty || razryads.last['salary'].text.isEmpty) {
+    if (razryads.last['name'].text.isEmpty ||
+        razryads.last['salary'].text.isEmpty) {
       CustomSnackbars(context).error("Iltimos, barcha maydonlarni to'ldiring!");
       return;
     }
@@ -49,7 +50,8 @@ class _AddModelState extends State<AddRazryad> {
         razryads = [
           {
             "name": TextEditingController(text: widget.razryad!['name']),
-            "salary": TextEditingController(text: widget.razryad!['salary'].toString()),
+            "salary": TextEditingController(
+                text: widget.razryad!['salary'].toString()),
           }
         ];
       }
@@ -134,8 +136,10 @@ class _AddModelState extends State<AddRazryad> {
             const SizedBox(height: 16),
             TextButton(
               onPressed: () async {
-                if (razryads.first['name'].text.isEmpty || razryads.first['salary'].text.isEmpty) {
-                  CustomSnackbars(context).error("Iltimos, barcha maydonlarni to'ldiring!");
+                if (razryads.first['name'].text.isEmpty ||
+                    razryads.first['salary'].text.isEmpty) {
+                  CustomSnackbars(context)
+                      .error("Iltimos, barcha maydonlarni to'ldiring!");
                   return;
                 }
 

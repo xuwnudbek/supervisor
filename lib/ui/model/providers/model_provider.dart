@@ -80,8 +80,11 @@ class ModelProvider extends ChangeNotifier {
   Future<void> updateModel(int id, Map<String, dynamic> data) async {
     isUpdatingModel = true;
 
-    var res = await HttpService.uploadWithImages("$model/$id",
-        body: data, method: "patch");
+    var res = await HttpService.uploadWithImages(
+      "$model/$id",
+      body: data,
+      method: "patch",
+    );
 
     if (res['status'] == Result.success) {
       await getModels();

@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:supervisor/ui/model/pages/add_model.dart';
-import 'package:supervisor/ui/model/pages/model_details.dart';
 import 'package:supervisor/ui/model/providers/model_provider.dart';
-import 'package:supervisor/utils/RGB.dart';
+import 'package:supervisor/utils/themes/app_colors.dart';
 
 class ModelPage extends StatefulWidget {
   const ModelPage({super.key});
@@ -85,98 +84,13 @@ class _ModelPageState extends State<ModelPage> {
                                   children: provider.models.map((model) {
                                     int index = provider.models.indexOf(model);
 
-                                    return GestureDetector(
-                                      onTap: () {
-                                        Get.to(() => ModelDetails(modelData: model));
+                                    return _buildModelCard(
+                                      index: index,
+                                      model: model,
+                                      modelProvider: provider,
+                                      onPressed: () {
+                                        // Get.to(() => ModelDetails(modelData: model));
                                       },
-                                      child: Container(
-                                        padding: const EdgeInsets.only(left: 20, top: 8, right: 8, bottom: 8),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.circular(8),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.grey.shade200,
-                                              blurRadius: 10,
-                                              spreadRadius: 1,
-                                            ),
-                                          ],
-                                        ),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Text.rich(
-                                              TextSpan(
-                                                children: [
-                                                  TextSpan(
-                                                    text: "${index + 1}. ",
-                                                    style: TextStyle(
-                                                      fontSize: 18,
-                                                      color: primary,
-                                                      fontWeight: FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                  TextSpan(
-                                                    text: "${model['name']}",
-                                                    style: const TextStyle(
-                                                      fontSize: 16,
-                                                      color: Colors.black87,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            const SizedBox(width: 16),
-                                            PopupMenuButton(
-                                              itemBuilder: (context) {
-                                                return [
-                                                  const PopupMenuItem(
-                                                    value: "edit",
-                                                    child: Row(
-                                                      children: [
-                                                        Icon(Icons.edit),
-                                                        SizedBox(width: 8),
-                                                        Text("Tahrirlash"),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  PopupMenuItem(
-                                                    value: "delete",
-                                                    child: Row(
-                                                      children: [
-                                                        Icon(Icons.delete, color: danger),
-                                                        const SizedBox(width: 8),
-                                                        Text(
-                                                          "O'chirish",
-                                                          style: TextStyle(
-                                                            color: danger,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ];
-                                              },
-                                              tooltip: "Ko'proq",
-                                              onSelected: (value) {
-                                                if (value == "edit") {
-                                                  Get.to(() => AddModel(provider: provider, model: model));
-                                                } else if (value == "delete") {
-                                                  provider.deleteModel(model['id']);
-                                                }
-                                              },
-                                              color: Colors.white,
-                                              style: IconButton.styleFrom(
-                                                backgroundColor: Colors.white,
-                                              ),
-                                              icon: Icon(
-                                                Icons.more_vert,
-                                                color: primary,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
                                     );
                                   }).toList(),
                                 ),
@@ -187,6 +101,93 @@ class _ModelPageState extends State<ModelPage> {
             ),
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildModelCard({
+    required int index,
+    required Map model,
+    required ModelProvider modelProvider,
+    Function? onPressed,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        onPressed?.call();
+      },
+      child: Container(
+        padding: EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.shade200,
+              blurRadius: 10,
+              spreadRadius: 1,
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(width: 24),
+            Text(
+              "${model['name']}",
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(width: 8),
+            PopupMenuButton(
+              itemBuilder: (context) {
+                return [
+                  const PopupMenuItem(
+                    value: "edit",
+                    child: Row(
+                      children: [
+                        Icon(Icons.edit),
+                        SizedBox(width: 8),
+                        Text("Tahrirlash"),
+                      ],
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: "delete",
+                    child: Row(
+                      children: [
+                        Icon(Icons.delete, color: danger),
+                        const SizedBox(width: 8),
+                        Text(
+                          "O'chirish",
+                          style: TextStyle(
+                            color: danger,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ];
+              },
+              tooltip: "Ko'proq",
+              onSelected: (value) {
+                if (value == "edit") {
+                  Get.to(() => AddModel(provider: modelProvider, model: model));
+                } else if (value == "delete") {
+                  modelProvider.deleteModel(model['id']);
+                }
+              },
+              icon: Icon(
+                Icons.more_vert,
+                color: primary,
+              ),
+              style: IconButton.styleFrom(
+                backgroundColor: Colors.white,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

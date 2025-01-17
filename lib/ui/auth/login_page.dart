@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:supervisor/ui/auth/provider/auth_provider.dart';
 import 'package:supervisor/ui/home_page.dart';
-import 'package:supervisor/utils/rgb.dart';
+import 'package:supervisor/utils/themes/app_colors.dart';
 import 'package:supervisor/utils/widgets/custom_input.dart';
 import 'package:supervisor/utils/widgets/custom_snackbars.dart';
 
@@ -58,7 +58,8 @@ class LoginPage extends StatelessWidget {
                     TextButton(
                       onPressed: () async {
                         if (provider.isLoading) return;
-                        if (provider.loginController.text.isEmpty || provider.passwordController.text.isEmpty) {
+                        if (provider.loginController.text.isEmpty ||
+                            provider.passwordController.text.isEmpty) {
                           CustomSnackbars(context).warning(
                             'Iltimos, login va parolni kiriting',
                           );
@@ -77,7 +78,8 @@ class LoginPage extends StatelessWidget {
                                   width: 24,
                                   height: 24,
                                   child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white),
                                   ),
                                 ),
                               ]

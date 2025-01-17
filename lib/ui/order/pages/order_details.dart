@@ -1,12 +1,10 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:supervisor/ui/order/provider/order_detail_provider.dart';
 import 'package:supervisor/utils/extensions/num_extension.dart';
-import 'package:supervisor/utils/rgb.dart';
+import 'package:supervisor/utils/themes/app_colors.dart';
 import 'package:supervisor/utils/widgets/custom_divider.dart';
 import 'package:supervisor/utils/widgets/custom_dotted_widget.dart';
 import 'package:supervisor/utils/widgets/custom_dropdown.dart';

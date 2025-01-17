@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:supervisor/ui/color/pages/add_color.dart';
 import 'package:supervisor/ui/color/provider/color_provider.dart';
-import 'package:supervisor/utils/RGB.dart';
+import 'package:supervisor/utils/themes/app_colors.dart';
 import 'package:supervisor/utils/extensions/string_extension.dart';
 import 'package:supervisor/utils/widgets/custom_dialog.dart';
 
@@ -51,7 +51,8 @@ class _ColorPageState extends State<ColorPage> {
                       color: primary,
                       icon: const Icon(Icons.add),
                       onPressed: () async {
-                        var res = await Get.to(() => AddColor(provider: provider));
+                        var res =
+                            await Get.to(() => AddColor(provider: provider));
 
                         if (res ?? false) {
                           provider.initialize();
@@ -88,7 +89,11 @@ class _ColorPageState extends State<ColorPage> {
                                   runSpacing: 8,
                                   children: provider.colors.map((color) {
                                     return Container(
-                                      padding: const EdgeInsets.only(left: 20, top: 8, right: 8, bottom: 8),
+                                      padding: const EdgeInsets.only(
+                                          left: 20,
+                                          top: 8,
+                                          right: 8,
+                                          bottom: 8),
                                       decoration: BoxDecoration(
                                         color: Colors.white,
                                         borderRadius: BorderRadius.circular(8),
@@ -108,40 +113,62 @@ class _ColorPageState extends State<ColorPage> {
                                               onTap: () async {
                                                 await showDialog(
                                                   context: context,
-                                                  builder: (context) => CustomDialog(
+                                                  builder: (context) =>
+                                                      CustomDialog(
                                                     backIconColor: Colors.white,
                                                     child: Column(
-                                                      mainAxisSize: MainAxisSize.min,
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
                                                       children: [
                                                         Row(
-                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
                                                           children: [
                                                             Text(
                                                               "${color['name']}",
-                                                              style: const TextStyle(
+                                                              style:
+                                                                  const TextStyle(
                                                                 fontSize: 16,
-                                                                color: Colors.black87,
-                                                                fontWeight: FontWeight.bold,
+                                                                color: Colors
+                                                                    .black87,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
                                                               ),
                                                             ),
-                                                            const SizedBox(width: 8),
+                                                            const SizedBox(
+                                                                width: 8),
                                                             SelectableText(
                                                               "#${color['hex']}",
-                                                              style: const TextStyle(
+                                                              style:
+                                                                  const TextStyle(
                                                                 fontSize: 16,
-                                                                color: Colors.black87,
+                                                                color: Colors
+                                                                    .black87,
                                                               ),
                                                             ),
                                                           ],
                                                         ),
-                                                        const SizedBox(height: 16),
+                                                        const SizedBox(
+                                                            height: 16),
                                                         Container(
                                                           height: 100,
-                                                          padding: const EdgeInsets.all(16),
-                                                          decoration: BoxDecoration(
-                                                            border: Border.all(color: Colors.grey),
-                                                            color: color['hex'].toString().toHEXColor,
-                                                            borderRadius: BorderRadius.circular(8),
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(16),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            border: Border.all(
+                                                                color: Colors
+                                                                    .grey),
+                                                            color: color['hex']
+                                                                .toString()
+                                                                .toHEXColor,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
                                                           ),
                                                         ),
                                                       ],
@@ -153,9 +180,14 @@ class _ColorPageState extends State<ColorPage> {
                                                 dimension: 32,
                                                 child: DecoratedBox(
                                                   decoration: BoxDecoration(
-                                                    color: color['hex'].toString().toHEXColor,
-                                                    borderRadius: BorderRadius.circular(32),
-                                                    border: Border.all(color: Colors.grey),
+                                                    color: color['hex']
+                                                        .toString()
+                                                        .toHEXColor,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            32),
+                                                    border: Border.all(
+                                                        color: Colors.grey),
                                                   ),
                                                 ),
                                               ),
@@ -186,7 +218,8 @@ class _ColorPageState extends State<ColorPage> {
                                                   value: "delete",
                                                   child: Row(
                                                     children: [
-                                                      Icon(Icons.delete, color: danger),
+                                                      Icon(Icons.delete,
+                                                          color: danger),
                                                       const SizedBox(width: 8),
                                                       Text(
                                                         "O'chirish",
@@ -202,9 +235,12 @@ class _ColorPageState extends State<ColorPage> {
                                             tooltip: "Ko'proq",
                                             onSelected: (value) {
                                               if (value == "edit") {
-                                                Get.to(() => AddColor(provider: provider, color: color));
+                                                Get.to(() => AddColor(
+                                                    provider: provider,
+                                                    color: color));
                                               } else if (value == "delete") {
-                                                provider.deleteColor(color['id']);
+                                                provider
+                                                    .deleteColor(color['id']);
                                               }
                                             },
                                             color: Colors.white,

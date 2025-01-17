@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:supervisor/services/http_service.dart';
 import 'package:supervisor/ui/model/providers/model_details_provider.dart';
-import 'package:supervisor/utils/rgb.dart';
+import 'package:supervisor/utils/themes/app_colors.dart';
 import 'package:supervisor/utils/widgets/custom_dialog.dart';
 import 'package:supervisor/utils/widgets/custom_dropdown.dart';
 import 'package:supervisor/utils/widgets/custom_input.dart';
@@ -102,7 +102,8 @@ class _AddRecipeState extends State<AddRecipe> {
                               return DropdownMenuItem(
                                 enabled: recipe.isNotEmpty
                                     ? false
-                                    : selectedItems.any((element) => element['item']['id'] == item['id'])
+                                    : selectedItems.any((element) =>
+                                            element['item']['id'] == item['id'])
                                         ? false
                                         : true,
                                 value: item['id'],
@@ -114,7 +115,9 @@ class _AddRecipeState extends State<AddRecipe> {
                             }).toList(),
                             value: selectedItem['item']?['id'],
                             onChanged: (value) {
-                              Map changedItem = items.firstWhereOrNull((element) => element?['id'] == value) ?? {};
+                              Map changedItem = items.firstWhereOrNull(
+                                      (element) => element?['id'] == value) ??
+                                  {};
                               selectedItems[index]['item'] = changedItem;
                               selectedItems[index]['quantity'].text = "";
                               setState(() {});
@@ -144,7 +147,12 @@ class _AddRecipeState extends State<AddRecipe> {
                               ),
                               alignment: Alignment.center,
                               child: Text(
-                                recipe.isNotEmpty ? selectedItems.first?['item']?['unit']['name'] ?? "" : selectedItem['item']?['unit']?['name'] ?? "",
+                                recipe.isNotEmpty
+                                    ? selectedItems.first?['item']?['unit']
+                                            ['name'] ??
+                                        ""
+                                    : selectedItem['item']?['unit']?['name'] ??
+                                        "",
                                 style: TextStyle(
                                   color: dark.withValues(alpha: 0.5),
                                   fontWeight: FontWeight.bold,
@@ -159,8 +167,12 @@ class _AddRecipeState extends State<AddRecipe> {
                             IconButton(
                               icon: const Icon(Icons.add),
                               onPressed: () {
-                                if (selectedItems.last['item'] == null || selectedItems.last['quantity'].text.trim().isEmpty) {
-                                  CustomSnackbars(context).warning("Barcha maydonlarni to'ldiring");
+                                if (selectedItems.last['item'] == null ||
+                                    selectedItems.last['quantity'].text
+                                        .trim()
+                                        .isEmpty) {
+                                  CustomSnackbars(context)
+                                      .warning("Barcha maydonlarni to'ldiring");
                                   return;
                                 }
 
@@ -207,7 +219,9 @@ class _AddRecipeState extends State<AddRecipe> {
                           ),
                         )
                       : Text(
-                          recipe.isNotEmpty ? "O'zgartirish" : "Retseptni saqlash",
+                          recipe.isNotEmpty
+                              ? "O'zgartirish"
+                              : "Retseptni saqlash",
                         ),
                 ],
               ),
@@ -221,13 +235,16 @@ class _AddRecipeState extends State<AddRecipe> {
   Future<void> _addRecipe() async {
     isLoading = true;
 
-    if (selectedItems.length == 1 && (selectedItems.first['item'] == null || selectedItems.first['quantity'].text.trim().isEmpty)) {
+    if (selectedItems.length == 1 &&
+        (selectedItems.first['item'] == null ||
+            selectedItems.first['quantity'].text.trim().isEmpty)) {
       CustomSnackbars(context).warning("Kamida 1 ta mahsulot tanlang!");
       isLoading = false;
       return;
     }
 
-    selectedItems.removeWhere((element) => element['item'] == null || element['quantity'].text.trim().isEmpty);
+    selectedItems.removeWhere((element) =>
+        element['item'] == null || element['quantity'].text.trim().isEmpty);
 
     if (recipe.isNotEmpty) {
       await provider.editRecipe(context: context, recipe['id'], {

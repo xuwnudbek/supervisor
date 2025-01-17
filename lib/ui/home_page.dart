@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:supervisor/ui/provider/home_provider.dart';
 import 'package:supervisor/ui/splash/splash_page.dart';
-import 'package:supervisor/utils/rgb.dart';
+import 'package:supervisor/utils/themes/app_colors.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -52,7 +52,12 @@ class HomePage extends StatelessWidget {
                                     },
                                     child: Row(
                                       children: [
-                                        Text(item['title']),
+                                        Text(
+                                          item['title'],
+                                          style: TextTheme.of(context).titleMedium?.copyWith(
+                                                color: isActive ? Colors.white : primary,
+                                              ),
+                                        ),
                                       ],
                                     ),
                                   ).paddingOnly(bottom: 4);
