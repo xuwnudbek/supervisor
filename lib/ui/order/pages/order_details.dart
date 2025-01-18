@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:supervisor/ui/order/provider/order_detail_provider.dart';
 import 'package:supervisor/utils/extensions/num_extension.dart';
 import 'package:supervisor/utils/themes/app_colors.dart';
 import 'package:supervisor/utils/widgets/custom_divider.dart';
-import 'package:supervisor/utils/widgets/custom_dotted_widget.dart';
-import 'package:supervisor/utils/widgets/custom_dropdown.dart';
-import 'package:supervisor/utils/widgets/custom_snackbars.dart';
 
 class OrderDetails extends StatefulWidget {
   const OrderDetails({
@@ -23,20 +18,27 @@ class OrderDetails extends StatefulWidget {
 }
 
 class _OrderDetailsState extends State<OrderDetails> {
-  int get orderId => widget.orderId;
-
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<OrderDetailProvider>(
-      create: (context) => OrderDetailProvider(orderId),
+      create: (context) => OrderDetailProvider(widget.orderId)..initialize(),
       child: Consumer<OrderDetailProvider>(
         builder: (context, provider, _) {
           return Scaffold(
             appBar: AppBar(
               title: const Text('Buyurtma haqida ma\'lumot'),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.refresh),
+                  onPressed: () {
+                    provider.initialize();
+                  },
+                ),
+                SizedBox(width: 16),
+              ],
             ),
             body: Padding(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(0),
               child: provider.isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : provider.orderData.isEmpty
@@ -50,284 +52,476 @@ class _OrderDetailsState extends State<OrderDetails> {
                               child: Container(
                                 decoration: BoxDecoration(
                                   color: light,
-                                  borderRadius: BorderRadius.circular(4),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: dark.withValues(alpha: 0.2),
-                                      blurRadius: 5,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ],
                                 ),
                                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Text.rich(
-                                          TextSpan(
-                                            text: 'Buyurtma',
-                                            children: [
-                                              const TextSpan(
-                                                text: ' / ',
-                                              ),
-                                              TextSpan(
-                                                text: '#${provider.orderData['id']}',
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    const SizedBox(height: 16),
-                                    const CustomDivider(),
-                                    const SizedBox(height: 16),
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              const Text(
-                                                'Buyurtma nomi',
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                              Text(
-                                                "${provider.orderData['name']}",
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              const Text(
-                                                'Buyurtma miqdori',
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                              Text(
-                                                "${provider.orderData['quantity']} ta",
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 16),
-                                    const CustomDivider(),
-                                    const SizedBox(height: 16),
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              const Text(
-                                                'Buyurtma holati',
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                              Text(
-                                                // status: active, inactive, pending
-                                                provider.orderData['status'] == 'active'
-                                                    ? 'Faol'
-                                                    : provider.orderData['status'] == 'inactive'
-                                                        ? 'Faol emas'
-                                                        : 'Kutilmoqda',
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              const Text(
-                                                'Buyurtma rasxodi',
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                              Text(
-                                                "${provider.orderData['rasxod']}\$",
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 16),
-                                    const CustomDivider(),
-                                    const SizedBox(height: 16),
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              const Text(
-                                                'Buyurtma boshlanish sanasi',
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                              Text(
-                                                provider.orderData['start_date'].toString().split(" ").firstOrNull ?? "Mavjud emas",
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              const Text(
-                                                'Buyurtma tugash sanasi',
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                              Text(
-                                                provider.orderData['end_date'].toString().split(" ").firstOrNull ?? "Mavjud emas",
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 16),
-                                    const CustomDivider(),
-                                    const SizedBox(height: 16),
-                                    Expanded(
-                                      child: Column(
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    spacing: 16,
+                                    children: [
+                                      Row(
                                         children: [
-                                          const Row(
-                                            children: [
-                                              Text(
-                                                'Buyurtma modellari',
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w500,
+                                          Text.rich(
+                                            TextSpan(
+                                              children: [
+                                                TextSpan(
+                                                  text: 'Buyurtma',
+                                                  style: TextTheme.of(context).bodyMedium,
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 16),
+                                                const TextSpan(
+                                                  text: ' / ',
+                                                ),
+                                                TextSpan(
+                                                  text: '#${provider.orderData['id']}',
+                                                  style: TextTheme.of(context).titleMedium?.copyWith(
+                                                        fontWeight: FontWeight.w600,
+                                                      ),
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                      const CustomDivider(),
+                                      Row(
+                                        children: [
                                           Expanded(
-                                            child: ListView.builder(
-                                              itemCount: provider.orderData['order_models'].length,
-                                              itemBuilder: (context, index) {
-                                                Map orderModel = provider.orderData['order_models'][index];
-                                                final controller = provider.expansionTileControllers[index];
-
-                                                return ExpansionTile(
-                                                  controller: controller,
-                                                  collapsedBackgroundColor: secondary,
-                                                  backgroundColor: secondary,
-                                                  title: Text(
-                                                    "${orderModel['model']['name']}",
-                                                    style: TextStyle(
-                                                      color: Colors.black,
-                                                    ),
-                                                  ),
-                                                  collapsedIconColor: Colors.black,
-                                                  iconColor: Colors.black,
-                                                  expandedAlignment: Alignment.centerLeft,
-                                                  onExpansionChanged: (value) {
-                                                    if (value) {
-                                                      provider.selectedOrderModel = orderModel;
-                                                      for (var element in provider.expansionTileControllers) {
-                                                        if (element != controller) {
-                                                          element.collapse();
-                                                        }
-                                                      }
-                                                      controller.expand();
-                                                    } else {
-                                                      controller.collapse();
-                                                    }
-                                                  },
-                                                  childrenPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                                                  children: [
-                                                    if ((provider.selectedOrderModel['submodels'] ?? []).isEmpty)
-                                                      const Center(
-                                                        child: Text("Submodel topilmadi"),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Buyurtma nomi',
+                                                  style: TextTheme.of(context).bodyMedium,
+                                                ),
+                                                Text(
+                                                  "${provider.orderData['name']}",
+                                                  style: TextTheme.of(context).titleMedium?.copyWith(
+                                                        fontWeight: FontWeight.w600,
                                                       ),
-                                                    SingleChildScrollView(
-                                                      child: StaggeredGrid.count(
-                                                        crossAxisCount: 3,
-                                                        crossAxisSpacing: 8,
-                                                        mainAxisSpacing: 8,
-                                                        children: [
-                                                          ...(provider.selectedOrderModel['submodels'] ?? []).map<Widget>((orderSubmodel) {
-                                                            int submodelIndex = provider.selectedOrderModel['submodels'].indexOf(orderSubmodel);
-                                                            return CustomSubmodels(
-                                                              orderModelIndex: index,
-                                                              orderSubmodelIndex: submodelIndex,
-                                                            );
-                                                          }),
-                                                        ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Holati',
+                                                  style: TextTheme.of(context).bodyMedium,
+                                                ),
+                                                Text(
+                                                  provider.orderData['status'] == 'active'
+                                                      ? 'Faol'
+                                                      : provider.orderData['status'] == 'inactive'
+                                                          ? 'Faol emas'
+                                                          : 'Kutilmoqda',
+                                                  style: TextTheme.of(context).titleMedium?.copyWith(
+                                                        fontWeight: FontWeight.w600,
+                                                        color: provider.orderData['status'] == 'active'
+                                                            ? success
+                                                            : provider.orderData['status'] == 'inactive'
+                                                                ? danger
+                                                                : primary,
                                                       ),
-                                                    ),
-                                                  ],
-                                                ).paddingOnly(bottom: 8);
-                                              },
+                                                ),
+                                              ],
                                             ),
                                           ),
                                         ],
                                       ),
-                                    ),
-                                  ],
+                                      const CustomDivider(),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Modeli',
+                                                  style: TextTheme.of(context).bodyMedium,
+                                                ),
+                                                Text(
+                                                  provider.orderModel['model']?['name'] ?? "Mavjud emas",
+                                                  style: TextTheme.of(context).titleMedium?.copyWith(
+                                                        fontWeight: FontWeight.w600,
+                                                      ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Matosi',
+                                                  style: TextTheme.of(context).bodyMedium,
+                                                ),
+                                                Text.rich(
+                                                  TextSpan(
+                                                    children: [
+                                                      TextSpan(
+                                                        text: provider.orderModel['material']?['name'] ?? "Mavjud emas",
+                                                        style: TextTheme.of(context).titleMedium?.copyWith(
+                                                              fontWeight: FontWeight.w600,
+                                                            ),
+                                                      ),
+                                                      TextSpan(
+                                                        text: ' — ',
+                                                        style: TextTheme.of(context).bodyMedium,
+                                                      ),
+                                                      TextSpan(
+                                                        text: '(${provider.orderModel['material']?['code'] ?? "N/A"})',
+                                                        style: TextTheme.of(context).bodyMedium,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const CustomDivider(),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Miqdori',
+                                                  style: TextTheme.of(context).bodyMedium,
+                                                ),
+                                                Text(
+                                                  "${provider.orderData['quantity']} ta",
+                                                  style: TextTheme.of(context).titleMedium?.copyWith(
+                                                        fontWeight: FontWeight.w600,
+                                                      ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Rasxodi',
+                                                  style: TextTheme.of(context).bodyMedium,
+                                                ),
+                                                Text(
+                                                  "${provider.orderData['rasxod']}\$",
+                                                  style: TextTheme.of(context).titleMedium?.copyWith(
+                                                        fontWeight: FontWeight.w600,
+                                                      ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const CustomDivider(),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Column(
+                                              spacing: 6,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Umumiy summa',
+                                                  style: TextTheme.of(context).bodyMedium,
+                                                ),
+                                                Text(
+                                                  "${provider.getRecipesTotalPrice.toStringAsFixed(2)}\$",
+                                                  style: TextTheme.of(context).titleMedium?.copyWith(
+                                                        fontWeight: FontWeight.w600,
+                                                      ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Boshlanish sanasi',
+                                                  style: TextTheme.of(context).bodyMedium,
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      provider.orderData['start_date'].toString().split(" ").firstOrNull ?? "Mavjud emas",
+                                                      style: TextTheme.of(context).titleMedium?.copyWith(
+                                                            fontWeight: FontWeight.w600,
+                                                          ),
+                                                    ),
+                                                    Text(
+                                                      ' — ',
+                                                      style: TextTheme.of(context).bodyMedium,
+                                                    ),
+                                                    Text(
+                                                      provider.orderData['end_date'].toString().split(" ").firstOrNull ?? "Mavjud emas",
+                                                      style: TextTheme.of(context).titleMedium?.copyWith(
+                                                            fontWeight: FontWeight.w600,
+                                                          ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const CustomDivider(),
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Expanded(
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              spacing: 6,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Submodellar',
+                                                  style: TextTheme.of(context).bodyMedium,
+                                                ),
+                                                Container(
+                                                  width: double.infinity,
+                                                  decoration: BoxDecoration(
+                                                    color: secondary,
+                                                    borderRadius: BorderRadius.circular(8),
+                                                  ),
+                                                  margin: EdgeInsets.only(right: 8),
+                                                  padding: EdgeInsets.all(8),
+                                                  child: Wrap(
+                                                    spacing: 8,
+                                                    runSpacing: 8,
+                                                    children: [
+                                                      ...provider.orderModel['submodels'].map((submodel) {
+                                                        return Container(
+                                                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                                          decoration: BoxDecoration(
+                                                            color: light,
+                                                            borderRadius: BorderRadius.circular(8),
+                                                          ),
+                                                          child: Text(
+                                                            submodel['submodel']['name'],
+                                                            style: TextTheme.of(context).titleMedium?.copyWith(
+                                                                  fontWeight: FontWeight.w600,
+                                                                ),
+                                                          ),
+                                                        );
+                                                      }).toList(),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              spacing: 6,
+                                              children: [
+                                                Text(
+                                                  'O\'lchamlar',
+                                                  style: TextTheme.of(context).bodyMedium,
+                                                ),
+                                                Container(
+                                                  width: double.infinity,
+                                                  decoration: BoxDecoration(
+                                                    color: secondary,
+                                                    borderRadius: BorderRadius.circular(8),
+                                                  ),
+                                                  margin: EdgeInsets.only(right: 8),
+                                                  padding: EdgeInsets.all(8),
+                                                  child: Wrap(
+                                                    spacing: 8,
+                                                    runSpacing: 8,
+                                                    children: [
+                                                      ...provider.orderModel['sizes'].map((sizeData) {
+                                                        return Container(
+                                                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                                          decoration: BoxDecoration(
+                                                            color: light,
+                                                            borderRadius: BorderRadius.circular(8),
+                                                          ),
+                                                          child: Text.rich(
+                                                            TextSpan(
+                                                              children: [
+                                                                TextSpan(
+                                                                  text: sizeData['size']['name'],
+                                                                  style: TextTheme.of(context).titleMedium?.copyWith(
+                                                                        fontWeight: FontWeight.w600,
+                                                                      ),
+                                                                ),
+                                                                const TextSpan(
+                                                                  text: ' — ',
+                                                                ),
+                                                                TextSpan(
+                                                                  text: "${sizeData['quantity']} ta",
+                                                                  style: const TextStyle(
+                                                                    fontSize: 14,
+                                                                    fontWeight: FontWeight.w500,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }).toList(),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const CustomDivider(),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Buyurtma instruksiyalari',
+                                                  style: TextTheme.of(context).bodyMedium,
+                                                ),
+                                                SizedBox(height: 8),
+                                                Table(
+                                                  border: TableBorder.all(
+                                                    color: dark.withValues(alpha: 0.2),
+                                                  ),
+                                                  columnWidths: {
+                                                    0: FixedColumnWidth(50),
+                                                    1: IntrinsicColumnWidth(flex: 1),
+                                                    2: IntrinsicColumnWidth(flex: 2),
+                                                  },
+                                                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                                                  children: [
+                                                    TableRow(
+                                                      children: [
+                                                        TableCell(
+                                                          child: Center(
+                                                            child: Text(
+                                                              "#",
+                                                              style: TextTheme.of(context).titleSmall,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        TableCell(
+                                                          child: Padding(
+                                                            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
+                                                            child: Text(
+                                                              "Instruksiya nomi",
+                                                              style: TextTheme.of(context).titleSmall,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        TableCell(
+                                                          child: Padding(
+                                                            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
+                                                            child: Text(
+                                                              "Instruksiya matni",
+                                                              style: TextTheme.of(context).titleSmall,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    ...(provider.orderData['instructions'] ?? []).map((instruction) {
+                                                      int index = (provider.orderData['instructions'] ?? []).indexOf(instruction);
+
+                                                      return TableRow(
+                                                        children: [
+                                                          TableCell(
+                                                            child: Center(
+                                                              child: Text(
+                                                                "${index + 1}",
+                                                                style: TextTheme.of(context).titleSmall,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          TableCell(
+                                                            child: Padding(
+                                                              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
+                                                              child: Text(
+                                                                instruction['title'] ?? "N/A",
+                                                                style: TextTheme.of(context).titleSmall,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          TableCell(
+                                                            child: Padding(
+                                                              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
+                                                              child: Text(
+                                                                instruction['description'] ?? "N/A",
+                                                                style: TextTheme.of(context).titleSmall,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    }),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const CustomDivider(),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Buyurtma izohi',
+                                                  style: TextTheme.of(context).bodyMedium,
+                                                ),
+                                                SizedBox(height: 8),
+                                                Container(
+                                                  width: double.infinity,
+                                                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                                  decoration: BoxDecoration(
+                                                    color: secondary,
+                                                    borderRadius: BorderRadius.circular(8),
+                                                  ),
+                                                  child: Text(
+                                                    provider.orderData['comment'] ?? "N/A",
+                                                    style: TextTheme.of(context).titleMedium,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 8),
+                            // const SizedBox(width: 8),
+                            Container(
+                              width: 1,
+                              color: dark.withValues(alpha: 0.2),
+                            ),
+                            // Right Side
                             Expanded(
                               flex: 3,
                               child: Container(
                                 decoration: BoxDecoration(
                                   color: light,
-                                  borderRadius: BorderRadius.circular(6),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: dark.withValues(alpha: 0.2),
-                                      blurRadius: 5,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ],
                                 ),
                                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 16),
                                 child: Column(
@@ -348,147 +542,173 @@ class _OrderDetailsState extends State<OrderDetails> {
                                       child: SingleChildScrollView(
                                         scrollDirection: Axis.vertical,
                                         child: Column(
-                                          children: provider.orderModels.map((orderModelData) {
-                                            Map orderModel = orderModelData['order_model'];
-                                            List<TableRow> recipesTableRows = orderModelData['recipes_table_rows'];
-
-                                            return Column(
-                                              children: [
-                                                Row(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  children: [
-                                                    const Text("Model:  "),
-                                                    Text(
-                                                      "${orderModel['model']['name']}",
-                                                      style: const TextStyle(
-                                                        fontWeight: FontWeight.bold,
+                                          children: [
+                                            ...(provider.orderModel['submodels'] ?? []).map((submodel) {
+                                              return Column(
+                                                children: [
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      border: Border(
+                                                        left: BorderSide(
+                                                          color: dark.withValues(alpha: 0.2),
+                                                        ),
+                                                        top: BorderSide(
+                                                          color: dark.withValues(alpha: 0.2),
+                                                        ),
+                                                        right: BorderSide(
+                                                          color: dark.withValues(alpha: 0.2),
+                                                        ),
                                                       ),
                                                     ),
-                                                  ],
-                                                ),
-                                                const SizedBox(height: 8.0),
-                                                Table(
-                                                  border: TableBorder.all(
-                                                    color: secondary,
-                                                  ),
-                                                  columnWidths: const {
-                                                    0: IntrinsicColumnWidth(),
-                                                    1: FlexColumnWidth(1),
-                                                    2: IntrinsicColumnWidth(),
-                                                    3: IntrinsicColumnWidth(),
-                                                    4: IntrinsicColumnWidth(),
-                                                  },
-                                                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                                                  children: [
-                                                    const TableRow(
+                                                    padding: EdgeInsets.all(8),
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.center,
                                                       children: [
-                                                        TableCell(
-                                                          child: Padding(
-                                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                                            child: Center(
-                                                              child: Text(
-                                                                '№',
-                                                                style: TextStyle(
-                                                                  fontSize: 12,
-                                                                  fontWeight: FontWeight.w500,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        TableCell(
-                                                          child: Padding(
-                                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                                            child: Center(
-                                                              child: Text(
-                                                                'Mahsulot',
-                                                                style: TextStyle(
-                                                                  fontSize: 12,
-                                                                  fontWeight: FontWeight.w500,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        TableCell(
-                                                          child: Padding(
-                                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                                            child: Center(
-                                                              child: Text(
-                                                                'Narxi',
-                                                                style: TextStyle(
-                                                                  fontSize: 12,
-                                                                  fontWeight: FontWeight.w500,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        TableCell(
-                                                          child: Padding(
-                                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                                            child: Center(
-                                                              child: Text(
-                                                                'Miqdori',
-                                                                style: TextStyle(
-                                                                  fontSize: 12,
-                                                                  fontWeight: FontWeight.w500,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        TableCell(
-                                                          child: Padding(
-                                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                                            child: Center(
-                                                              child: Text(
-                                                                'Summa',
-                                                                style: TextStyle(
-                                                                  fontSize: 12,
-                                                                  fontWeight: FontWeight.w500,
-                                                                ),
-                                                                textAlign: TextAlign.center,
-                                                              ),
-                                                            ),
-                                                          ),
+                                                        Text(
+                                                          "${submodel['submodel']['name']}",
+                                                          style: TextTheme.of(context).titleMedium,
                                                         ),
                                                       ],
                                                     ),
-                                                    ...recipesTableRows,
-                                                  ],
-                                                ),
-                                                const SizedBox(height: 16),
-                                              ],
-                                            );
-                                          }).toList(),
+                                                  ),
+                                                  Table(
+                                                    border: TableBorder.all(
+                                                      color: dark.withValues(alpha: 0.2),
+                                                    ),
+                                                    columnWidths: {
+                                                      0: FixedColumnWidth(50),
+                                                      1: IntrinsicColumnWidth(flex: 2),
+                                                      2: FixedColumnWidth(120),
+                                                      3: FixedColumnWidth(100),
+                                                    },
+                                                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                                                    children: [
+                                                      TableRow(
+                                                        children: [
+                                                          TableCell(
+                                                            child: Center(
+                                                              child: Text(
+                                                                "#",
+                                                                style: TextTheme.of(context).titleSmall,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          TableCell(
+                                                            child: Padding(
+                                                              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
+                                                              child: Text(
+                                                                "Maxsulot",
+                                                                style: TextTheme.of(context).titleSmall,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          TableCell(
+                                                            child: Padding(
+                                                              padding: const EdgeInsets.all(8.0),
+                                                              child: Center(
+                                                                child: Text(
+                                                                  "Miqdor",
+                                                                  style: TextTheme.of(context).titleSmall,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          TableCell(
+                                                            child: Padding(
+                                                              padding: const EdgeInsets.all(8.0),
+                                                              child: Center(
+                                                                child: Text(
+                                                                  "Narxi",
+                                                                  style: TextTheme.of(context).titleSmall,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      ...(submodel['recipes'] ?? []).map((recipe) {
+                                                        int index = (submodel['recipes'] ?? []).indexOf(recipe);
+                                                        Map item = recipe['item'];
+
+                                                        return TableRow(
+                                                          children: [
+                                                            TableCell(
+                                                              child: Center(
+                                                                child: Text(
+                                                                  "${index + 1}",
+                                                                  style: TextTheme.of(context).titleSmall,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            TableCell(
+                                                              child: Padding(
+                                                                padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
+                                                                child: Row(
+                                                                  children: [
+                                                                    Text(
+                                                                      item['name'],
+                                                                      style: TextTheme.of(context).titleSmall,
+                                                                    ),
+                                                                    Text(" — "),
+                                                                    Text(
+                                                                      item['code'] ?? "N/A",
+                                                                      style: TextTheme.of(context).titleSmall?.copyWith(
+                                                                            color: dark.withValues(alpha: 0.6),
+                                                                          ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            TableCell(
+                                                              child: Padding(
+                                                                padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
+                                                                child: Center(
+                                                                  child: Text.rich(
+                                                                    TextSpan(
+                                                                      children: [
+                                                                        TextSpan(
+                                                                          text: "${recipe['quantity']}",
+                                                                          style: TextTheme.of(context).titleSmall,
+                                                                        ),
+                                                                        TextSpan(text: " /"),
+                                                                        TextSpan(
+                                                                          text: " ${item['unit']?['name'] ?? "ta"}".toLowerCase(),
+                                                                          style: TextTheme.of(context).titleSmall?.copyWith(
+                                                                                fontWeight: FontWeight.w500,
+                                                                              ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            TableCell(
+                                                              child: Padding(
+                                                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                                                child: Center(
+                                                                  child: Text(
+                                                                    "${((num.tryParse(item['price'] ?? "") ?? 0) * (num.tryParse(recipe['quantity']) ?? 0)).toCurrency}\$",
+                                                                    style: TextTheme.of(context).titleSmall,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        );
+                                                      }),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(height: 16),
+                                                ],
+                                              );
+                                            }).toList(),
+                                          ],
                                         ),
                                       ),
                                     ),
                                     SizedBox(height: 16),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                                      child: Row(
-                                        children: [
-                                          Text.rich(
-                                            TextSpan(
-                                              text: "Umumiy summa: ",
-                                              children: [
-                                                TextSpan(
-                                                  text: "${provider.totalPrice.toCurrency.split(".").firstOrNull ?? "0"}\$",
-                                                  style: const TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ],
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
                                   ],
                                 ),
                               ),
@@ -500,180 +720,5 @@ class _OrderDetailsState extends State<OrderDetails> {
         },
       ),
     );
-  }
-}
-
-class CustomSubmodels extends StatefulWidget {
-  const CustomSubmodels({
-    super.key,
-    required this.orderModelIndex,
-    required this.orderSubmodelIndex,
-  });
-
-  final int orderModelIndex;
-  final int orderSubmodelIndex;
-
-  @override
-  State<CustomSubmodels> createState() => _CustomSubmodelsState();
-}
-
-class _CustomSubmodelsState extends State<CustomSubmodels> {
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<OrderDetailProvider>(builder: (context, provider, _) {
-      Map orderModel = provider.orderData['order_models'][widget.orderModelIndex];
-      Map orderSubmodel = orderModel['submodels'][widget.orderSubmodelIndex];
-
-      Color backgrounColor = orderSubmodel['model_color']['color']['hex'].toString().isEmpty
-          ? Colors.white
-          : Color(
-              int.parse(orderSubmodel['model_color']['color']['hex'], radix: 16),
-            ).withAlpha(255);
-
-      Color foregroundColor = backgrounColor.computeLuminance() > 0.5 ? Colors.black : Colors.white;
-
-      return Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: backgrounColor,
-          borderRadius: BorderRadius.circular(6),
-          boxShadow: [
-            BoxShadow(
-              color: dark.withValues(alpha: 0.2),
-              blurRadius: 5,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              "${orderSubmodel['submodel']['name']}",
-              style: TextStyle(
-                color: foregroundColor,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 4),
-            const CustomDivider(),
-            const SizedBox(height: 4),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  "Miqodor",
-                  style: TextStyle(
-                    color: foregroundColor,
-                    fontSize: 12,
-                  ),
-                ),
-                const CustomDottedWidget(),
-                Text(
-                  "${orderSubmodel['quantity']} ta",
-                  style: TextStyle(
-                    color: foregroundColor,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  "Rang",
-                  style: TextStyle(
-                    color: foregroundColor,
-                    fontSize: 12,
-                  ),
-                ),
-                const CustomDottedWidget(),
-                Text(
-                  "${orderSubmodel['model_color']['color']['name']}",
-                  style: TextStyle(
-                    color: foregroundColor,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  "Razmerlar",
-                  style: TextStyle(
-                    color: foregroundColor,
-                    fontSize: 12,
-                  ),
-                ),
-                const CustomDottedWidget(),
-                Text(
-                  orderSubmodel['size']['name'],
-                  style: TextStyle(
-                    color: foregroundColor,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Row(
-              children: [
-                Text(
-                  "Guruh",
-                  style: TextStyle(
-                    color: foregroundColor,
-                    fontSize: 12,
-                  ),
-                ),
-                const CustomDottedWidget(),
-                Text(
-                  "${orderSubmodel['group']?['group']?['name'] ?? "Guruh topilmadi"}",
-                  style: TextStyle(
-                    color: foregroundColor,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 4),
-            CustomDropdown(
-              color: secondary,
-              value: orderSubmodel['group']?['group']?['id'],
-              items: provider.groups.map((group) {
-                return DropdownMenuItem(
-                  value: group['id'],
-                  child: Text(
-                    "${group['name']}",
-                    style: TextStyle(
-                      color: Colors.red,
-                    ),
-                  ),
-                );
-              }).toList(),
-              onChanged: (value) async {
-                await provider.fasteningOrderToGroup(orderSubmodel['submodel']['id'], value).then((value) {
-                  if (value) {
-                    CustomSnackbars(context).success("Guruhga muvaffaqiyatli qo'shildi");
-                  } else {
-                    CustomSnackbars(context).error("Guruhga qo'shishda xatolik yuz berdi");
-                  }
-                });
-              },
-            ),
-          ],
-        ),
-      );
-    });
   }
 }

@@ -49,7 +49,13 @@ class _CustomDropdownState extends State<CustomDropdown> {
             child: DropdownButton(
               menuMaxHeight: 300,
               isExpanded: true,
-              items: widget.items,
+              items: widget.items?.map((e) {
+                return DropdownMenuItem(
+                  value: e.value,
+                  enabled: widget.disabledItems?.contains(e.value) != true,
+                  child: e.child,
+                );
+              }).toList(),
               onChanged: (value) {
                 widget.onChanged?.call(value);
               },

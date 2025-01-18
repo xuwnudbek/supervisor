@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:supervisor/services/http_service.dart';
-import 'package:supervisor/utils/extensions/num_extension.dart';
 
 class OrderDetailProvider extends ChangeNotifier {
   final int orderId;
-  double _totalPrice = 0;
 
   Map _orderData = {};
-  Map _selectedOrderModel = {};
-  List _groups = [];
-  List _orderModels = [];
+  Map _orderModel = {};
 
   bool _isLoading = false;
 
@@ -21,15 +17,9 @@ class OrderDetailProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  List get orderModels => _orderModels;
-  set orderModels(List value) {
-    _orderModels = value;
-    notifyListeners();
-  }
-
-  Map get selectedOrderModel => _selectedOrderModel;
-  set selectedOrderModel(Map value) {
-    _selectedOrderModel = value;
+  Map get orderModel => _orderModel;
+  set orderModel(Map value) {
+    _orderModel = value;
     notifyListeners();
   }
 
@@ -39,27 +29,24 @@ class OrderDetailProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  double get totalPrice => _totalPrice;
-  set totalPrice(double value) {
-    _totalPrice = value;
-    notifyListeners();
+  num get getRecipesTotalPrice {
+    num summa = 0;
+    for (var submodel in orderModel['submodels'] ?? []) {
+      for (var recipe in submodel['recipes'] ?? []) {
+        summa += (num.tryParse(recipe['quantity']) ?? 0) *
+            (num.tryParse(recipe['item']['price'] ?? "") ?? 0);
+      }
+    }
+
+    return summa;
   }
 
-  List get groups => _groups;
-  set groups(List value) {
-    _groups = value;
-    notifyListeners();
-  }
-
-  OrderDetailProvider(this.orderId) {
-    initialize();
-  }
+  OrderDetailProvider(this.orderId);
 
   Future<void> initialize() async {
     isLoading = true;
 
     await getOrder();
-    await getGroups();
 
     isLoading = false;
   }
@@ -68,151 +55,7 @@ class OrderDetailProvider extends ChangeNotifier {
     final response = await HttpService.get('$order/$orderId');
     if (response['status'] == Result.success) {
       orderData = response['data'];
-      if (expansionTileControllers.isEmpty) {
-        expansionTileControllers = List.generate(orderData['order_models'].length, (index) => ExpansionTileController());
-        notifyListeners();
-      }
-
-      collectModelsToTableRow();
+      orderModel = orderData['order_model'];
     }
-  }
-
-  Future<void> getGroups() async {
-    final response = await HttpService.get(group);
-    if (response['status'] == Result.success) {
-      groups = response['data'];
-      notifyListeners();
-    }
-  }
-
-  Future<bool> fasteningOrderToGroup(int submodelId, int groupId) async {
-    Map<String, dynamic> body = {
-      "order_id": orderId,
-      "submodel_id": submodelId,
-      "group_id": groupId,
-    };
-
-    var res = await HttpService.post("/fasteningOrderToGroup", {
-      "data": [body],
-    });
-
-    if (res['status'] == Result.success) {
-      await getOrder();
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  void collectModelsToTableRow() {
-    orderModels = [];
-
-    double innerTotalPrice = 0;
-    for (var orderModel in orderData['order_models'] ?? []) {
-      List<TableRow> recipesTableRows = [];
-      for (var submodels in orderModel?['submodels'] ?? []) {
-        for (var recipe in submodels['recipes'] ?? []) {
-          int index = recipesTableRows.length;
-          recipesTableRows.add(
-            TableRow(
-              children: [
-                TableCell(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    child: Center(
-                      child: Text(
-                        '${index + 1}',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                TableCell(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    child: Text(
-                      '${recipe['item']['name']}',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ),
-                TableCell(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                          "${double.parse("${recipe['item']['price']}").toCurrency}\$",
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                TableCell(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                          "${num.parse(recipe['quantity']).toCurrency} ",
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        Text(
-                          "/ ${recipe['item']['unit']['name']}",
-                          style: const TextStyle(
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                TableCell(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                          "${(double.parse("${recipe['quantity']}") * double.parse("${recipe['item']['price']}")).toCurrency}\$",
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        }
-      }
-
-      innerTotalPrice = innerTotalPrice + double.parse("${orderModel['total_rasxod']}");
-
-      orderModels.add({
-        'order_model': orderModel,
-        'recipes_table_rows': recipesTableRows,
-      });
-    }
-
-    totalPrice = innerTotalPrice;
   }
 }

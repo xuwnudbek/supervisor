@@ -7,7 +7,9 @@ extension ListExtension on List {
         final fieldText = fieldValue.toString();
         final searchText = value.toString().toLowerCase();
 
-        return fieldText.startsWith(searchText) || fieldText.contains(searchText) || fieldText.endsWith(searchText);
+        return fieldText.startsWith(searchText) ||
+            fieldText.contains(searchText) ||
+            fieldText.endsWith(searchText);
       });
     }).toList();
   }

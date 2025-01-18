@@ -75,7 +75,8 @@ class _AddModelState extends State<AddModel> {
       return;
     }
 
-    bool hasAlready = submodels.any((el) => el.text.toLowerCase() == newSubmodelController.text.toLowerCase());
+    bool hasAlready = submodels.any((el) =>
+        el.text.toLowerCase() == newSubmodelController.text.toLowerCase());
 
     if (hasAlready) {
       CustomSnackbars(context).warning("Malumot avvaldan mavjud!");
@@ -102,7 +103,8 @@ class _AddModelState extends State<AddModel> {
       return;
     }
 
-    bool hasAlready = sizes.any((el) => el.text.toLowerCase() == newSizeController.text.toLowerCase());
+    bool hasAlready = sizes.any(
+        (el) => el.text.toLowerCase() == newSizeController.text.toLowerCase());
 
     if (hasAlready) {
       CustomSnackbars(context).warning("Malumot avvaldan mavjud!");
@@ -210,7 +212,8 @@ class _AddModelState extends State<AddModel> {
                               ),
                               GridView(
                                 shrinkWrap: true,
-                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 2,
                                   crossAxisSpacing: 4,
                                   mainAxisSpacing: 4,
@@ -264,7 +267,8 @@ class _AddModelState extends State<AddModel> {
                                 controller: newSizeController,
                                 color: light,
                                 formatters: [
-                                  FilteringTextInputFormatter.deny(RegExp(r'[a-zA-Z]')),
+                                  FilteringTextInputFormatter.deny(
+                                      RegExp(r'[a-zA-Z]')),
                                 ],
                                 hint: "o'lcham",
                                 onEnter: () {
@@ -280,7 +284,8 @@ class _AddModelState extends State<AddModel> {
                               ),
                               GridView(
                                 shrinkWrap: true,
-                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 4,
                                   crossAxisSpacing: 4,
                                   mainAxisSpacing: 4,
@@ -336,12 +341,14 @@ class _AddModelState extends State<AddModel> {
                                       child: Text(
                                         "Rasm yo'q",
                                         style: TextStyle(
-                                          color: Colors.black.withValues(alpha: 0.5),
+                                          color: Colors.black
+                                              .withValues(alpha: 0.5),
                                         ),
                                       ),
                                     )
                                   : GridView.builder(
-                                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                      gridDelegate:
+                                          SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount: 1,
                                         crossAxisSpacing: 4,
                                         mainAxisSpacing: 4,
@@ -368,7 +375,8 @@ class _AddModelState extends State<AddModel> {
                                 child: GestureDetector(
                                   onTap: showImagesPicker,
                                   child: Tooltip(
-                                    message: "Yangi rasm qo'shilganda\neskilari o'chib ketadi!",
+                                    message:
+                                        "Yangi rasm qo'shilganda\neskilari o'chib ketadi!",
                                     child: Container(
                                       width: 30,
                                       decoration: BoxDecoration(
@@ -423,7 +431,9 @@ class _AddModelState extends State<AddModel> {
   }
 
   Future<void> _createModel() async {
-    if (provider.isLoading || provider.isCreatingModel || provider.isUpdatingModel) {
+    if (provider.isLoading ||
+        provider.isCreatingModel ||
+        provider.isUpdatingModel) {
       return;
     }
 
@@ -447,7 +457,9 @@ class _AddModelState extends State<AddModel> {
     };
 
     if (widget.model != null) {
-      await widget.provider.updateModel(widget.model!['id'], body).then((value) {
+      await widget.provider
+          .updateModel(widget.model!['id'], body)
+          .then((value) {
         CustomSnackbars(context).success("Model muvaffaqiyatli yangilandi!");
         Get.back();
       });

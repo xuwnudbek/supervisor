@@ -1,18 +1,26 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:supervisor/services/http_service.dart';
 import 'package:supervisor/ui/order/provider/order_provider.dart';
+import 'package:supervisor/utils/extensions/list_extension.dart';
+import 'package:supervisor/utils/extensions/string_extension.dart';
 import 'package:supervisor/utils/widgets/custom_snackbars.dart';
 
 class AddOrderProvider extends ChangeNotifier {
   final TextEditingController orderNameController = TextEditingController();
   final TextEditingController orderRasxodController = TextEditingController();
 
-  final TextEditingController instructionTitleController = TextEditingController();
-  final TextEditingController instructionBodyController = TextEditingController();
+  final TextEditingController instructionTitleController =
+      TextEditingController();
+  final TextEditingController instructionBodyController =
+      TextEditingController();
   final TextEditingController orderCommentController = TextEditingController();
 
   List models = [];
   List submodels = [];
   List sizes = [];
+  List materials = [];
   List items = [];
   List contragents = [];
 
@@ -24,6 +32,7 @@ class AddOrderProvider extends ChangeNotifier {
   // Private Fields
   List<DateTime> _deadline = [];
   Map _selectedModel = {};
+  Map _selectedMaterial = {};
   Map _selectedContragent = {};
 
   bool _isLoading = false;
@@ -46,6 +55,12 @@ class AddOrderProvider extends ChangeNotifier {
 
     submodels = value['submodels'] ?? [];
     sizes = value['sizes'] ?? [];
+    notifyListeners();
+  }
+
+  Map get selectedMaterial => _selectedMaterial;
+  set selectedMaterial(Map value) {
+    _selectedMaterial = value;
     notifyListeners();
   }
 
@@ -72,26 +87,32 @@ class AddOrderProvider extends ChangeNotifier {
     models = orderProvider.models;
     contragents = orderProvider.contragents;
     items = orderProvider.items;
+    materials = orderProvider.materials;
   }
 
-  double getSizesQuantity() {
-    if (selectedSizes.isNotEmpty) {
-      return selectedSizes.map((e) => e['quantity']).reduce((a, b) => a + b);
-    }
-
-    return 0.0;
-  }
-
-  void addRecipe(Map submodel) {
+  bool addRecipe(Map submodel) {
     recipes.add({
       "submodel": submodel,
       "item": {},
-      "quantity": TextEditingController(text: "0"),
+      "quantity": TextEditingController(text: "")
+        ..addListener(() {
+          notifyListeners();
+        }),
     });
     notifyListeners();
+
+    return true;
   }
 
   void removeRecipe(Map recipe) {
+    if (recipes.qaysiki(['submodel'], recipe['submodel']).length == 1) {
+      recipes.qaysiki(['submodel'], recipe['submodel'])[0]['item'] = {};
+      recipes.qaysiki(['submodel'], recipe['submodel'])[0]['quantity'] =
+          TextEditingController(text: "");
+      notifyListeners();
+      return;
+    }
+
     recipes.removeWhere((e) => e == recipe);
     notifyListeners();
   }
@@ -101,7 +122,8 @@ class AddOrderProvider extends ChangeNotifier {
     required Map item,
     required index,
   }) {
-    var submodelRecipes = recipes.where((e) => e['submodel'] == submodel).toList();
+    var submodelRecipes =
+        recipes.where((e) => e['submodel'] == submodel).toList();
     submodelRecipes[index]['item'] = item;
     notifyListeners();
   }
@@ -115,18 +137,24 @@ class AddOrderProvider extends ChangeNotifier {
   void removeSelectedSubmodel(value) {
     selectedSubmodels.remove(value);
 
-    removeRecipe(value);
+    recipes.removeWhere((e) => e['submodel'] == value);
 
     notifyListeners();
   }
 
   void selectSize(value) {
-    selectedSizes.add(value);
+    selectedSizes.add({
+      "size": value,
+      "quantity": TextEditingController(text: "")
+        ..addListener(() {
+          notifyListeners();
+        }),
+    });
     notifyListeners();
   }
 
   void removeSelectedSize(value) {
-    selectedSizes.remove(value);
+    selectedSizes.removeWhere((e) => e['size'] == value);
     notifyListeners();
   }
 
@@ -139,7 +167,8 @@ class AddOrderProvider extends ChangeNotifier {
       return;
     }
 
-    if (instructions.isNotEmpty && instructions.where((e) => e['title'] == title).isNotEmpty) {
+    if (instructions.isNotEmpty &&
+        instructions.where((e) => e['title'] == title).isNotEmpty) {
       CustomSnackbars(context).warning("Bunday instruksiya mavjud");
       return;
     }
@@ -149,7 +178,7 @@ class AddOrderProvider extends ChangeNotifier {
 
     instructions.add({
       "title": title,
-      "body": body,
+      "description": body,
     });
 
     instructions = instructions.reversed.toList();
@@ -161,37 +190,152 @@ class AddOrderProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> createOrder(BuildContext context) async {
-    // if (orderNameController.text.isEmpty || orderQuantityController.text.isNotValidNumber || startDate == null || endDate == null || orderModels.isEmpty) {
-    //   CustomSnackbars(context).warning("Barcha maydonlar to'ldirilganini tekshiring!");
-    //   return;
-    // }
+  int get getSizesQuantity {
+    if (selectedSizes.isNotEmpty) {
+      return selectedSizes
+          .map((e) => (double.tryParse(e['quantity'].text) ?? 0).toInt())
+          .reduce((a, b) => a + b);
+    }
+    return 0;
+  }
 
-    // if (orderRasxodController.text.isEmpty) {
-    //   CustomSnackbars(context).warning("Iltimos, rasxodni kiriting!");
-    //   return;
-    // }
+  num get getRecipesQuantity {
+    if (recipes.isNotEmpty) {
+      return recipes
+          .map((e) {
+            return (double.tryParse(e['quantity'].text) ?? 0) *
+                (num.tryParse(e['item']['price'] ?? "") ?? 0);
+          })
+          .reduce((a, b) => a + b)
+          .toStringAsFixed(1)
+          .toDouble;
+    }
+    return 0;
+  }
 
-    // isCreatingOrder = true;
+  Future<bool?> createOrder(BuildContext context) async {
+    if (orderNameController.text.isEmpty) {
+      CustomSnackbars(context).warning("Buyurtma nomini kiriting!");
+      return null;
+    }
 
-    // Map<String, dynamic> data = {
-    //   "name": orderNameController.text,
-    //   "quantity": orderQuantityController.text,
-    //   "start_date": startDate!.toIso8601String().split("T").first,
-    //   "end_date": endDate!.toIso8601String().split("T").first,
-    //   "models": orderModels,
-    //   "rasxod": orderRasxodController.text,
-    // };
+    if (selectedContragent.isEmpty) {
+      CustomSnackbars(context).warning("Buyurtmachini tanlang/kiriting!");
+      return null;
+    }
 
-    // var res = await HttpService.post(order, data);
+    if (selectedMaterial.isEmpty) {
+      CustomSnackbars(context).warning("Matoni tanlang!");
+      return null;
+    }
 
-    // if (res['status'] == Result.success) {
-    //   CustomSnackbars(context).success("Buyurtma muvofaqqiyatli yaratildi!");
-    //   clearAllField();
-    // } else {
-    //   CustomSnackbars(context).error("Buyurtmani yaratishda xatolik yuz berdi!");
-    // }
+    if (deadline.isEmpty) {
+      CustomSnackbars(context)
+          .warning("Buyurtma olish/topshirish sanasini tanlang!");
+      return null;
+    }
 
-    // isCreatingOrder = false;
+    if (selectedModel.isEmpty) {
+      CustomSnackbars(context).warning("Modelni tanlang!");
+      return null;
+    }
+
+    if (selectedSubmodels.isEmpty) {
+      CustomSnackbars(context).warning("Maxsulotni tanlang!");
+      return null;
+    }
+
+    if (selectedSizes.isEmpty) {
+      CustomSnackbars(context).warning("Kamida 1 ta o'lchamni tanlang!");
+      return null;
+    }
+
+    if (orderCommentController.text.isEmpty) {
+      CustomSnackbars(context).warning("Buyurtma uchun izoh yozmadingiz!");
+      return null;
+    }
+
+    isCreatingOrder = true;
+
+    Map<String, dynamic> data = {
+      "name": orderNameController.text,
+      "quantity": getSizesQuantity,
+      "start_date": deadline.firstOrNull.toString(),
+      "end_date": deadline.lastOrNull.toString(),
+      "rasxod": double.tryParse(orderRasxodController.text),
+      "comment": orderCommentController.text,
+      "contragent_id":
+          selectedContragent['id'] == 0 ? null : selectedContragent['id'],
+      "contragent_name": selectedContragent['name'],
+      "instructions": instructions,
+      "model": {
+        "material_id": selectedMaterial['id'],
+        "id": selectedModel['id'],
+        "submodels": [
+          ...selectedSubmodels.map((e) => e['id']),
+        ],
+        "sizes": [
+          ...selectedSizes.map((e) => {
+                "id": e['size']['id'],
+                "quantity": double.tryParse(e['quantity'].text) ?? 0,
+              }),
+        ],
+      },
+      "recipes": [
+        ...recipes.map((e) => {
+              "submodel_id": e['submodel']['id'],
+              "item_id": e['item']['id'],
+              "quantity": double.tryParse(e['quantity'].text) ?? 0,
+            }),
+      ],
+    };
+
+    print(data);
+
+    var res = await HttpService.post(order, data);
+
+    if (res['status'] == Result.success) {
+      CustomSnackbars(context).success("Buyurtma muvaffaqiyatli yaratildi!");
+      return true;
+    }
+    notifyListeners();
+
+    return false;
   }
 }
+
+/*
+{
+  "name": "OrderName",
+  "quantity": 100,
+  "start_date": "2021-01-01",
+  "end_date": "2021-01-02",
+  "rasxod": 0.1,
+  "final_product_name": "POLNOTA 1",
+  "comment": "Order Comment",
+  "contragent_id": 1,
+  "contragent_name": "Contragent Name",
+  "instructions": [
+      {
+          "title": "Instruction Name",
+          "description": "Instruction Description"
+      }
+  ],
+  "model": {
+      "id": 1,
+      "material_id": 1,
+      "submodel": [
+          1,
+          2,
+          3,
+          4
+      ],
+      "sizes": [
+          {
+              "id": 1,
+              "quantity": 10
+          }
+      ]
+  }
+}
+*/

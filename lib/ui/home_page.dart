@@ -15,7 +15,7 @@ class HomePage extends StatelessWidget {
         builder: (context, provider, _) {
           return Scaffold(
             appBar: AppBar(
-              title: const Text('Super Visior'),
+              title: const Text('Supervisior'),
               elevation: 20,
             ),
             body: Padding(
@@ -39,13 +39,17 @@ class HomePage extends StatelessWidget {
                               ...List.generate(
                                 provider.menu.length,
                                 (index) {
-                                  bool isActive = provider.selectedIndex == index;
+                                  bool isActive =
+                                      provider.selectedIndex == index;
                                   Map item = provider.menu[index];
 
                                   return TextButton(
                                     style: TextButton.styleFrom(
-                                      backgroundColor: isActive ? primary : primary.withValues(alpha: .1),
-                                      foregroundColor: isActive ? Colors.white : primary,
+                                      backgroundColor: isActive
+                                          ? primary
+                                          : primary.withValues(alpha: .1),
+                                      foregroundColor:
+                                          isActive ? Colors.white : primary,
                                     ),
                                     onPressed: () {
                                       provider.selectedIndex = index;
@@ -53,9 +57,13 @@ class HomePage extends StatelessWidget {
                                     child: Row(
                                       children: [
                                         Text(
-                                          item['title'],
-                                          style: TextTheme.of(context).titleMedium?.copyWith(
-                                                color: isActive ? Colors.white : primary,
+                                          item['title'] ?? '',
+                                          style: TextTheme.of(context)
+                                              .titleMedium
+                                              ?.copyWith(
+                                                color: isActive
+                                                    ? Colors.white
+                                                    : primary,
                                               ),
                                         ),
                                       ],

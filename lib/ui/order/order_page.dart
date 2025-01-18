@@ -58,7 +58,8 @@ class _OrderPageState extends State<OrderPage> {
                       icon: const Icon(Icons.add),
                       onPressed: () async {
                         if (provider.isLoading) {
-                          CustomSnackbars(context).warning("Ma'lumotlar yuklanmoqda, iltimos kuting");
+                          CustomSnackbars(context).warning(
+                              "Ma'lumotlar yuklanmoqda, iltimos kuting");
                           return;
                         }
                         await Get.to(
@@ -66,7 +67,11 @@ class _OrderPageState extends State<OrderPage> {
                             value: context.read<OrderProvider>(),
                             child: const AddOrder(),
                           ),
-                        );
+                        )?.then((value) {
+                          if (value != null) {
+                            provider.initialize();
+                          }
+                        });
                       },
                     ),
                   ],
@@ -103,29 +108,35 @@ class _OrderPageState extends State<OrderPage> {
                                       provider.orders.length,
                                       (index) {
                                         var order = provider.orders[index];
-                                        bool status = order['status'] == "active";
+                                        bool status =
+                                            order['status'] == "active";
 
                                         return HoverWidget(
                                           onTap: () {
-                                            Get.to(() => OrderDetails(orderId: order['id']));
+                                            Get.to(() => OrderDetails(
+                                                orderId: order['id']));
                                           },
                                           builder: (isHovered) {
                                             return Container(
                                               padding: const EdgeInsets.all(16),
                                               decoration: BoxDecoration(
                                                 color: Colors.white,
-                                                borderRadius: BorderRadius.circular(8),
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
                                                 boxShadow: [
                                                   if (isHovered)
                                                     BoxShadow(
-                                                      color: dark.withValues(alpha: 0.2),
+                                                      color: dark.withValues(
+                                                          alpha: 0.2),
                                                       blurRadius: 4,
-                                                      offset: const Offset(0, 4),
+                                                      offset:
+                                                          const Offset(0, 4),
                                                     ),
                                                 ],
                                               ),
                                               child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
                                                 children: [
                                                   Row(
                                                     children: [
@@ -133,7 +144,8 @@ class _OrderPageState extends State<OrderPage> {
                                                         "Buyurtma №${order['id']}",
                                                         style: const TextStyle(
                                                           fontSize: 16,
-                                                          fontWeight: FontWeight.bold,
+                                                          fontWeight:
+                                                              FontWeight.bold,
                                                         ),
                                                       ),
                                                     ],
@@ -145,15 +157,18 @@ class _OrderPageState extends State<OrderPage> {
                                                         "Nomi:  ",
                                                         style: const TextStyle(
                                                           fontSize: 14,
-                                                          fontWeight: FontWeight.w600,
+                                                          fontWeight:
+                                                              FontWeight.w600,
                                                         ),
                                                       ),
                                                       CustomDottedWidget(),
                                                       Text(
-                                                        order['name'] ?? "Unknown",
+                                                        order['name'] ??
+                                                            "Unknown",
                                                         style: const TextStyle(
                                                           fontSize: 14,
-                                                          fontWeight: FontWeight.w400,
+                                                          fontWeight:
+                                                              FontWeight.w400,
                                                         ),
                                                       ),
                                                     ],
@@ -165,15 +180,20 @@ class _OrderPageState extends State<OrderPage> {
                                                         "B/S:  ",
                                                         style: const TextStyle(
                                                           fontSize: 14,
-                                                          fontWeight: FontWeight.w600,
+                                                          fontWeight:
+                                                              FontWeight.w600,
                                                         ),
                                                       ),
                                                       CustomDottedWidget(),
                                                       Text(
-                                                        order['start_date'].toString().split(" ").first,
+                                                        order['start_date']
+                                                            .toString()
+                                                            .split(" ")
+                                                            .first,
                                                         style: const TextStyle(
                                                           fontSize: 14,
-                                                          fontWeight: FontWeight.w400,
+                                                          fontWeight:
+                                                              FontWeight.w400,
                                                         ),
                                                       ),
                                                     ],
@@ -185,15 +205,20 @@ class _OrderPageState extends State<OrderPage> {
                                                         "T/S:  ",
                                                         style: const TextStyle(
                                                           fontSize: 14,
-                                                          fontWeight: FontWeight.w600,
+                                                          fontWeight:
+                                                              FontWeight.w600,
                                                         ),
                                                       ),
                                                       CustomDottedWidget(),
                                                       Text(
-                                                        order['end_date'].toString().split(" ").first,
+                                                        order['end_date']
+                                                            .toString()
+                                                            .split(" ")
+                                                            .first,
                                                         style: const TextStyle(
                                                           fontSize: 14,
-                                                          fontWeight: FontWeight.w400,
+                                                          fontWeight:
+                                                              FontWeight.w400,
                                                         ),
                                                       ),
                                                     ],
@@ -205,7 +230,8 @@ class _OrderPageState extends State<OrderPage> {
                                                         "Maxsulot:  ",
                                                         style: const TextStyle(
                                                           fontSize: 14,
-                                                          fontWeight: FontWeight.w600,
+                                                          fontWeight:
+                                                              FontWeight.w600,
                                                         ),
                                                       ),
                                                       CustomDottedWidget(),
@@ -213,7 +239,8 @@ class _OrderPageState extends State<OrderPage> {
                                                         "${order['quantity']} ta",
                                                         style: const TextStyle(
                                                           fontSize: 14,
-                                                          fontWeight: FontWeight.w400,
+                                                          fontWeight:
+                                                              FontWeight.w400,
                                                         ),
                                                       ),
                                                     ],
@@ -225,38 +252,66 @@ class _OrderPageState extends State<OrderPage> {
                                                         "Holat:  ",
                                                         style: const TextStyle(
                                                           fontSize: 14,
-                                                          fontWeight: FontWeight.w600,
+                                                          fontWeight:
+                                                              FontWeight.w600,
                                                         ),
                                                       ),
                                                       CustomDottedWidget(),
                                                       ActionChip(
                                                         onPressed: () {
-                                                          if (provider.isUpdating) {
-                                                            CustomSnackbars(context).warning("Buyurtma yangilanmoqda, iltimos kuting");
+                                                          if (provider
+                                                              .isUpdating) {
+                                                            CustomSnackbars(
+                                                                    context)
+                                                                .warning(
+                                                                    "Buyurtma yangilanmoqda, iltimos kuting");
                                                             return;
                                                           }
                                                           provider.updateOrder(
                                                             order['id'],
-                                                            {"status": status ? "inactive" : "active"},
+                                                            {
+                                                              "status": status
+                                                                  ? "inactive"
+                                                                  : "active"
+                                                            },
                                                             context: context,
                                                           );
                                                         },
-                                                        backgroundColor: provider.isUpdating
-                                                            ? Colors.grey.withValues(alpha: 0.2)
+                                                        backgroundColor: provider
+                                                                .isUpdating
+                                                            ? Colors.grey
+                                                                .withValues(
+                                                                    alpha: 0.2)
                                                             : status
-                                                                ? Colors.green.withValues(alpha: 0.2)
-                                                                : Colors.red.withValues(alpha: 0.2),
-                                                        tooltip: "Holatni o'zgartirish",
+                                                                ? Colors.green
+                                                                    .withValues(
+                                                                        alpha:
+                                                                            0.2)
+                                                                : Colors.red
+                                                                    .withValues(
+                                                                        alpha:
+                                                                            0.2),
+                                                        tooltip:
+                                                            "Holatni o'zgartirish",
                                                         label: Text(
-                                                          status ? "Faol" : "Faol emas",
+                                                          status
+                                                              ? "Faol"
+                                                              : "Faol emas",
                                                           style: TextStyle(
                                                             fontSize: 14,
-                                                            fontWeight: FontWeight.w400,
-                                                            color: provider.isUpdating
-                                                                ? Colors.black.withValues(alpha: 0.2)
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                            color: provider
+                                                                    .isUpdating
+                                                                ? Colors.black
+                                                                    .withValues(
+                                                                        alpha:
+                                                                            0.2)
                                                                 : status
-                                                                    ? Colors.green
-                                                                    : Colors.red,
+                                                                    ? Colors
+                                                                        .green
+                                                                    : Colors
+                                                                        .red,
                                                           ),
                                                         ),
                                                       ),

@@ -41,14 +41,20 @@ class CustomSnackbars {
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: Colors.orange,
-        content: Text(message),
+        backgroundColor: Colors.lime,
+        content: Text(
+          message,
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         showCloseIcon: true,
         closeIconColor: Colors.white,
         duration: const Duration(milliseconds: 1500),
         behavior: SnackBarBehavior.floating,
         width: 300,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
       ),
     );
   }

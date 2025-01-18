@@ -88,7 +88,8 @@ class _ItemPageState extends State<ItemPage> {
                                         color: dark.withAlpha(50),
                                         borderRadius: BorderRadius.circular(8),
                                       ),
-                                      defaultColumnWidth: const IntrinsicColumnWidth(),
+                                      defaultColumnWidth:
+                                          const IntrinsicColumnWidth(),
                                       columnWidths: const {
                                         0: FlexColumnWidth(0.5),
                                         1: FlexColumnWidth(1),
@@ -104,18 +105,22 @@ class _ItemPageState extends State<ItemPage> {
                                         TableRow(
                                           decoration: BoxDecoration(
                                             color: Colors.white,
-                                            borderRadius: BorderRadius.circular(8),
+                                            borderRadius:
+                                                BorderRadius.circular(8),
                                           ),
                                           children: const [
                                             TableCell(
                                               child: Center(
                                                 child: Padding(
-                                                  padding: EdgeInsets.symmetric(vertical: 16.0),
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 16.0),
                                                   child: Text(
                                                     "#",
                                                     style: TextStyle(
-                                                      fontWeight: FontWeight.bold,
-                                                      overflow: TextOverflow.ellipsis,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
                                                     ),
                                                   ),
                                                 ),
@@ -124,12 +129,15 @@ class _ItemPageState extends State<ItemPage> {
                                             TableCell(
                                               child: Center(
                                                 child: Padding(
-                                                  padding: EdgeInsets.symmetric(vertical: 16.0),
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 16.0),
                                                   child: Text(
                                                     "Nomi",
                                                     style: TextStyle(
-                                                      fontWeight: FontWeight.bold,
-                                                      overflow: TextOverflow.ellipsis,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
                                                     ),
                                                   ),
                                                 ),
@@ -138,12 +146,15 @@ class _ItemPageState extends State<ItemPage> {
                                             TableCell(
                                               child: Center(
                                                 child: Padding(
-                                                  padding: EdgeInsets.symmetric(vertical: 16.0),
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 16.0),
                                                   child: Text(
                                                     "Narxi",
                                                     style: TextStyle(
-                                                      fontWeight: FontWeight.bold,
-                                                      overflow: TextOverflow.ellipsis,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
                                                     ),
                                                   ),
                                                 ),
@@ -152,12 +163,15 @@ class _ItemPageState extends State<ItemPage> {
                                             TableCell(
                                               child: Center(
                                                 child: Padding(
-                                                  padding: EdgeInsets.symmetric(vertical: 16.0),
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 16.0),
                                                   child: Text(
                                                     "O'lchov",
                                                     style: TextStyle(
-                                                      fontWeight: FontWeight.bold,
-                                                      overflow: TextOverflow.ellipsis,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
                                                     ),
                                                   ),
                                                 ),
@@ -166,12 +180,15 @@ class _ItemPageState extends State<ItemPage> {
                                             TableCell(
                                               child: Center(
                                                 child: Padding(
-                                                  padding: EdgeInsets.symmetric(vertical: 16.0),
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 16.0),
                                                   child: Text(
                                                     "Rang",
                                                     style: TextStyle(
-                                                      fontWeight: FontWeight.bold,
-                                                      overflow: TextOverflow.ellipsis,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
                                                     ),
                                                   ),
                                                 ),
@@ -180,12 +197,15 @@ class _ItemPageState extends State<ItemPage> {
                                             TableCell(
                                               child: Center(
                                                 child: Padding(
-                                                  padding: EdgeInsets.symmetric(vertical: 16.0),
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 16.0),
                                                   child: Text(
                                                     "Rasm",
                                                     style: TextStyle(
-                                                      fontWeight: FontWeight.bold,
-                                                      overflow: TextOverflow.ellipsis,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
                                                     ),
                                                   ),
                                                 ),
@@ -194,12 +214,15 @@ class _ItemPageState extends State<ItemPage> {
                                             TableCell(
                                               child: Center(
                                                 child: Padding(
-                                                  padding: EdgeInsets.symmetric(vertical: 16.0),
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 16.0),
                                                   child: Text(
                                                     "Material turi",
                                                     style: TextStyle(
-                                                      fontWeight: FontWeight.bold,
-                                                      overflow: TextOverflow.ellipsis,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
                                                     ),
                                                   ),
                                                 ),
@@ -208,12 +231,15 @@ class _ItemPageState extends State<ItemPage> {
                                             TableCell(
                                               child: Center(
                                                 child: Padding(
-                                                  padding: EdgeInsets.symmetric(vertical: 16.0),
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 16.0),
                                                   child: Text(
                                                     "Amallar",
                                                     style: TextStyle(
-                                                      fontWeight: FontWeight.bold,
-                                                      overflow: TextOverflow.ellipsis,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
                                                     ),
                                                   ),
                                                 ),
@@ -223,22 +249,28 @@ class _ItemPageState extends State<ItemPage> {
                                         ),
                                         // Table Rows
                                         ...provider.items.map((item) {
-                                          int index = provider.items.indexOf(item);
+                                          int index =
+                                              provider.items.indexOf(item);
 
                                           return TableRow(
                                             children: [
                                               TableCell(
                                                 child: Center(
                                                   child: Padding(
-                                                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                                                    child: Text((++index).toString()),
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        vertical: 16.0),
+                                                    child: Text(
+                                                        (++index).toString()),
                                                   ),
                                                 ),
                                               ),
                                               TableCell(
                                                 child: Center(
                                                   child: Padding(
-                                                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        vertical: 16.0),
                                                     child: SizedBox(
                                                       child: Text(item['name']),
                                                     ),
@@ -248,17 +280,23 @@ class _ItemPageState extends State<ItemPage> {
                                               TableCell(
                                                 child: Center(
                                                   child: Padding(
-                                                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                                                    child: Text("${num.parse(item['price']).toCurrency}\$"),
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        vertical: 16.0),
+                                                    child: Text(
+                                                        "${num.parse(item['price']).toCurrency}\$"),
                                                   ),
                                                 ),
                                               ),
                                               TableCell(
                                                 child: Center(
                                                   child: Padding(
-                                                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        vertical: 16.0),
                                                     child: Text(
-                                                      item?['unit']?['name'] ?? "O'lchov yo'q",
+                                                      item?['unit']?['name'] ??
+                                                          "O'lchov yo'q",
                                                     ),
                                                   ),
                                                 ),
@@ -266,19 +304,27 @@ class _ItemPageState extends State<ItemPage> {
                                               TableCell(
                                                 child: Center(
                                                   child: Padding(
-                                                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                                                    child: Text(item?['color']?['name'] ?? "Rang yo'q"),
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        vertical: 16.0),
+                                                    child: Text(item?['color']
+                                                            ?['name'] ??
+                                                        "Rang yo'q"),
                                                   ),
                                                 ),
                                               ),
                                               TableCell(
                                                 child: Padding(
-                                                  padding: const EdgeInsets.all(4.0),
+                                                  padding:
+                                                      const EdgeInsets.all(4.0),
                                                   child: Center(
                                                     child: SizedBox(
                                                       width: 200,
                                                       height: 200,
-                                                      child: CustomImageWidget(image: item['image'] ?? ""),
+                                                      child: CustomImageWidget(
+                                                          image:
+                                                              item['image'] ??
+                                                                  ""),
                                                     ),
                                                   ),
                                                 ),
@@ -286,19 +332,30 @@ class _ItemPageState extends State<ItemPage> {
                                               TableCell(
                                                 child: Center(
                                                   child: Padding(
-                                                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                                                    child: Text(item?['type']?['name'] ?? "Mavjud emas"),
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        vertical: 16.0),
+                                                    child: Text(item?['type']
+                                                            ?['name'] ??
+                                                        "Mavjud emas"),
                                                   ),
                                                 ),
                                               ),
                                               TableCell(
                                                 child: Center(
                                                   child: Padding(
-                                                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        vertical: 16.0),
                                                     child: IconButton(
-                                                      icon: const Icon(Icons.edit),
+                                                      icon: const Icon(
+                                                          Icons.edit),
                                                       onPressed: () async {
-                                                        await Get.to(() => AddItem(provider: provider, item: item));
+                                                        await Get.to(() =>
+                                                            AddItem(
+                                                                provider:
+                                                                    provider,
+                                                                item: item));
                                                       },
                                                     ),
                                                   ),

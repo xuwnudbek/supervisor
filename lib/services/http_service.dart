@@ -15,6 +15,7 @@ String model = "/models";
 String recipe = "/recipes";
 String showRecipe = "/getrecipes";
 String item = "/items";
+String material = "/materials";
 String unit = "/units";
 String color = "/colors";
 String razryad = "/razryads";
@@ -49,7 +50,8 @@ class HttpService {
           'status': Result.success,
         };
       } else {
-        print("Error [GET]: ${response.body}\nCode: ${response.statusCode}\nURL: $url");
+        print(
+            "Error [GET]: ${response.body}\nCode: ${response.statusCode}\nURL: $url");
         return {
           'status': Result.error,
         };
@@ -224,7 +226,8 @@ class HttpService {
     try {
       Map<String, String> headers = {
         'Content-Type': 'multipart/form-data',
-      }..addAllIf(StorageService.read("token") != null, {"Authorization": "Bearer ${StorageService.read("token")}"});
+      }..addAllIf(StorageService.read("token") != null,
+          {"Authorization": "Bearer ${StorageService.read("token")}"});
 
       // API endpoint
       final url = Uri.http(

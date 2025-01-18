@@ -35,7 +35,8 @@ class AppTheme {
         ),
         iconButtonTheme: IconButtonThemeData(
           style: ButtonStyle(
-            backgroundColor: WidgetStateProperty.all(primary.withValues(alpha: 0.1)),
+            backgroundColor:
+                WidgetStateProperty.all(primary.withValues(alpha: 0.1)),
             foregroundColor: WidgetStateProperty.all(primary),
             shape: WidgetStateProperty.all(
               RoundedRectangleBorder(

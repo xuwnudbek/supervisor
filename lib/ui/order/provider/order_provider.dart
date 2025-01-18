@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:supervisor/services/http_service.dart';
 import 'package:supervisor/utils/widgets/custom_snackbars.dart';
@@ -8,6 +6,7 @@ class OrderProvider extends ChangeNotifier {
   List _orders = [];
   List _models = [];
   List _items = [];
+  List _materials = [];
   List _contragents = [];
   bool _isLoading = false;
   bool _isUpdating = false;
@@ -21,6 +20,12 @@ class OrderProvider extends ChangeNotifier {
   List get items => _items;
   set items(List value) {
     _items = value;
+    notifyListeners();
+  }
+
+  List get materials => _materials;
+  set materials(List value) {
+    _materials = value;
     notifyListeners();
   }
 
@@ -58,6 +63,7 @@ class OrderProvider extends ChangeNotifier {
     await getOrders();
     await getModels();
     await getItems();
+    await getMaterials();
     getContragents();
 
     isLoading = false;
@@ -72,9 +78,15 @@ class OrderProvider extends ChangeNotifier {
 
   Future<void> getItems() async {
     var res = await HttpService.get(item);
-    inspect(res);
     if (res['status'] == Result.success) {
       items = res['data'];
+    }
+  }
+
+  Future<void> getMaterials() async {
+    var res = await HttpService.get(material);
+    if (res['status'] == Result.success) {
+      materials = res['data'];
     }
   }
 
@@ -94,18 +106,21 @@ class OrderProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> updateOrder(int id, Map<String, dynamic> body, {BuildContext? context}) async {
+  Future<void> updateOrder(int id, Map<String, dynamic> body,
+      {BuildContext? context}) async {
     isUpdating = true;
 
     var res = await HttpService.patch("$order/$id", body);
     if (res['status'] == Result.success) {
       await getOrders();
       if (context != null) {
-        CustomSnackbars(context).success("Buyurtma muvaffaqiyatli o'zgartirildi");
+        CustomSnackbars(context)
+            .success("Buyurtma muvaffaqiyatli o'zgartirildi");
       }
     } else {
       if (context != null) {
-        CustomSnackbars(context).success("Buyurtma o'zgartirishda xatolik yuz berdi");
+        CustomSnackbars(context)
+            .success("Buyurtma o'zgartirishda xatolik yuz berdi");
       }
     }
 

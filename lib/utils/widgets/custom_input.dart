@@ -6,6 +6,7 @@ class CustomInput extends StatefulWidget {
   const CustomInput({
     this.controller,
     this.hint,
+    this.textAlign,
     this.tooltip,
     this.formatters,
     this.onChanged,
@@ -21,6 +22,7 @@ class CustomInput extends StatefulWidget {
   });
 
   final String? hint;
+  final TextAlign? textAlign;
   final String? tooltip;
   final TextEditingController? controller;
   final List<TextInputFormatter>? formatters;
@@ -79,14 +81,18 @@ class _CustomInputState extends State<CustomInput> {
                 controller: widget.controller,
                 inputFormatters: widget.formatters ?? [],
                 textInputAction: TextInputAction.done,
+
                 onFieldSubmitted: (_) {
                   widget.onEnter?.call();
                   focusNode.requestFocus();
                 },
+                textAlign: widget.textAlign ?? TextAlign.start,
+                cursorWidth: 1,
                 maxLines: widget.lines,
                 decoration: InputDecoration(
                   floatingLabelAlignment: FloatingLabelAlignment.start,
-                  contentPadding: widget.padding ?? EdgeInsets.symmetric(horizontal: 16, vertical: 0.0),
+                  contentPadding: widget.padding ??
+                      EdgeInsets.symmetric(horizontal: 16, vertical: 0.0),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: BorderSide(
