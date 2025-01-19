@@ -228,7 +228,7 @@ class _ItemPageState extends State<ItemPage> {
                                         ],
                                       ),
                                       // Table Rows
-                                      ...provider.items.qaysiki(['name', "type/name"], provider.searchController.text).map((item) {
+                                      ...provider.items.qaysiki(['name'], provider.searchController.text).map((item) {
                                         int index = provider.items.indexOf(item);
 
                                         return TableRow(
