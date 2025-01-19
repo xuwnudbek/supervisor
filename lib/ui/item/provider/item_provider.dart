@@ -2,50 +2,69 @@ import 'package:flutter/material.dart';
 import 'package:supervisor/services/http_service.dart';
 
 class ItemProvider extends ChangeNotifier {
+  final TextEditingController searchController = TextEditingController();
+
   bool _isLoading = false;
+  bool _isCreating = false;
+  bool _isUpdating = false;
+  List _items = [];
+  List _units = [];
+  List _colors = [];
+  List _itemTypes = [];
+
   bool get isLoading => _isLoading;
   set isLoading(bool value) {
     _isLoading = value;
     notifyListeners();
   }
 
-  List _items = [];
+  bool get isCreating => _isCreating;
+  set isCreating(bool value) {
+    _isCreating = value;
+    notifyListeners();
+  }
+
+  bool get isUpdating => _isUpdating;
+  set isUpdating(bool value) {
+    _isUpdating = value;
+    notifyListeners();
+  }
+
   List get items => _items;
   set items(List value) {
     _items = value;
     notifyListeners();
   }
 
-  List _units = [];
   List get units => _units;
   set units(List value) {
     _units = value;
     notifyListeners();
   }
 
-  List _colors = [];
   List get colors => _colors;
   set colors(List value) {
     _colors = value;
     notifyListeners();
   }
 
-  List _itemTypes = [];
   List get itemTypes => _itemTypes;
   set itemTypes(List value) {
     _itemTypes = value;
     notifyListeners();
   }
 
-  ItemProvider() {
-    initialize();
-  }
+  ItemProvider();
 
   Future<void> initialize() async {
     await getItems();
     await getUnits();
     await getColors();
     await getItemTypes();
+
+    searchController.addListener(() {
+      notifyListeners();
+    });
   }
 
   Future<void> getItems() async {
@@ -56,13 +75,6 @@ class ItemProvider extends ChangeNotifier {
       items = res['data'] ?? [];
     }
     isLoading = false;
-  }
-
-  bool _isCreating = false;
-  bool get isCreating => _isCreating;
-  set isCreating(bool value) {
-    _isCreating = value;
-    notifyListeners();
   }
 
   Future<Map> createItem(Map<String, dynamic> body) async {
@@ -77,20 +89,12 @@ class ItemProvider extends ChangeNotifier {
     return res;
   }
 
-  bool _isUpdating = false;
-  bool get isUpdating => _isUpdating;
-  set isUpdating(bool value) {
-    _isUpdating = value;
-    notifyListeners();
-  }
-
   Future<Map> updateItem(
     int id,
     Map<String, dynamic> body,
   ) async {
     isUpdating = true;
-    final res = await HttpService.uploadWithImages("$item/$id",
-        body: body, method: "patch");
+    final res = await HttpService.uploadWithImages("$item/$id", body: body, method: "patch");
 
     if (res['status'] == Result.success) {
       await getItems();

@@ -31,10 +31,10 @@ class OrderDetailProvider extends ChangeNotifier {
 
   num get getRecipesTotalPrice {
     num summa = 0;
+
     for (var submodel in orderModel['submodels'] ?? []) {
       for (var recipe in submodel['recipes'] ?? []) {
-        summa += (num.tryParse(recipe['quantity']) ?? 0) *
-            (num.tryParse(recipe['item']['price'] ?? "") ?? 0);
+        summa += (num.tryParse(recipe['quantity'] ?? "") ?? 0) * (num.tryParse(recipe['item']?['price'] ?? "") ?? 0);
       }
     }
 

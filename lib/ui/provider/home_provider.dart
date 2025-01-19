@@ -26,7 +26,7 @@ class HomeProvider extends ChangeNotifier {
       'view': const ModelPage(),
     },
     {
-      'title': 'Materiallar',
+      'title': 'Maxsulotlar',
       'icon': Icons.shopping_cart,
       'view': const ItemPage(),
     },

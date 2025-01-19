@@ -3,9 +3,11 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:supervisor/ui/item/pages/add_item.dart';
 import 'package:supervisor/ui/item/provider/item_provider.dart';
+import 'package:supervisor/utils/extensions/list_extension.dart';
 import 'package:supervisor/utils/themes/app_colors.dart';
 import 'package:supervisor/utils/extensions/num_extension.dart';
 import 'package:supervisor/utils/widgets/custom_image_widget.dart';
+import 'package:supervisor/utils/widgets/custom_input.dart';
 
 class ItemPage extends StatefulWidget {
   const ItemPage({super.key});
@@ -18,7 +20,7 @@ class _ItemPageState extends State<ItemPage> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<ItemProvider>(
-      create: (context) => ItemProvider(),
+      create: (context) => ItemProvider()..initialize(),
       child: Consumer<ItemProvider>(
         builder: (context, provider, _) {
           return Container(
@@ -32,13 +34,22 @@ class _ItemPageState extends State<ItemPage> {
               children: [
                 Row(
                   children: [
-                    const Text(
-                      "Materiallar",
+                    Text(
+                      "Maxsulotlar",
                       style: TextStyle(
                         fontSize: 20,
                       ),
                     ),
                     const Spacer(),
+                    SizedBox(
+                      width: 250,
+                      child: CustomInput(
+                        hint: "Qidirish",
+                        size: 40,
+                        controller: provider.searchController,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
                     IconButton(
                       color: primary,
                       icon: const Icon(Icons.refresh),
@@ -80,48 +91,186 @@ class _ItemPageState extends State<ItemPage> {
                             : Padding(
                                 padding: EdgeInsets.all(8),
                                 child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.vertical,
-                                    child: Table(
-                                      border: TableBorder.all(
-                                        color: dark.withAlpha(50),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      defaultColumnWidth:
-                                          const IntrinsicColumnWidth(),
-                                      columnWidths: const {
-                                        0: FlexColumnWidth(0.5),
-                                        1: FlexColumnWidth(1),
-                                        2: FlexColumnWidth(0.5),
-                                        3: FlexColumnWidth(0.5),
-                                        4: FlexColumnWidth(0.5),
-                                        5: FlexColumnWidth(1),
-                                        6: FlexColumnWidth(1),
-                                        7: FlexColumnWidth(0.5),
-                                      },
-                                      children: [
-                                        // Table Header
-                                        TableRow(
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(8),
+                                  child: Table(
+                                    border: TableBorder.all(
+                                      color: dark.withAlpha(50),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    columnWidths: const {
+                                      0: IntrinsicColumnWidth(),
+                                      1: MaxColumnWidth(FixedColumnWidth(250), FixedColumnWidth(350)),
+                                      2: IntrinsicColumnWidth(),
+                                      3: IntrinsicColumnWidth(),
+                                      4: IntrinsicColumnWidth(),
+                                      5: MaxColumnWidth(FixedColumnWidth(100), FixedColumnWidth(100)),
+                                      6: FractionColumnWidth(0.2),
+                                      7: IntrinsicColumnWidth(),
+                                    },
+                                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                                    children: [
+                                      // Table Header
+                                      TableRow(
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        children: const [
+                                          TableCell(
+                                            child: Center(
+                                              child: Padding(
+                                                padding: EdgeInsets.all(16.0),
+                                                child: Text(
+                                                  "#",
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
                                           ),
-                                          children: const [
+                                          TableCell(
+                                            child: Padding(
+                                              padding: EdgeInsets.all(16.0),
+                                              child: Text(
+                                                "Nomi",
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          TableCell(
+                                            child: Center(
+                                              child: Padding(
+                                                padding: EdgeInsets.all(16.0),
+                                                child: Text(
+                                                  "Narxi",
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          TableCell(
+                                            child: Center(
+                                              child: Padding(
+                                                padding: EdgeInsets.all(16.0),
+                                                child: Text(
+                                                  "O'lchov",
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          TableCell(
+                                            child: Center(
+                                              child: Padding(
+                                                padding: EdgeInsets.all(16.0),
+                                                child: Text(
+                                                  "Rang",
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          TableCell(
+                                            child: Center(
+                                              child: Padding(
+                                                padding: EdgeInsets.all(16.0),
+                                                child: Text(
+                                                  "Rasm",
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          TableCell(
+                                            child: Center(
+                                              child: Padding(
+                                                padding: EdgeInsets.all(16.0),
+                                                child: Text(
+                                                  "Maxsulot turi",
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          TableCell(
+                                            child: Center(
+                                              child: Padding(
+                                                padding: EdgeInsets.all(16.0),
+                                                child: Text(
+                                                  "Amallar",
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      // Table Rows
+                                      ...provider.items.qaysiki(['name', "type/name"], provider.searchController.text).map((item) {
+                                        int index = provider.items.indexOf(item);
+
+                                        return TableRow(
+                                          decoration: BoxDecoration(
+                                            color: index.isEven ? Colors.white : Colors.white.withAlpha(50),
+                                            border: Border(
+                                              bottom: BorderSide(
+                                                color: Colors.transparent,
+                                              ),
+                                            ),
+                                          ),
+                                          children: [
                                             TableCell(
                                               child: Center(
                                                 child: Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      vertical: 16.0),
+                                                  padding: const EdgeInsets.all(16.0),
+                                                  child: Text((++index).toString()),
+                                                ),
+                                              ),
+                                            ),
+                                            TableCell(
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(16),
+                                                child: SizedBox(
+                                                  child: Text(item['name']),
+                                                ),
+                                              ),
+                                            ),
+                                            TableCell(
+                                              child: Center(
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(16.0),
+                                                  child: Text("${num.parse(item['price']).toCurrency}\$"),
+                                                ),
+                                              ),
+                                            ),
+                                            TableCell(
+                                              child: Center(
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(16.0),
                                                   child: Text(
-                                                    "#",
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                    ),
+                                                    item?['unit']?['name'] ?? "O'lchov yo'q",
                                                   ),
                                                 ),
                                               ),
@@ -129,16 +278,34 @@ class _ItemPageState extends State<ItemPage> {
                                             TableCell(
                                               child: Center(
                                                 child: Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      vertical: 16.0),
-                                                  child: Text(
-                                                    "Nomi",
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                    ),
+                                                  padding: const EdgeInsets.all(16.0),
+                                                  child: Column(
+                                                    children: [
+                                                      Text(
+                                                        "${item?['color']?['name']}",
+                                                        textAlign: TextAlign.center,
+                                                      ),
+                                                      if (item?['color']?['hex'] != null)
+                                                        SelectableText(
+                                                          "#${item?['color']?['hex']}",
+                                                          textAlign: TextAlign.center,
+                                                          style: TextStyle(
+                                                              // color: Colors.white,
+                                                              // backgroundColor: Color(int.tryParse("0xFF${item?['color']?['hex']}") ?? 0x00000000),
+                                                              ),
+                                                        ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            TableCell(
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child: Center(
+                                                  child: SizedBox(
+                                                    height: 85,
+                                                    child: CustomImageWidget(image: item['image'] ?? ""),
                                                   ),
                                                 ),
                                               ),
@@ -146,226 +313,28 @@ class _ItemPageState extends State<ItemPage> {
                                             TableCell(
                                               child: Center(
                                                 child: Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      vertical: 16.0),
-                                                  child: Text(
-                                                    "Narxi",
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                    ),
-                                                  ),
+                                                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                                                  child: Text(item?['type']?['name'] ?? "Mavjud emas"),
                                                 ),
                                               ),
                                             ),
                                             TableCell(
                                               child: Center(
                                                 child: Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      vertical: 16.0),
-                                                  child: Text(
-                                                    "O'lchov",
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            TableCell(
-                                              child: Center(
-                                                child: Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      vertical: 16.0),
-                                                  child: Text(
-                                                    "Rang",
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            TableCell(
-                                              child: Center(
-                                                child: Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      vertical: 16.0),
-                                                  child: Text(
-                                                    "Rasm",
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            TableCell(
-                                              child: Center(
-                                                child: Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      vertical: 16.0),
-                                                  child: Text(
-                                                    "Material turi",
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            TableCell(
-                                              child: Center(
-                                                child: Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      vertical: 16.0),
-                                                  child: Text(
-                                                    "Amallar",
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                    ),
+                                                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                                                  child: IconButton(
+                                                    icon: const Icon(Icons.edit),
+                                                    onPressed: () async {
+                                                      await Get.to(() => AddItem(provider: provider, item: item));
+                                                    },
                                                   ),
                                                 ),
                                               ),
                                             ),
                                           ],
-                                        ),
-                                        // Table Rows
-                                        ...provider.items.map((item) {
-                                          int index =
-                                              provider.items.indexOf(item);
-
-                                          return TableRow(
-                                            children: [
-                                              TableCell(
-                                                child: Center(
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        vertical: 16.0),
-                                                    child: Text(
-                                                        (++index).toString()),
-                                                  ),
-                                                ),
-                                              ),
-                                              TableCell(
-                                                child: Center(
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        vertical: 16.0),
-                                                    child: SizedBox(
-                                                      child: Text(item['name']),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              TableCell(
-                                                child: Center(
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        vertical: 16.0),
-                                                    child: Text(
-                                                        "${num.parse(item['price']).toCurrency}\$"),
-                                                  ),
-                                                ),
-                                              ),
-                                              TableCell(
-                                                child: Center(
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        vertical: 16.0),
-                                                    child: Text(
-                                                      item?['unit']?['name'] ??
-                                                          "O'lchov yo'q",
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              TableCell(
-                                                child: Center(
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        vertical: 16.0),
-                                                    child: Text(item?['color']
-                                                            ?['name'] ??
-                                                        "Rang yo'q"),
-                                                  ),
-                                                ),
-                                              ),
-                                              TableCell(
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(4.0),
-                                                  child: Center(
-                                                    child: SizedBox(
-                                                      width: 200,
-                                                      height: 200,
-                                                      child: CustomImageWidget(
-                                                          image:
-                                                              item['image'] ??
-                                                                  ""),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              TableCell(
-                                                child: Center(
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        vertical: 16.0),
-                                                    child: Text(item?['type']
-                                                            ?['name'] ??
-                                                        "Mavjud emas"),
-                                                  ),
-                                                ),
-                                              ),
-                                              TableCell(
-                                                child: Center(
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        vertical: 16.0),
-                                                    child: IconButton(
-                                                      icon: const Icon(
-                                                          Icons.edit),
-                                                      onPressed: () async {
-                                                        await Get.to(() =>
-                                                            AddItem(
-                                                                provider:
-                                                                    provider,
-                                                                item: item));
-                                                      },
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          );
-                                        }),
-                                      ],
-                                    ),
+                                        );
+                                      }),
+                                    ],
                                   ),
                                 ),
                               ),

@@ -234,11 +234,31 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                   'Umumiy summa',
                                                   style: TextTheme.of(context).bodyMedium,
                                                 ),
-                                                Text(
-                                                  "${provider.getRecipesTotalPrice.toStringAsFixed(2)}\$",
-                                                  style: TextTheme.of(context).titleMedium?.copyWith(
-                                                        fontWeight: FontWeight.w600,
-                                                      ),
+                                                Text.rich(
+                                                  TextSpan(children: [
+                                                    TextSpan(
+                                                      text: "${provider.orderData['quantity']}",
+                                                      style: TextTheme.of(context).titleMedium,
+                                                    ),
+                                                    TextSpan(
+                                                      text: " x ",
+                                                      style: TextTheme.of(context).titleMedium,
+                                                    ),
+                                                    TextSpan(
+                                                      text: "${provider.getRecipesTotalPrice.toStringAsFixed(2)}\$",
+                                                      style: TextTheme.of(context).titleMedium,
+                                                    ),
+                                                    TextSpan(
+                                                      text: " = ",
+                                                      style: TextTheme.of(context).titleMedium,
+                                                    ),
+                                                    TextSpan(
+                                                      text: "${((provider.orderData['quantity'] as int) * provider.getRecipesTotalPrice).toCurrency}\$",
+                                                      style: TextTheme.of(context).titleMedium?.copyWith(
+                                                            fontWeight: FontWeight.w600,
+                                                          ),
+                                                    ),
+                                                  ]),
                                                 ),
                                               ],
                                             ),
@@ -618,7 +638,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                               padding: const EdgeInsets.all(8.0),
                                                               child: Center(
                                                                 child: Text(
-                                                                  "Narxi",
+                                                                  "U/S",
                                                                   style: TextTheme.of(context).titleSmall,
                                                                 ),
                                                               ),
