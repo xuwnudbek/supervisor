@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:supervisor/ui/provider/home_provider.dart';
 import 'package:supervisor/ui/splash/splash_page.dart';
 import 'package:supervisor/utils/themes/app_colors.dart';
+import 'package:supervisor/utils/widgets/app/custom_sidebar.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -23,81 +24,7 @@ class HomePage extends StatelessWidget {
               child: Row(
                 children: [
                   // Siderbar
-                  Container(
-                    width: 200,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: const EdgeInsets.all(8),
-                    child: Column(
-                      children: [
-                        Expanded(
-                          child: ListView(
-                            shrinkWrap: true,
-                            children: [
-                              ...List.generate(
-                                provider.menu.length,
-                                (index) {
-                                  bool isActive =
-                                      provider.selectedIndex == index;
-                                  Map item = provider.menu[index];
-
-                                  return TextButton(
-                                    style: TextButton.styleFrom(
-                                      backgroundColor: isActive
-                                          ? primary
-                                          : primary.withValues(alpha: .1),
-                                      foregroundColor:
-                                          isActive ? Colors.white : primary,
-                                    ),
-                                    onPressed: () {
-                                      provider.selectedIndex = index;
-                                    },
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                          item['title'] ?? '',
-                                          style: TextTheme.of(context)
-                                              .titleMedium
-                                              ?.copyWith(
-                                                color: isActive
-                                                    ? Colors.white
-                                                    : primary,
-                                              ),
-                                        ),
-                                      ],
-                                    ),
-                                  ).paddingOnly(bottom: 4);
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        TextButton(
-                          style: TextButton.styleFrom(
-                            backgroundColor: danger.withValues(alpha: .1),
-                            foregroundColor: danger,
-                          ),
-                          onPressed: () async {
-                            await provider.logout();
-                            Get.offAll(() => const SplashPage());
-                          },
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.logout,
-                                color: danger,
-                              ),
-                              SizedBox(width: 8),
-                              Text('Chiqish'),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  CustomSidebar(),
 
                   const SizedBox(width: 16),
                   // Content

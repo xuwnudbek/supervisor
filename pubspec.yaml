@@ -45,13 +45,9 @@ dependencies:
   path: ^1.9.0
   window_manager: ^0.4.3
   flutter_colorpicker: ^1.1.0
-  # intl: ^0.20.1
   dotted_line_flutter: ^0.1.6
   path_provider: ^2.1.5
   dropdown_search: ^6.0.1
-  flutter_gemini: ^3.0.0
-
-  # fluent_ui: ^4.10.0
 
 dev_dependencies:
   flutter_test:
