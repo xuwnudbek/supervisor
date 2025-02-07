@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supervisor/utils/themes/app_colors.dart';
 
 class CustomSnackbars {
   final BuildContext context;
@@ -41,16 +42,16 @@ class CustomSnackbars {
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: Colors.lime,
+        backgroundColor: Colors.orange,
         content: Text(
           message,
           style: TextStyle(
-            color: Colors.black,
+            color: light,
             fontWeight: FontWeight.w600,
           ),
         ),
         showCloseIcon: true,
-        closeIconColor: Colors.white,
+        closeIconColor: light,
         duration: const Duration(milliseconds: 1500),
         behavior: SnackBarBehavior.floating,
         width: 300,

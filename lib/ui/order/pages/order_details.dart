@@ -5,7 +5,7 @@ import 'package:supervisor/utils/extensions/num_extension.dart';
 import 'package:supervisor/utils/themes/app_colors.dart';
 import 'package:supervisor/utils/widgets/custom_divider.dart';
 
-class OrderDetails extends StatefulWidget {
+class OrderDetails extends StatelessWidget {
   const OrderDetails({
     super.key,
     required this.orderId,
@@ -14,14 +14,11 @@ class OrderDetails extends StatefulWidget {
   final int orderId;
 
   @override
-  State<OrderDetails> createState() => _OrderDetailsState();
-}
-
-class _OrderDetailsState extends State<OrderDetails> {
-  @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
     return ChangeNotifierProvider<OrderDetailProvider>(
-      create: (context) => OrderDetailProvider(widget.orderId)..initialize(),
+      create: (context) => OrderDetailProvider(orderId)..initialize(),
       child: Consumer<OrderDetailProvider>(
         builder: (context, provider, _) {
           return Scaffold(
@@ -46,10 +43,12 @@ class _OrderDetailsState extends State<OrderDetails> {
                           child: Text('Buyurtma haqida ma\'lumot topilmadi'),
                         )
                       : Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Expanded(
                               flex: 4,
                               child: Container(
+                                height: double.infinity,
                                 decoration: BoxDecoration(
                                   color: light,
                                 ),
@@ -322,7 +321,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                     spacing: 8,
                                                     runSpacing: 8,
                                                     children: [
-                                                      ...provider.orderModel['submodels'].map((submodel) {
+                                                      ...(provider.orderModel['submodels'] ?? []).map((submodel) {
                                                         return Container(
                                                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                                                           decoration: BoxDecoration(
@@ -330,7 +329,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                             borderRadius: BorderRadius.circular(8),
                                                           ),
                                                           child: Text(
-                                                            submodel['submodel']['name'],
+                                                            submodel['submodel']?['name'] ?? "Unknown",
                                                             style: TextTheme.of(context).titleMedium?.copyWith(
                                                                   fontWeight: FontWeight.w600,
                                                                 ),
@@ -360,43 +359,55 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                   ),
                                                   margin: EdgeInsets.only(right: 8),
                                                   padding: EdgeInsets.all(8),
-                                                  child: Wrap(
-                                                    spacing: 8,
-                                                    runSpacing: 8,
-                                                    children: [
-                                                      ...provider.orderModel['sizes'].map((sizeData) {
-                                                        return Container(
-                                                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                                          decoration: BoxDecoration(
-                                                            color: light,
-                                                            borderRadius: BorderRadius.circular(8),
-                                                          ),
-                                                          child: Text.rich(
-                                                            TextSpan(
-                                                              children: [
-                                                                TextSpan(
-                                                                  text: sizeData['size']['name'],
-                                                                  style: TextTheme.of(context).titleMedium?.copyWith(
-                                                                        fontWeight: FontWeight.w600,
-                                                                      ),
-                                                                ),
-                                                                const TextSpan(
-                                                                  text: ' — ',
-                                                                ),
-                                                                TextSpan(
-                                                                  text: "${sizeData['quantity']} ta",
-                                                                  style: const TextStyle(
-                                                                    fontSize: 14,
-                                                                    fontWeight: FontWeight.w500,
-                                                                  ),
-                                                                ),
-                                                              ],
+                                                  child: (provider.orderModel['sizes'] ?? []).isEmpty
+                                                      ? SizedBox(
+                                                          height: 40,
+                                                          child: Center(
+                                                            child: Text(
+                                                              "O'lcham mavjud emas",
+                                                              style: textTheme.titleSmall?.copyWith(
+                                                                color: dark.withValues(alpha: 0.6),
+                                                              ),
                                                             ),
                                                           ),
-                                                        );
-                                                      }).toList(),
-                                                    ],
-                                                  ),
+                                                        )
+                                                      : Wrap(
+                                                          spacing: 8,
+                                                          runSpacing: 8,
+                                                          children: [
+                                                            ...(provider.orderModel['sizes'] ?? []).map((sizeData) {
+                                                              return Container(
+                                                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                                                decoration: BoxDecoration(
+                                                                  color: light,
+                                                                  borderRadius: BorderRadius.circular(8),
+                                                                ),
+                                                                child: Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text: sizeData['size']?['name'] ?? "Unknown",
+                                                                        style: TextTheme.of(context).titleMedium?.copyWith(
+                                                                              fontWeight: FontWeight.w600,
+                                                                            ),
+                                                                      ),
+                                                                      const TextSpan(
+                                                                        text: ' — ',
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text: "${sizeData['quantity'] ?? 0} ta",
+                                                                        style: const TextStyle(
+                                                                          fontSize: 14,
+                                                                          fontWeight: FontWeight.w500,
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            }).toList(),
+                                                          ],
+                                                        ),
                                                 ),
                                               ],
                                             ),

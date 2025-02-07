@@ -8,6 +8,7 @@ import 'package:supervisor/utils/themes/app_colors.dart';
 import 'package:supervisor/utils/extensions/num_extension.dart';
 import 'package:supervisor/utils/widgets/custom_image_widget.dart';
 import 'package:supervisor/utils/widgets/custom_input.dart';
+import 'package:supervisor/utils/widgets/custom_snackbars.dart';
 
 class ItemPage extends StatefulWidget {
   const ItemPage({super.key});
@@ -62,6 +63,10 @@ class _ItemPageState extends State<ItemPage> {
                       color: primary,
                       icon: const Icon(Icons.add),
                       onPressed: () async {
+                        if (provider.isLoading) {
+                          CustomSnackbars(context).warning("Iltimos, ma'lumotlar yuklanishini kutib turing!");
+                          return;
+                        }
                         await Get.to(() => AddItem(provider: provider));
                       },
                     ),

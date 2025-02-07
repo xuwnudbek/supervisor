@@ -54,8 +54,8 @@ class OrderDetailProvider extends ChangeNotifier {
   Future<void> getOrder() async {
     final response = await HttpService.get('$order/$orderId');
     if (response['status'] == Result.success) {
-      orderData = response['data'];
-      orderModel = orderData['order_model'];
+      orderData = response['data'] ?? {};
+      orderModel = orderData['order_model'] ?? {};
     }
   }
 }

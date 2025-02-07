@@ -153,21 +153,21 @@ class _ModelPageState extends State<ModelPage> {
                       ],
                     ),
                   ),
-                  PopupMenuItem(
-                    value: "delete",
-                    child: Row(
-                      children: [
-                        Icon(Icons.delete, color: danger),
-                        const SizedBox(width: 8),
-                        Text(
-                          "O'chirish",
-                          style: TextStyle(
-                            color: danger,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  // PopupMenuItem(
+                  //   value: "delete",
+                  //   child: Row(
+                  //     children: [
+                  //       Icon(Icons.delete, color: danger),
+                  //       const SizedBox(width: 8),
+                  //       Text(
+                  //         "O'chirish",
+                  //         style: TextStyle(
+                  //           color: danger,
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
                 ];
               },
               tooltip: "Ko'proq",

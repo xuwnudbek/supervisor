@@ -49,8 +49,7 @@ class _RazryadPageState extends State<RazryadPage> {
                       color: primary,
                       icon: const Icon(Icons.add),
                       onPressed: () async {
-                        var res =
-                            await Get.to(() => AddRazryad(provider: provider));
+                        var res = await Get.to(() => AddRazryad(provider: provider));
 
                         if (res ?? false) {
                           provider.initialize();
@@ -87,11 +86,7 @@ class _RazryadPageState extends State<RazryadPage> {
                                   runSpacing: 8,
                                   children: provider.razryads.map((razryad) {
                                     return Container(
-                                      padding: const EdgeInsets.only(
-                                          left: 20,
-                                          top: 8,
-                                          right: 8,
-                                          bottom: 8),
+                                      padding: const EdgeInsets.only(left: 20, top: 8, right: 8, bottom: 8),
                                       decoration: BoxDecoration(
                                         color: Colors.white,
                                         borderRadius: BorderRadius.circular(8),
@@ -117,8 +112,7 @@ class _RazryadPageState extends State<RazryadPage> {
                                                   ),
                                                 ),
                                                 TextSpan(
-                                                  text:
-                                                      " - ${double.parse(razryad['salary']).toStringAsFixed(1)} so'm",
+                                                  text: " - ${double.parse(razryad['salary']).toStringAsFixed(1)} so'm",
                                                   style: const TextStyle(
                                                     fontSize: 16,
                                                     color: Colors.black87,
@@ -141,33 +135,30 @@ class _RazryadPageState extends State<RazryadPage> {
                                                     ],
                                                   ),
                                                 ),
-                                                PopupMenuItem(
-                                                  value: "delete",
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(Icons.delete,
-                                                          color: danger),
-                                                      const SizedBox(width: 8),
-                                                      Text(
-                                                        "O'chirish",
-                                                        style: TextStyle(
-                                                          color: danger,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
+                                                // PopupMenuItem(
+                                                //   value: "delete",
+                                                //   child: Row(
+                                                //     children: [
+                                                //       Icon(Icons.delete,
+                                                //           color: danger),
+                                                //       const SizedBox(width: 8),
+                                                //       Text(
+                                                //         "O'chirish",
+                                                //         style: TextStyle(
+                                                //           color: danger,
+                                                //         ),
+                                                //       ),
+                                                //     ],
+                                                //   ),
+                                                // ),
                                               ];
                                             },
                                             tooltip: "Ko'proq",
                                             onSelected: (value) {
                                               if (value == "edit") {
-                                                Get.to(() => AddRazryad(
-                                                    provider: provider,
-                                                    razryad: razryad));
+                                                Get.to(() => AddRazryad(provider: provider, razryad: razryad));
                                               } else if (value == "delete") {
-                                                provider.deleteRazryad(
-                                                    razryad['id']);
+                                                provider.deleteRazryad(razryad['id']);
                                               }
                                             },
                                             color: Colors.white,
