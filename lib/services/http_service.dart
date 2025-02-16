@@ -50,8 +50,7 @@ class HttpService {
           'status': Result.success,
         };
       } else {
-        print(
-            "Error [GET]: ${response.body}\nCode: ${response.statusCode}\nURL: $url");
+        print("Error [GET]: ${response.body}\nCode: ${response.statusCode}\nURL: $url");
         return {
           'status': Result.error,
         };
@@ -222,12 +221,10 @@ class HttpService {
     required Map<String, dynamic> body,
     String method = 'post',
   }) async {
-    print(body);
     try {
       Map<String, String> headers = {
         'Content-Type': 'multipart/form-data',
-      }..addAllIf(StorageService.read("token") != null,
-          {"Authorization": "Bearer ${StorageService.read("token")}"});
+      }..addAllIf(StorageService.read("token") != null, {"Authorization": "Bearer ${StorageService.read("token")}"});
 
       // API endpoint
       final url = Uri.http(
@@ -251,6 +248,63 @@ class HttpService {
       }
 
       body.remove('images');
+
+      request.fields.addAll({
+        "data": jsonEncode(body),
+      });
+
+      var res = await request.send();
+
+      if (res.statusCode >= 200 && res.statusCode < 300) {
+        return {
+          'data': jsonDecode(await res.stream.bytesToString()),
+          'status': Result.success,
+        };
+      } else {
+        log(await res.stream.bytesToString());
+        return {
+          'status': Result.error,
+        };
+      }
+    } catch (e) {
+      print('Error: $e');
+      return {
+        'status': Result.error,
+      };
+    }
+  }
+
+  static Future<Map<String, dynamic>> uploadWithFile(
+    String endpoint, {
+    required Map<String, dynamic> body,
+    String method = 'post',
+  }) async {
+    try {
+      Map<String, String> headers = {
+        'Content-Type': 'multipart/form-data',
+        if (StorageService.read("token") != null) "Authorization": "Bearer ${StorageService.read("token")}",
+      };
+
+      // API endpoint
+      final url = Uri.http(
+        baseUrl,
+        '$middle$endpoint',
+        {'_method': method},
+      );
+
+      var request = http.MultipartRequest("post", url);
+
+      request.headers.addAll(headers);
+
+      if (body['file'] != null) {
+        request.files.add(await http.MultipartFile.fromPath(
+          'file',
+          body['path'],
+          filename: body['name'],
+        ));
+      }
+
+      body.remove('file');
 
       request.fields.addAll({
         "data": jsonEncode(body),

@@ -45,10 +45,10 @@ class _OrderPageState extends State<OrderPage> {
                       color: primary,
                       icon: const Icon(Icons.refresh),
                       onPressed: () {
-                        // if (provider.isLoading) {
-                        //   CustomSnackbars(context).warning("Ma'lumotlar yuklanmoqda, iltimos kuting");
-                        //   return;
-                        // }
+                        if (provider.isLoading) {
+                          CustomSnackbars(context).warning("Ma'lumotlar yuklanmoqda, iltimos kuting");
+                          return;
+                        }
                         provider.initialize();
                       },
                     ),

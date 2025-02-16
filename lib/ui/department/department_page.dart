@@ -96,15 +96,9 @@ class _DepartmentPageState extends State<DepartmentPage> {
                                             provider.departments.length,
                                             (index) => CustomDepartmentCard(
                                               index: index,
-                                              department:
-                                                  provider.departments[index],
+                                              department: provider.departments[index],
                                               onTap: () async {
-                                                await Get.to(() =>
-                                                    AddDepartment(
-                                                        department: provider
-                                                                .departments[
-                                                            index]))?.then(
-                                                    (value) {
+                                                await Get.to(() => AddDepartment(department: provider.departments[index]))?.then((value) {
                                                   if (value) {
                                                     provider.initialize();
                                                   }

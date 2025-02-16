@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:supervisor/ui/model/pages/add_model.dart';
 import 'package:supervisor/ui/model/providers/model_provider.dart';
+import 'package:supervisor/ui/order/pages/import_order.dart';
+import 'package:supervisor/utils/extensions/list_extension.dart';
 import 'package:supervisor/utils/themes/app_colors.dart';
+import 'package:supervisor/utils/widgets/app/model_card.dart';
+import 'package:supervisor/utils/widgets/custom_input.dart';
 
 class ModelPage extends StatefulWidget {
   const ModelPage({super.key});
@@ -29,6 +34,7 @@ class _ModelPageState extends State<ModelPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Row(
+                  spacing: 8,
                   children: [
                     const Text(
                       "Modellar",
@@ -37,6 +43,14 @@ class _ModelPageState extends State<ModelPage> {
                       ),
                     ),
                     const Spacer(),
+                    SizedBox(
+                      width: 250,
+                      child: CustomInput(
+                        size: 40,
+                        controller: provider.searchController,
+                        hint: "Qidirish...",
+                      ),
+                    ),
                     IconButton(
                       color: primary,
                       icon: const Icon(Icons.refresh),
@@ -44,13 +58,21 @@ class _ModelPageState extends State<ModelPage> {
                         provider.initialize();
                       },
                     ),
-                    const SizedBox(width: 8),
                     IconButton(
                       color: primary,
                       icon: const Icon(Icons.add),
                       onPressed: () async {
-                        await Get.to(() => AddModel(provider: provider));
-                        provider.initialize();
+                        var res = await Get.to(() => AddModel(provider: provider));
+                        if (res == true) {
+                          provider.initialize();
+                        }
+                      },
+                    ),
+                    IconButton(
+                      color: primary,
+                      icon: const Icon(Icons.flash_on_rounded),
+                      onPressed: () async {
+                        await Get.to(() => ImportOrder());
                       },
                     ),
                   ],
@@ -78,21 +100,23 @@ class _ModelPageState extends State<ModelPage> {
                               )
                             : Padding(
                                 padding: EdgeInsets.all(8),
-                                child: Wrap(
-                                  spacing: 16,
-                                  runSpacing: 8,
-                                  children: provider.models.map((model) {
-                                    int index = provider.models.indexOf(model);
-
-                                    return _buildModelCard(
-                                      index: index,
-                                      model: model,
-                                      modelProvider: provider,
-                                      onPressed: () {
-                                        // Get.to(() => ModelDetails(modelData: model));
-                                      },
-                                    );
-                                  }).toList(),
+                                child: StaggeredGrid.count(
+                                  crossAxisCount: 5,
+                                  crossAxisSpacing: 8,
+                                  mainAxisSpacing: 8,
+                                  children: [
+                                    ...provider.models.qaysiki(['name'], provider.searchController.text).map((model) {
+                                      return ModelCard(
+                                        model: model,
+                                        onTap: () async {
+                                          var res = await Get.to(() => AddModel(provider: provider, model: model));
+                                          if (res == true) {
+                                            provider.initialize();
+                                          }
+                                        },
+                                      );
+                                    }),
+                                  ],
                                 ),
                               ),
                   ),
@@ -101,93 +125,6 @@ class _ModelPageState extends State<ModelPage> {
             ),
           );
         },
-      ),
-    );
-  }
-
-  Widget _buildModelCard({
-    required int index,
-    required Map model,
-    required ModelProvider modelProvider,
-    Function? onPressed,
-  }) {
-    return GestureDetector(
-      onTap: () {
-        onPressed?.call();
-      },
-      child: Container(
-        padding: EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(8),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.shade200,
-              blurRadius: 10,
-              spreadRadius: 1,
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(width: 24),
-            Text(
-              "${model['name']}",
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(width: 8),
-            PopupMenuButton(
-              itemBuilder: (context) {
-                return [
-                  const PopupMenuItem(
-                    value: "edit",
-                    child: Row(
-                      children: [
-                        Icon(Icons.edit),
-                        SizedBox(width: 8),
-                        Text("Tahrirlash"),
-                      ],
-                    ),
-                  ),
-                  // PopupMenuItem(
-                  //   value: "delete",
-                  //   child: Row(
-                  //     children: [
-                  //       Icon(Icons.delete, color: danger),
-                  //       const SizedBox(width: 8),
-                  //       Text(
-                  //         "O'chirish",
-                  //         style: TextStyle(
-                  //           color: danger,
-                  //         ),
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
-                ];
-              },
-              tooltip: "Ko'proq",
-              onSelected: (value) {
-                if (value == "edit") {
-                  Get.to(() => AddModel(provider: modelProvider, model: model));
-                } else if (value == "delete") {
-                  modelProvider.deleteModel(model['id']);
-                }
-              },
-              icon: Icon(
-                Icons.more_vert,
-                color: primary,
-              ),
-              style: IconButton.styleFrom(
-                backgroundColor: Colors.white,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

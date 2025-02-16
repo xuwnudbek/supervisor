@@ -1,89 +1,19 @@
 {
-    "id": 59,
-    "name": "8gd237d82d",
-    "quantity": 6,
-    "status": "active",
-    "start_date": "2025-01-18 00:00:00",
-    "end_date": "2025-01-31 00:00:00",
-    "rasxod": "0",
-    "order_models": [
+    "name": "BEKORCHILAR",
+    "responsible_user_id": 140,
+    "start_time": "9:30 AM",
+    "end_time": "9:30 PM",
+    "break_time": "7200",
+    "groups": [
         {
-            "id": 53,
-            "model": {
-                "id": 50,
-                "name": "Prezident",
-                "rasxod": "0.5"
-            },
-            "material": {
-                "id": 51,
-                "name": "Siniy s kletkami",
-                "price": "0.1",
-                "image": null,
-                "code": "JSP-24342",
-                "qr_code": null
-            },
-            "sizes": [
-                {
-                    "id": 13,
-                    "size": {
-                        "id": 149,
-                        "name": "123-12"
-                    },
-                    "quantity": 3
-                },
-                {
-                    "id": 14,
-                    "size": {
-                        "id": 151,
-                        "name": "123-12"
-                    },
-                    "quantity": 3
-                }
-            ],
-            "submodels": [
-                {
-                    "id": 108,
-                    "submodel": {
-                        "id": 67,
-                        "name": "Kastyum4"
-                    },
-                    "recipes": [
-                        {
-                            "id": 118,
-                            "item": {
-                                "id": 54,
-                                "name": "Чиска кайчи",
-                                "price": "4.8",
-                                "image": "",
-                                "code": "3",
-                                "qr_code": "5c8c890b-3678-485d-a152-d076e02fc138"
-                            },
-                            "quantity": "4"
-                        }
-                    ]
-                },
-                {
-                    "id": 109,
-                    "submodel": {
-                        "id": 69,
-                        "name": "qwdqwqw"
-                    },
-                    "recipes": [
-                        {
-                            "id": 119,
-                            "item": {
-                                "id": 53,
-                                "name": "6 лик жилвир",
-                                "price": "8",
-                                "image": "",
-                                "code": "2",
-                                "qr_code": "5c8c890b-3678-485d-a152-d076e02fc138"
-                            },
-                            "quantity": "4"
-                        }
-                    ]
-                }
-            ]
+            "id": null,
+            "name": "1-patok",
+            "responsible_user_id": 139
+        },
+        {
+            "id": null,
+            "name": "2-patok",
+            "responsible_user_id": 155
         }
     ]
 }

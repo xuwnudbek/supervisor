@@ -1,7 +1,10 @@
+
 import 'package:flutter/material.dart';
 import 'package:supervisor/services/http_service.dart';
 
 class ModelProvider extends ChangeNotifier {
+  final TextEditingController searchController = TextEditingController();
+
   List _models = [];
   List _colors = [];
   bool _isLoading = false;
@@ -9,6 +12,10 @@ class ModelProvider extends ChangeNotifier {
   bool _isUpdatingModel = false;
 
   ModelProvider() {
+    searchController.addListener(() {
+      notifyListeners();
+    });
+
     initialize();
   }
 
@@ -65,19 +72,20 @@ class ModelProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> createModel(Map<String, dynamic> data) async {
+  Future<bool> createModel(Map<String, dynamic> data) async {
     isCreatingModel = true;
 
     var res = await HttpService.uploadWithImages(model, body: data);
 
     if (res['status'] == Result.success) {
-      await getModels();
+      isCreatingModel = false;
+      return true;
     }
-
     isCreatingModel = false;
+    return false;
   }
 
-  Future<void> updateModel(int id, Map<String, dynamic> data) async {
+  Future<bool> updateModel(int id, Map<String, dynamic> data) async {
     isUpdatingModel = true;
 
     var res = await HttpService.uploadWithImages(
@@ -87,17 +95,11 @@ class ModelProvider extends ChangeNotifier {
     );
 
     if (res['status'] == Result.success) {
-      await getModels();
+      isUpdatingModel = false;
+      return true;
     }
 
     isUpdatingModel = false;
-  }
-
-  Future<void> deleteModel(int id) async {
-    var res = await HttpService.delete("$model/$id");
-
-    if (res['status'] == Result.success) {
-      await getModels();
-    }
+    return false;
   }
 }

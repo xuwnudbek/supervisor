@@ -40,14 +40,25 @@ class _AddModelState extends State<AddWarehouse> {
   TextEditingController addressController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+
+    if (warehouse.isNotEmpty) {
+      nameController.text = warehouse['name'];
+      addressController.text = warehouse['location'];
+      _selectedUsers.addAll(warehouse['users']);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: CustomDialog(
         width: 500,
-        maxHeight: MediaQuery.of(context).size.height * 0.8,
+        maxHeight: MediaQuery.of(context).size.height * 0.6,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
+          // mainAxisSize: MainAxisSize.min,
           children: [
             const Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -64,10 +75,11 @@ class _AddModelState extends State<AddWarehouse> {
             Row(
               children: [
                 Expanded(
-                  flex: 3,
+                  flex: 4,
                   child: CustomInput(
                     hint: "Ombor nomi",
                     controller: nameController,
+                    lines: 1,
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -76,35 +88,41 @@ class _AddModelState extends State<AddWarehouse> {
                   child: CustomInput(
                     hint: "Ombor manzili",
                     controller: addressController,
+                    lines: 1,
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 8),
-            Container(
-              width: double.infinity,
-              height: 200,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey.shade300),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              padding: EdgeInsets.all(8),
-              child: Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  ...provider.warehouseUsers.map((user) {
-                    bool isSelected = selectedUsers.contains(user);
+            Expanded(
+              child: Container(
+                width: double.infinity,
+                height: 200,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade300),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: EdgeInsets.all(8),
+                child: SingleChildScrollView(
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      ...provider.warehouseUsers.map((user) {
+                        bool isSelected = selectedUsers.contains(user);
 
-                    return ChoiceChip(
-                      label: Text(user['employee']['name']),
-                      selected: selectedUsers.contains(user),
-                      onSelected: (value) => onSelectUser(user),
-                      color: WidgetStatePropertyAll(
-                          isSelected ? primary : Colors.grey.shade300),
-                    );
-                  }),
-                ],
+                        return ChoiceChip(
+                          label: Text(
+                            user['employee']?['name'] ?? "Unknown",
+                          ),
+                          selected: selectedUsers.contains(user),
+                          onSelected: (value) => onSelectUser(user),
+                          color: WidgetStatePropertyAll(isSelected ? primary : Colors.grey.shade300),
+                        );
+                      }),
+                    ],
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: 16),
@@ -128,12 +146,10 @@ class _AddModelState extends State<AddWarehouse> {
                 isLoading = false;
 
                 if (res['status'] == Result.success) {
-                  CustomSnackbars(context)
-                      .success("Ombor muvaffaqiyatli qo'shildi!");
+                  CustomSnackbars(context).success("Ombor muvaffaqiyatli qo'shildi!");
                   Get.back(result: true);
                 } else {
-                  CustomSnackbars(context)
-                      .error("Ombor qo'shishda xatolik yuz berdi!");
+                  CustomSnackbars(context).error("Ombor qo'shishda xatolik yuz berdi!");
                 }
               },
               child: Row(

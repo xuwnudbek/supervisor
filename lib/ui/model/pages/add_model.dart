@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -35,8 +36,8 @@ class _AddModelState extends State<AddModel> {
   final TextEditingController newSizeController = TextEditingController();
 
   List<String> images = [];
-  List<TextEditingController> submodels = [];
-  List<TextEditingController> sizes = [];
+  List<Map> submodels = [];
+  List<Map> sizes = [];
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -58,11 +59,17 @@ class _AddModelState extends State<AddModel> {
       modelRasxodController.text = widget.model!['rasxod'] ?? "";
 
       for (var size in (model!['sizes'] as List)) {
-        sizes.add(TextEditingController(text: size['name'] ?? ""));
+        sizes.add({
+          "id": size['id'],
+          "name": TextEditingController(text: size['name'] ?? ""),
+        });
       }
 
       for (var submodel in (model!['submodels'] as List)) {
-        submodels.add(TextEditingController(text: submodel['name'] ?? ""));
+        submodels.add({
+          "id": submodel['id'],
+          "name": TextEditingController(text: submodel['name'] ?? ""),
+        });
       }
 
       setState(() {});
@@ -75,7 +82,7 @@ class _AddModelState extends State<AddModel> {
       return;
     }
 
-    bool hasAlready = submodels.any((el) => el.text.toLowerCase() == newSubmodelController.text.toLowerCase());
+    bool hasAlready = submodels.any((el) => el['name'].text.toLowerCase() == newSubmodelController.text.toLowerCase());
 
     if (hasAlready) {
       CustomSnackbars(context).warning("Malumot avvaldan mavjud!");
@@ -83,9 +90,10 @@ class _AddModelState extends State<AddModel> {
     }
 
     setState(() {
-      submodels.add(
-        TextEditingController(text: newSubmodelController.text),
-      );
+      submodels.add({
+        "id": null,
+        "name": TextEditingController(text: newSubmodelController.text),
+      });
       newSubmodelController.clear();
     });
   }
@@ -102,7 +110,7 @@ class _AddModelState extends State<AddModel> {
       return;
     }
 
-    bool hasAlready = sizes.any((el) => el.text.toLowerCase() == newSizeController.text.toLowerCase());
+    bool hasAlready = sizes.any((el) => el['name'].text.toLowerCase() == newSizeController.text.toLowerCase());
 
     if (hasAlready) {
       CustomSnackbars(context).warning("Malumot avvaldan mavjud!");
@@ -110,9 +118,10 @@ class _AddModelState extends State<AddModel> {
     }
 
     setState(() {
-      sizes.add(
-        TextEditingController(text: newSizeController.text),
-      );
+      sizes.add({
+        "id": null,
+        "name": TextEditingController(text: newSizeController.text),
+      });
       newSizeController.clear();
     });
   }
@@ -219,7 +228,7 @@ class _AddModelState extends State<AddModel> {
                                 children: [
                                   ...submodels.map((submodel) {
                                     return CustomInput(
-                                      controller: submodel,
+                                      controller: submodel['name'],
                                       color: light,
                                       hint: "submodel",
                                       onTrailingTap: () {
@@ -289,7 +298,7 @@ class _AddModelState extends State<AddModel> {
                                 children: [
                                   ...sizes.map((size) {
                                     return CustomInput(
-                                      controller: size,
+                                      controller: size['name'],
                                       color: light,
                                       hint: "size",
                                       onTrailingTap: () {
@@ -436,20 +445,31 @@ class _AddModelState extends State<AddModel> {
 
     final body = {
       "name": nameController.text.trim(),
-      "rasxod": double.tryParse(modelRasxodController.text.trim()) ?? "0.0",
+      "rasxod": double.tryParse(modelRasxodController.text.replaceAll(",", '').trim()) ?? "0.0",
       "sizes": [
-        ...sizes.map((e) => e.text),
+        ...sizes.map((e) => {
+              "id": e['id'],
+              "name": e['name'].text.trim(),
+            }),
       ],
       "submodels": [
-        ...submodels.map((e) => e.text),
+        ...submodels.map((e) => {
+              "id": e['id'],
+              "name": e['name'].text.trim(),
+            }),
       ],
       "images": images,
     };
 
+
     if (widget.model != null) {
       await widget.provider.updateModel(widget.model!['id'], body).then((value) {
-        CustomSnackbars(context).success("Model muvaffaqiyatli yangilandi!");
-        Get.back();
+        if (value) {
+          CustomSnackbars(context).success("Model muvaffaqiyatli yangilandi!");
+          Get.back(result: true);
+        } else {
+          CustomSnackbars(context).error("Modelni yangilashda xatolik yuz berdi!");
+        }
       });
 
       isLoading = false;
@@ -457,10 +477,16 @@ class _AddModelState extends State<AddModel> {
     }
 
     await widget.provider.createModel(body).then((value) {
-      CustomSnackbars(context).success("Model muvaffaqiyatli qo'shildi!");
-      Get.back();
-
+      if (value == true) {
+        CustomSnackbars(context).success("Model muvaffaqiyatli qo'shildi!");
+        Get.back(result: true);
+        isLoading = false;
+        return;
+      } else {
+        CustomSnackbars(context).error("Model qo'shishda xatolik yuz berdi!");
+      }
       isLoading = false;
+      Get.back();
     });
   }
 }

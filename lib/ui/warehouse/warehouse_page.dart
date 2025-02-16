@@ -85,10 +85,10 @@ class WarehousePage extends StatelessWidget {
 
                                             return ChoiceChip(
                                               label: Text(
-                                                warehouse?['name'] ?? "Unknown",
+                                                warehouse['name'] ?? "Unknown",
                                               ),
                                               showCheckmark: false,
-                                              labelPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                              labelPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                                               selected: provider.selectedWarehouse == warehouse,
                                               onSelected: (value) {
                                                 provider.selectedWarehouse = warehouse;

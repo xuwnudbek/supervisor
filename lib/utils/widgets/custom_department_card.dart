@@ -15,6 +15,8 @@ class CustomDepartmentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -38,10 +40,7 @@ class CustomDepartmentCard extends StatelessWidget {
               children: [
                 Text(
                   "${department['name']}",
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: textTheme.titleLarge,
                 ),
               ],
             ),
@@ -49,14 +48,17 @@ class CustomDepartmentCard extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Mas'ul: "),
+                Text(
+                  "Mas'ul: ",
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: dark.withValues(alpha: 0.5),
+                  ),
+                ),
                 SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     "${department['responsible_user']['employee']?['name'] ?? 'Mavjud emas'}",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: textTheme.titleSmall,
                   ),
                 ),
               ],
@@ -66,17 +68,22 @@ class CustomDepartmentCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text("Guruhlar:"),
+                Text(
+                  "Guruhlar:",
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: dark.withValues(alpha: 0.5),
+                  ),
+                ),
               ],
             ),
             SizedBox(height: 4),
             SizedBox(
               width: double.infinity,
-              child: (department['groups'] ?? []).isEmpty
+              child: ((department['groups'] ?? []) as List).isEmpty
                   ? Center(
                       child: Text(
                         "Hech qanday guruh topilmadi",
-                        style: TextStyle(
+                        style: textTheme.bodySmall?.copyWith(
                           color: dark.withValues(alpha: 0.5),
                         ),
                       ),
@@ -87,13 +94,17 @@ class CustomDepartmentCard extends StatelessWidget {
                       children: [
                         ...(department['groups'] ?? []).map((group) {
                           return Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 4),
+                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                             decoration: BoxDecoration(
-                              color: primary.withValues(alpha: 0.2),
+                              color: primary.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(4),
                             ),
-                            child: Text(group['name'] ?? "Unknown"),
+                            child: Text(
+                              group['name'] ?? "Unknown",
+                              style: TextTheme.of(context).titleSmall?.copyWith(
+                                    color: primary,
+                                  ),
+                            ),
                           );
                         }),
                       ],

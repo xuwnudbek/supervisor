@@ -11,7 +11,7 @@ import 'package:supervisor/ui/warehouse/warehouse_page.dart';
 class HomeProvider extends ChangeNotifier {
   final List<Map> menu = [
     {
-      'title': 'Home',
+      'title': 'Bosh sahifa',
       'icon': Icons.home,
       'view': Container(),
     },
@@ -41,12 +41,12 @@ class HomeProvider extends ChangeNotifier {
       'view': const RazryadPage(),
     },
     {
-      'title': 'Bo\'limlar',
+      'title': 'Departmentlar',
       'icon': Icons.shopping_cart,
       'view': const DepartmentPage(),
     },
     {
-      'title': 'Ombor',
+      'title': 'Omborlar',
       'icon': Icons.shopping_cart,
       'view': const WarehousePage(),
     },

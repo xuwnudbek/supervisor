@@ -1,5 +1,8 @@
+
 import 'package:flutter/material.dart';
 import 'package:supervisor/services/http_service.dart';
+import 'package:supervisor/utils/extensions/fime_of_day_extension.dart';
+import 'package:supervisor/utils/extensions/string_extension.dart';
 import 'package:supervisor/utils/widgets/custom_snackbars.dart';
 
 class AddDepartmentProvider extends ChangeNotifier {
@@ -8,6 +11,10 @@ class AddDepartmentProvider extends ChangeNotifier {
   List _userSubMasters = [];
   bool _isLoading = false;
   bool _isCreating = false;
+
+  TimeOfDay? startTime;
+  TimeOfDay? endTime;
+  final TextEditingController breakTime = TextEditingController();
 
   Map<String, dynamic> get departmentData => _departmentData;
   set departmentData(Map<String, dynamic> value) {
@@ -42,9 +49,15 @@ class AddDepartmentProvider extends ChangeNotifier {
   AddDepartmentProvider(Map? department) {
     if (department != null) {
       departmentData['name'] = TextEditingController(text: department['name']);
+
+      startTime = department['start_time'].toString().toTimeOfDay;
+      endTime = department['end_time'].toString().toTimeOfDay;
+      breakTime.text = department['break_time'].toString();
+
       departmentData['master'] = department['responsible_user'];
       departmentData['groups'] = <Map<String, dynamic>>[
-        ...(department['groups'] ?? []).map((group) => {
+        ...((department['groups'] ?? []) as List).map((group) => {
+              "id": group['id'],
               "name": TextEditingController(text: group['name']),
               "submaster": group['responsible_user'],
             }),
@@ -69,9 +82,24 @@ class AddDepartmentProvider extends ChangeNotifier {
     isLoading = false;
   }
 
+  void onSelectEndTime(TimeOfDay time) {
+    if (startTime == null || time.hour < startTime!.hour) {
+      endTime = startTime;
+      notifyListeners();
+      return;
+    }
+
+    endTime = time;
+    notifyListeners();
+  }
+
+  void onSelectStartTime(TimeOfDay time) {
+    startTime = time;
+    notifyListeners();
+  }
+
   void onSelectMaster(int masterId) {
-    departmentData['master'] =
-        userMasters.firstWhere((master) => master['id'] == masterId);
+    departmentData['master'] = userMasters.firstWhere((master) => master['id'] == masterId);
     notifyListeners();
   }
 
@@ -79,8 +107,7 @@ class AddDepartmentProvider extends ChangeNotifier {
     int submasterId,
     int groupIndex,
   ) {
-    Map submaster = userSubMasters
-        .firstWhere((submaster) => submaster['id'] == submasterId);
+    Map submaster = userSubMasters.firstWhere((submaster) => submaster['id'] == submasterId);
     departmentData['groups'][groupIndex]['submaster'] = submaster;
     notifyListeners();
   }
@@ -100,7 +127,7 @@ class AddDepartmentProvider extends ChangeNotifier {
         CustomSnackbars(context).success("Guruh nomini kiriting");
         return;
       } else if (groups.last['submaster'] == null) {
-        CustomSnackbars(context).success("Guruh mudirini tanlang");
+        CustomSnackbars(context).success("Guruh masterini tanlang");
         return;
       }
 
@@ -131,15 +158,25 @@ class AddDepartmentProvider extends ChangeNotifier {
       return null;
     }
 
+    if (startTime == null || endTime == null) {
+      CustomSnackbars(context).warning("Ish vaqtlarini tanlang");
+      return null;
+    }
+
+    if (breakTime.text.isEmpty) {
+      CustomSnackbars(context).warning("Tanaffus vaqtini kiriting");
+      return null;
+    }
+
     if (departmentData['master'] == null) {
       CustomSnackbars(context).warning("Bo'lim masterini tanlang");
       return null;
     }
 
     List groups = departmentData['groups'] ?? [];
-    if ((groups.lastOrNull ?? {}).isNotEmpty) {
+    if (((groups.lastOrNull ?? {}) as Map).isNotEmpty) {
       Map last = groups.last;
-      if (last['name'].text.isEmpty || last['submaster'] == null) {
+      if ((last['name'] as TextEditingController).text.isEmpty || last['submaster'] == null) {
         CustomSnackbars(context).warning("Guruh nomini va masterini kiriting");
         return null;
       }
@@ -150,8 +187,12 @@ class AddDepartmentProvider extends ChangeNotifier {
     Map<String, dynamic> data = {
       "name": departmentData['name'].text.trim(),
       "responsible_user_id": departmentData['master']?['id'],
-      "groups": (departmentData['groups'] ?? [])
+      "start_time": startTime!.toHM,
+      "end_time": endTime!.toHM,
+      "break_time": breakTime.text,
+      "groups": ((departmentData['groups'] ?? []) as List)
           .map((group) => {
+                "id": group['id'],
                 "name": group['name'].text.trim(),
                 "responsible_user_id": group['submaster']?['id'],
               })

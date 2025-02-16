@@ -65,7 +65,7 @@ class _ColorPickerSquareState extends State<ColorPickerSquare> {
               actions: [
                 TextButton(
                   onPressed: () {
-                    widget.onColorChanged.call(selectedHEX ?? hex);
+                    widget.onColorChanged.call(selectedHEX);
                     Get.back();
                   },
                   child: const Text("Tasdiqlash"),

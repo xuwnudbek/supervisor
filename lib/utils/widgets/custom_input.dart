@@ -88,11 +88,14 @@ class _CustomInputState extends State<CustomInput> {
                 },
                 textAlign: widget.textAlign ?? TextAlign.start,
                 cursorWidth: 1,
-                maxLines: widget.lines,
+                maxLines: widget.lines ?? 1,
+                style: TextStyle(
+                  overflow: TextOverflow.ellipsis,
+                ),
+
                 decoration: InputDecoration(
                   floatingLabelAlignment: FloatingLabelAlignment.start,
-                  contentPadding: widget.padding ??
-                      EdgeInsets.symmetric(horizontal: 16, vertical: 0.0),
+                  contentPadding: widget.padding ?? EdgeInsets.symmetric(horizontal: 16, vertical: 0.0),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: BorderSide(
