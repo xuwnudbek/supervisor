@@ -63,7 +63,6 @@ class AddOrder extends StatelessWidget {
                                       );
                                     }).toList(),
                                     onChanged: (id) {
-                                      print(id);
                                       provider.selectedContragent = provider.contragents.firstWhere((e) => e['id'] == id);
                                     },
                                     value: provider.selectedContragent['id'],

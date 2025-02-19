@@ -72,7 +72,11 @@ class _ModelPageState extends State<ModelPage> {
                       color: primary,
                       icon: const Icon(Icons.flash_on_rounded),
                       onPressed: () async {
-                        await Get.to(() => ImportOrder());
+                        var res = await Get.to(() => ImportOrder());
+
+                        if (res == true) {
+                          provider.initialize();
+                        }
                       },
                     ),
                   ],
@@ -100,23 +104,25 @@ class _ModelPageState extends State<ModelPage> {
                               )
                             : Padding(
                                 padding: EdgeInsets.all(8),
-                                child: StaggeredGrid.count(
-                                  crossAxisCount: 5,
-                                  crossAxisSpacing: 8,
-                                  mainAxisSpacing: 8,
-                                  children: [
-                                    ...provider.models.qaysiki(['name'], provider.searchController.text).map((model) {
-                                      return ModelCard(
-                                        model: model,
-                                        onTap: () async {
-                                          var res = await Get.to(() => AddModel(provider: provider, model: model));
-                                          if (res == true) {
-                                            provider.initialize();
-                                          }
-                                        },
-                                      );
-                                    }),
-                                  ],
+                                child: SingleChildScrollView(
+                                  child: StaggeredGrid.count(
+                                    crossAxisCount: 5,
+                                    crossAxisSpacing: 8,
+                                    mainAxisSpacing: 8,
+                                    children: [
+                                      ...provider.models.qaysiki(['name'], provider.searchController.text).map((model) {
+                                        return ModelCard(
+                                          model: model,
+                                          onTap: () async {
+                                            var res = await Get.to(() => AddModel(provider: provider, model: model));
+                                            if (res == true) {
+                                              provider.initialize();
+                                            }
+                                          },
+                                        );
+                                      }),
+                                    ],
+                                  ),
                                 ),
                               ),
                   ),

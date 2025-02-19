@@ -98,7 +98,6 @@ class ModelDetailsProvider extends ChangeNotifier {
 
     if (res['status'] == Result.success) {
       recipes = res['data'];
-      print(recipes.length);
       notifyListeners();
     }
   }

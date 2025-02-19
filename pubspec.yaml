@@ -28,6 +28,7 @@ dependencies:
   path_provider: ^2.1.5
   dropdown_search: ^6.0.1
   file_picker: ^9.0.0
+  image: ^4.5.2
 
 
 dev_dependencies:
@@ -43,8 +44,8 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/images/models/
     - assets/fonts/
-    - assets/files/
   
 
   fonts:

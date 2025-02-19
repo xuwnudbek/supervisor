@@ -88,7 +88,6 @@ class AddItem extends StatelessWidget {
                           ? CustomImageWidget(
                               onSecondaryTap: () {
                                 addItemProvider.selectedImage = null;
-                                print("Image cleared");
                               },
                               image: addItemProvider.selectedImage!.path,
                               source: Sources.file,

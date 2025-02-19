@@ -23,7 +23,6 @@ class CustomImageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        print("wqdwdqdwwqd");
         showDialog(
           context: context,
           builder: (context) {

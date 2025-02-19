@@ -1,8 +1,12 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 import 'package:supervisor/services/storage_service.dart';
 import 'package:get/get.dart';
+import 'package:image/image.dart' as img;
 
 enum Result { success, error }
 
@@ -27,6 +31,8 @@ String userSubMaster = "/users/submaster";
 String warehouseUrl = "/warehouses";
 String group = "/groups";
 String contragent = "/contragents";
+String importOrders = "/import-orders";
+String orderStore = "/orderStore";
 
 class HttpService {
   static Future<Map<String, dynamic>> get(
@@ -224,7 +230,8 @@ class HttpService {
     try {
       Map<String, String> headers = {
         'Content-Type': 'multipart/form-data',
-      }..addAllIf(StorageService.read("token") != null, {"Authorization": "Bearer ${StorageService.read("token")}"});
+        if (StorageService.read("token") != null) "Authorization": "Bearer ${StorageService.read("token")}",
+      };
 
       // API endpoint
       final url = Uri.http(
@@ -237,8 +244,24 @@ class HttpService {
 
       request.headers.addAll(headers);
 
-      if (body['images'] != null) {
+      if (body['images'] != null && body['images'].isNotEmpty) {
         for (var imagePath in body['images']) {
+          if (imagePath.toString().contains("http")) {
+            img.Image image = img.decodeImage((await http.get(Uri.parse(imagePath))).bodyBytes)!;
+
+            //save image to file and upload
+
+            var file = File("assets/images/models/${imagePath.split('/').last}")..writeAsBytesSync(img.encodePng(image));
+
+            request.files.add(await http.MultipartFile.fromPath(
+              'images[]',
+              file.path,
+              filename: imagePath.split('/').last,
+            ));
+
+            continue;
+          }
+
           request.files.add(await http.MultipartFile.fromPath(
             'images[]',
             imagePath,
@@ -247,13 +270,21 @@ class HttpService {
         }
       }
 
-      body.remove('images');
-
       request.fields.addAll({
-        "data": jsonEncode(body),
+        "data": jsonEncode(Map.from(body)..remove('images')),
       });
 
       var res = await request.send();
+
+      final directory = Directory('assets/images/models');
+
+      if (directory.existsSync()) {
+        for (var file in directory.listSync()) {
+          if (file is File) {
+            file.deleteSync();
+          }
+        }
+      }
 
       if (res.statusCode >= 200 && res.statusCode < 300) {
         return {
@@ -261,13 +292,13 @@ class HttpService {
           'status': Result.success,
         };
       } else {
-        log(await res.stream.bytesToString());
+        log("Error: ${await res.stream.bytesToString()}");
         return {
           'status': Result.error,
         };
       }
     } catch (e) {
-      print('Error: $e');
+      log('Error: $e');
       return {
         'status': Result.error,
       };
@@ -296,19 +327,12 @@ class HttpService {
 
       request.headers.addAll(headers);
 
-      if (body['file'] != null) {
+      if (body['path'] != null) {
         request.files.add(await http.MultipartFile.fromPath(
           'file',
           body['path'],
-          filename: body['name'],
         ));
       }
-
-      body.remove('file');
-
-      request.fields.addAll({
-        "data": jsonEncode(body),
-      });
 
       var res = await request.send();
 

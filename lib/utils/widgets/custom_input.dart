@@ -6,6 +6,7 @@ class CustomInput extends StatefulWidget {
   const CustomInput({
     this.controller,
     this.hint,
+    this.enabled,
     this.textAlign,
     this.tooltip,
     this.formatters,
@@ -24,6 +25,7 @@ class CustomInput extends StatefulWidget {
   final String? hint;
   final TextAlign? textAlign;
   final String? tooltip;
+  final bool? enabled;
   final TextEditingController? controller;
   final List<TextInputFormatter>? formatters;
   final void Function(dynamic)? onChanged;
@@ -67,6 +69,10 @@ class _CustomInputState extends State<CustomInput> {
       child: Container(
         height: widget.size ?? 50,
         decoration: BoxDecoration(
+          border: Border.all(
+            width: 0.1,
+            color: Colors.transparent,
+          ),
           color: widget.color ?? secondary.withValues(alpha: 0.8),
           borderRadius: widget.borderRadius ?? BorderRadius.circular(8),
         ),
@@ -77,6 +83,7 @@ class _CustomInputState extends State<CustomInput> {
           children: [
             Expanded(
               child: TextFormField(
+                enabled: widget.enabled ?? true,
                 focusNode: focusNode, // Fokus tugmasi ulandi
                 controller: widget.controller,
                 inputFormatters: widget.formatters ?? [],
@@ -97,6 +104,12 @@ class _CustomInputState extends State<CustomInput> {
                   floatingLabelAlignment: FloatingLabelAlignment.start,
                   contentPadding: widget.padding ?? EdgeInsets.symmetric(horizontal: 16, vertical: 0.0),
                   enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      color: Colors.grey.shade200,
+                    ),
+                  ),
+                  disabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: BorderSide(
                       color: Colors.grey.shade200,

@@ -101,26 +101,21 @@ class OrderProvider extends ChangeNotifier {
     var res = await HttpService.post(order, body);
     if (res['status'] == Result.success) {
       await getOrders();
-    } else {
-      print(res['data']);
-    }
+    } else {}
   }
 
-  Future<void> updateOrder(int id, Map<String, dynamic> body,
-      {BuildContext? context}) async {
+  Future<void> updateOrder(int id, Map<String, dynamic> body, {BuildContext? context}) async {
     isUpdating = true;
 
     var res = await HttpService.patch("$order/$id", body);
     if (res['status'] == Result.success) {
       await getOrders();
       if (context != null) {
-        CustomSnackbars(context)
-            .success("Buyurtma muvaffaqiyatli o'zgartirildi");
+        CustomSnackbars(context).success("Buyurtma muvaffaqiyatli o'zgartirildi");
       }
     } else {
       if (context != null) {
-        CustomSnackbars(context)
-            .success("Buyurtma o'zgartirishda xatolik yuz berdi");
+        CustomSnackbars(context).success("Buyurtma o'zgartirishda xatolik yuz berdi");
       }
     }
 

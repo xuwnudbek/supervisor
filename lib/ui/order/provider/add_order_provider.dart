@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:supervisor/services/http_service.dart';
 import 'package:supervisor/ui/order/provider/order_provider.dart';
@@ -10,10 +9,8 @@ class AddOrderProvider extends ChangeNotifier {
   final TextEditingController orderNameController = TextEditingController();
   final TextEditingController orderRasxodController = TextEditingController();
 
-  final TextEditingController instructionTitleController =
-      TextEditingController();
-  final TextEditingController instructionBodyController =
-      TextEditingController();
+  final TextEditingController instructionTitleController = TextEditingController();
+  final TextEditingController instructionBodyController = TextEditingController();
   final TextEditingController orderCommentController = TextEditingController();
 
   List models = [];
@@ -106,8 +103,7 @@ class AddOrderProvider extends ChangeNotifier {
   void removeRecipe(Map recipe) {
     if (recipes.qaysiki(['submodel'], recipe['submodel']).length == 1) {
       recipes.qaysiki(['submodel'], recipe['submodel'])[0]['item'] = {};
-      recipes.qaysiki(['submodel'], recipe['submodel'])[0]['quantity'] =
-          TextEditingController(text: "");
+      recipes.qaysiki(['submodel'], recipe['submodel'])[0]['quantity'] = TextEditingController(text: "");
       notifyListeners();
       return;
     }
@@ -121,8 +117,7 @@ class AddOrderProvider extends ChangeNotifier {
     required Map item,
     required index,
   }) {
-    var submodelRecipes =
-        recipes.where((e) => e['submodel'] == submodel).toList();
+    var submodelRecipes = recipes.where((e) => e['submodel'] == submodel).toList();
     submodelRecipes[index]['item'] = item;
     notifyListeners();
   }
@@ -166,8 +161,7 @@ class AddOrderProvider extends ChangeNotifier {
       return;
     }
 
-    if (instructions.isNotEmpty &&
-        instructions.where((e) => e['title'] == title).isNotEmpty) {
+    if (instructions.isNotEmpty && instructions.where((e) => e['title'] == title).isNotEmpty) {
       CustomSnackbars(context).warning("Bunday instruksiya mavjud");
       return;
     }
@@ -191,9 +185,7 @@ class AddOrderProvider extends ChangeNotifier {
 
   int get getSizesQuantity {
     if (selectedSizes.isNotEmpty) {
-      return selectedSizes
-          .map((e) => (double.tryParse(e['quantity'].text) ?? 0).toInt())
-          .reduce((a, b) => a + b);
+      return selectedSizes.map((e) => (double.tryParse(e['quantity'].text) ?? 0).toInt()).reduce((a, b) => a + b);
     }
     return 0;
   }
@@ -202,8 +194,7 @@ class AddOrderProvider extends ChangeNotifier {
     if (recipes.isNotEmpty) {
       return recipes
           .map((e) {
-            return (double.tryParse(e['quantity'].text) ?? 0) *
-                (num.tryParse(e['item']['price'] ?? "") ?? 0);
+            return (double.tryParse(e['quantity'].text) ?? 0) * (num.tryParse(e['item']['price'] ?? "") ?? 0);
           })
           .reduce((a, b) => a + b)
           .toStringAsFixed(1)
@@ -229,8 +220,7 @@ class AddOrderProvider extends ChangeNotifier {
     }
 
     if (deadline.isEmpty) {
-      CustomSnackbars(context)
-          .warning("Buyurtma olish/topshirish sanasini tanlang!");
+      CustomSnackbars(context).warning("Buyurtma olish/topshirish sanasini tanlang!");
       return null;
     }
 
@@ -263,8 +253,7 @@ class AddOrderProvider extends ChangeNotifier {
       "end_date": deadline.lastOrNull.toString(),
       "rasxod": double.tryParse(orderRasxodController.text),
       "comment": orderCommentController.text,
-      "contragent_id":
-          selectedContragent['id'] == 0 ? null : selectedContragent['id'],
+      "contragent_id": selectedContragent['id'] == 0 ? null : selectedContragent['id'],
       "contragent_name": selectedContragent['name'],
       "instructions": instructions,
       "model": {
@@ -288,8 +277,6 @@ class AddOrderProvider extends ChangeNotifier {
             }),
       ],
     };
-
-    print(data);
 
     var res = await HttpService.post(order, data);
 
