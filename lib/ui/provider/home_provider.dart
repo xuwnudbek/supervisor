@@ -11,43 +11,31 @@ import 'package:supervisor/ui/warehouse/warehouse_page.dart';
 class HomeProvider extends ChangeNotifier {
   final List<Map> menu = [
     {
-      'title': 'Bosh sahifa',
-      'icon': Icons.home,
-      'view': Container(),
-    },
-    {
       'title': 'Buyurtmalar',
-      'icon': Icons.shopping_cart,
       'view': const OrderPage(),
     },
     {
       'title': 'Modellar',
-      'icon': Icons.shopping_cart,
       'view': const ModelPage(),
     },
     {
       'title': 'Maxsulotlar',
-      'icon': Icons.shopping_cart,
       'view': const ItemPage(),
     },
     {
       'title': 'Ranglar',
-      'icon': Icons.shopping_cart,
       'view': const ColorPage(),
     },
     {
       'title': 'Razryadlar',
-      'icon': Icons.shopping_cart,
       'view': const RazryadPage(),
     },
     {
       'title': 'Departmentlar',
-      'icon': Icons.shopping_cart,
       'view': const DepartmentPage(),
     },
     {
       'title': 'Omborlar',
-      'icon': Icons.shopping_cart,
       'view': const WarehousePage(),
     },
   ];

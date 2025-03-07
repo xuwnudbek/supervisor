@@ -20,6 +20,8 @@ class ItemPage extends StatefulWidget {
 class _ItemPageState extends State<ItemPage> {
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
     return ChangeNotifierProvider<ItemProvider>(
       create: (context) => ItemProvider()..initialize(),
       child: Consumer<ItemProvider>(
@@ -103,12 +105,12 @@ class _ItemPageState extends State<ItemPage> {
                                     ),
                                     columnWidths: const {
                                       0: IntrinsicColumnWidth(),
-                                      1: MaxColumnWidth(FixedColumnWidth(250), FixedColumnWidth(350)),
+                                      1: MaxColumnWidth(IntrinsicColumnWidth(), FixedColumnWidth(350)),
                                       2: IntrinsicColumnWidth(),
                                       3: IntrinsicColumnWidth(),
                                       4: IntrinsicColumnWidth(),
                                       5: MaxColumnWidth(FixedColumnWidth(100), FixedColumnWidth(100)),
-                                      6: FractionColumnWidth(0.2),
+                                      6: IntrinsicColumnWidth(),
                                       7: IntrinsicColumnWidth(),
                                     },
                                     defaultVerticalAlignment: TableCellVerticalAlignment.middle,
@@ -294,10 +296,7 @@ class _ItemPageState extends State<ItemPage> {
                                                         SelectableText(
                                                           "#${item?['color']?['hex']}",
                                                           textAlign: TextAlign.center,
-                                                          style: TextStyle(
-                                                              // color: Colors.white,
-                                                              // backgroundColor: Color(int.tryParse("0xFF${item?['color']?['hex']}") ?? 0x00000000),
-                                                              ),
+                                                          style: textTheme.bodySmall,
                                                         ),
                                                     ],
                                                   ),
@@ -310,7 +309,10 @@ class _ItemPageState extends State<ItemPage> {
                                                 child: Center(
                                                   child: SizedBox(
                                                     height: 85,
-                                                    child: CustomImageWidget(image: item['image'] ?? ""),
+                                                    child: CustomImageWidget(
+                                                      image: item['image'] ?? "",
+                                                      fit: BoxFit.cover,
+                                                    ),
                                                   ),
                                                 ),
                                               ),

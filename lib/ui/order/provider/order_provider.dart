@@ -104,10 +104,14 @@ class OrderProvider extends ChangeNotifier {
     } else {}
   }
 
-  Future<void> updateOrder(int id, Map<String, dynamic> body, {BuildContext? context}) async {
+  Future<void> updateOrder(
+    int id,
+    Map<String, dynamic> body, {
+    BuildContext? context,
+  }) async {
     isUpdating = true;
 
-    var res = await HttpService.patch("$order/$id", body);
+    var res = await HttpService.patch("$order/change/$id", body);
     if (res['status'] == Result.success) {
       await getOrders();
       if (context != null) {

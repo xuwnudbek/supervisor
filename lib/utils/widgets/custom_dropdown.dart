@@ -9,6 +9,7 @@ class CustomDropdown extends StatefulWidget {
     this.items,
     this.disabledItems,
     this.onChanged,
+    this.onTapTrailing,
     this.value,
     this.size,
     this.borderRadius,
@@ -23,6 +24,7 @@ class CustomDropdown extends StatefulWidget {
   final List? disabledItems;
   final dynamic value;
   final void Function(dynamic)? onChanged;
+  final void Function()? onTapTrailing;
   final double? size;
   final BorderRadius? borderRadius;
   final Color? color;
@@ -45,29 +47,46 @@ class _CustomDropdownState extends State<CustomDropdown> {
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton(
-              menuMaxHeight: 300,
-              isExpanded: true,
-              items: widget.items?.map((e) {
-                return DropdownMenuItem(
-                  value: e.value,
-                  enabled: widget.disabledItems?.contains(e.value) != true,
-                  child: e.child,
-                );
-              }).toList(),
-              onChanged: (value) {
-                widget.onChanged?.call(value);
-              },
-              value: widget.value,
-              hint: Text(
-                widget.hint ?? "",
-                style: const TextStyle(
-                  color: Colors.grey,
-                  overflow: TextOverflow.ellipsis,
+          child: Row(
+            spacing: 4,
+            children: [
+              Expanded(
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton(
+                    menuMaxHeight: 300,
+                    isExpanded: true,
+                    items: widget.items?.map((e) {
+                      return DropdownMenuItem(
+                        value: e.value,
+                        enabled: widget.disabledItems?.contains(e.value) != true,
+                        child: e.child,
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      widget.onChanged?.call(value);
+                    },
+                    value: widget.value,
+                    hint: Text(
+                      widget.hint ?? "",
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
                 ),
               ),
-            ),
+              if (widget.onTapTrailing != null)
+                InkWell(
+                  onTap: () {
+                    widget.onTapTrailing?.call();
+                  },
+                  child: Icon(
+                    Icons.add_rounded,
+                    color: dark,
+                  ),
+                ),
+            ],
           ),
         ),
       ),

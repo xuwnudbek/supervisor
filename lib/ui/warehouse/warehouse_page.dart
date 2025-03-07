@@ -301,7 +301,11 @@ class WarehousePage extends StatelessWidget {
                                                             Center(child: Text(item['type']?['name'] ?? "unknown")),
                                                           ),
                                                           DataCell(
-                                                            Center(child: Text(lastUpdated.format)),
+                                                            Center(
+                                                              child: Text(
+                                                                lastUpdated.format ?? "Unknown",
+                                                              ),
+                                                            ),
                                                           ),
                                                         ],
                                                       );

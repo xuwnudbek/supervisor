@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
 import 'package:supervisor/services/storage_service.dart';
 import 'package:get/get.dart';
 import 'package:image/image.dart' as img;
+import 'package:path_provider/path_provider.dart';
 
 enum Result { success, error }
 
@@ -171,6 +171,7 @@ class HttpService {
         body: jsonEncode(body),
       );
       if (response.statusCode >= 200 && response.statusCode < 300) {
+        
         return {
           'data': jsonDecode(response.body),
           'status': Result.success,
@@ -190,7 +191,9 @@ class HttpService {
     }
   }
 
-  static Future<Map<String, dynamic>> delete(String endpoint) async {
+  static Future<Map<String, dynamic>> delete(
+    String endpoint,
+  ) async {
     String token = StorageService.read("token") ?? "";
 
     Map<String, String> headers = {
@@ -241,24 +244,29 @@ class HttpService {
       );
 
       var request = http.MultipartRequest("post", url);
-
       request.headers.addAll(headers);
+
+      final tempDir = await getTemporaryDirectory();
 
       if (body['images'] != null && body['images'].isNotEmpty) {
         for (var imagePath in body['images']) {
           if (imagePath.toString().contains("http")) {
             img.Image image = img.decodeImage((await http.get(Uri.parse(imagePath))).bodyBytes)!;
 
-            //save image to file and upload
+            final folder = Directory("${tempDir.path}/supervisor/assets/images/models");
 
-            var file = File("assets/images/models/${imagePath.split('/').last}")..writeAsBytesSync(img.encodePng(image));
+            if (!folder.existsSync()) {
+              folder.createSync(recursive: true);
+            }
+
+            var file = File("${tempDir.path}/supervisor/assets/images/models/${imagePath.split('/').last}");
+            file = await file.writeAsBytes(img.encodePng(image));
 
             request.files.add(await http.MultipartFile.fromPath(
               'images[]',
               file.path,
               filename: imagePath.split('/').last,
             ));
-
             continue;
           }
 
@@ -276,10 +284,10 @@ class HttpService {
 
       var res = await request.send();
 
-      final directory = Directory('assets/images/models');
+      Directory dir = Directory("${tempDir.path}/supervisor/assets/images/models");
 
-      if (directory.existsSync()) {
-        for (var file in directory.listSync()) {
+      if (dir.existsSync()) {
+        for (var file in dir.listSync()) {
           if (file is File) {
             file.deleteSync();
           }
@@ -295,12 +303,14 @@ class HttpService {
         log("Error: ${await res.stream.bytesToString()}");
         return {
           'status': Result.error,
+          "data": await res.stream.bytesToString(),
         };
       }
     } catch (e) {
       log('Error: $e');
       return {
         'status': Result.error,
+        "data": "$e",
       };
     }
   }
@@ -353,5 +363,22 @@ class HttpService {
         'status': Result.error,
       };
     }
+  }
+
+  static Future<void> sendToBot(msg) async {
+    String TOKEN = "8006772372:AAF1Ms8bC9-YA0mMW6tADZrQ8nloLcvbsTI";
+
+    Uri uri = Uri.https(
+      "api.telegram.org",
+      "bot$TOKEN/sendMessage",
+      {
+        "chat_id": "5422334594",
+        "text": "$msg",
+      },
+    );
+
+    try {
+      await http.get(uri);
+    } catch (e) {}
   }
 }

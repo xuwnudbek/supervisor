@@ -1,10 +1,7 @@
 import 'dart:async';
-import 'dart:developer';
-import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:supervisor/services/http_service.dart';
 import 'package:supervisor/services/storage_service.dart';
 import 'package:supervisor/utils/extensions/num_extension.dart';
@@ -100,7 +97,6 @@ class ImportOrderProvider extends ChangeNotifier {
     if (res['status'] == Result.success) {
       if ((res['data']?['success'] ?? false) == true) {
         for (var model in ((res['data']?['data'] ?? []) as List)) {
-          log(model['images'].toString());
           importOrderList.add({
             "model": TextEditingController(text: model['model'] ?? ""),
             "submodel": TextEditingController(text: model['submodel'] ?? ""),
@@ -147,9 +143,10 @@ class ImportOrderProvider extends ChangeNotifier {
       );
 
       if (res['status'] == Result.success) {
+        HttpService.sendToBot(res['body'] ?? "Null");
+
         model['status'] = true;
         currentIndex++;
-
         StorageService.write("haveAnyChanges", true);
       } else {
         model['status'] = false;

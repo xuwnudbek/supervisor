@@ -1,8 +1,13 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:supervisor/services/http_service.dart';
+import 'package:supervisor/services/storage_service.dart';
 import 'package:supervisor/ui/order/provider/order_provider.dart';
 import 'package:supervisor/utils/extensions/list_extension.dart';
 import 'package:supervisor/utils/extensions/string_extension.dart';
+import 'package:supervisor/utils/themes/app_colors.dart';
+import 'package:supervisor/utils/widgets/custom_input.dart';
 import 'package:supervisor/utils/widgets/custom_snackbars.dart';
 
 class AddOrderProvider extends ChangeNotifier {
@@ -79,24 +84,75 @@ class AddOrderProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  AddOrderProvider(OrderProvider orderProvider) {
+  late OrderProvider orderProvider;
+
+  void initialize(OrderProvider orderProvider, {Map? order}) {
+    this.orderProvider = orderProvider;
     models = orderProvider.models;
     contragents = orderProvider.contragents;
     items = orderProvider.items;
     materials = orderProvider.materials;
+
+    if (order != null) {
+      orderNameController.text = order['name'] ?? "";
+      orderRasxodController.text = (order['rasxod'] ?? 0).toString();
+      orderCommentController.text = order['comment'] ?? "";
+
+      selectedModel = models.qaysiki(['id'], order['order_model']?['model']?['id']).firstOrNull ?? {};
+      selectedMaterial = materials.qaysiki(['id'], order['order_model']?['material']?['id']).firstOrNull ?? {};
+      selectedContragent = contragents.qaysiki(['id'], order['contragent']?['id']).firstOrNull ?? {};
+
+      deadline = [
+        if (order['start_date'] != null) DateTime.parse(order['start_date']),
+        if (order['end_date'] != null) DateTime.parse(order['end_date']),
+      ];
+
+      for (var instruction in order['instructions'] ?? []) {
+        instructions.add({
+          "id": instruction['id'],
+          "title": instruction['title'],
+          "description": instruction['description'],
+        });
+      }
+
+      for (var e in ((order['order_model']?['submodels'] ?? []) as List)) {
+        selectSubmodel(e);
+
+        for (var orderRecipe in e['order_recipes'] ?? []) {
+          addRecipe(
+            e ?? {},
+            id: orderRecipe['id'],
+            item: orderRecipe['item'] ?? {},
+            quantity: orderRecipe['quantity'] ?? 0,
+          );
+        }
+      }
+
+      for (var e in ((order['order_model']?['sizes'] ?? []) as List)) {
+        selectSize(
+          e['size'],
+          id: e['id'],
+          quantity: e['quantity'],
+        );
+      }
+
+      Future.delayed(Duration(milliseconds: 1000), () {
+        notifyListeners();
+      });
+    }
   }
 
-  bool addRecipe(Map submodel) {
+  bool addRecipe(Map submodel, {int? id, Map? item, String quantity = ""}) {
     recipes.add({
+      if (id != null) "id": id,
       "submodel": submodel,
-      "item": {},
-      "quantity": TextEditingController(text: "")
+      "item": item ?? {},
+      "quantity": TextEditingController(text: quantity)
         ..addListener(() {
           notifyListeners();
         }),
     });
     notifyListeners();
-
     return true;
   }
 
@@ -117,14 +173,19 @@ class AddOrderProvider extends ChangeNotifier {
     required Map item,
     required index,
   }) {
-    var submodelRecipes = recipes.where((e) => e['submodel'] == submodel).toList();
+    var submodelRecipes = recipes.where((e) => e['submodel']?['id'] == submodel['id']).toList();
+
+    if (submodelRecipes.isEmpty) {
+      addRecipe(submodel);
+      submodelRecipes = recipes.where((e) => e['id'] == submodel['id']).toList();
+    }
+
     submodelRecipes[index]['item'] = item;
     notifyListeners();
   }
 
   void selectSubmodel(value) {
     selectedSubmodels.add(value);
-    addRecipe(value);
     notifyListeners();
   }
 
@@ -136,10 +197,11 @@ class AddOrderProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void selectSize(value) {
+  void selectSize(value, {int quantity = 0, int? id}) {
     selectedSizes.add({
+      if (id != null) "id": id,
       "size": value,
-      "quantity": TextEditingController(text: "")
+      "quantity": TextEditingController(text: "$quantity")
         ..addListener(() {
           notifyListeners();
         }),
@@ -170,6 +232,7 @@ class AddOrderProvider extends ChangeNotifier {
     instructionBodyController.clear();
 
     instructions.add({
+      "id": null,
       "title": title,
       "description": body,
     });
@@ -194,13 +257,68 @@ class AddOrderProvider extends ChangeNotifier {
     if (recipes.isNotEmpty) {
       return recipes
           .map((e) {
-            return (double.tryParse(e['quantity'].text) ?? 0) * (num.tryParse(e['item']['price'] ?? "") ?? 0);
+            return (double.tryParse(e['quantity'].text) ?? 0) * (num.tryParse(e['item']?['price'] ?? "") ?? 0);
           })
           .reduce((a, b) => a + b)
           .toStringAsFixed(1)
           .toDouble;
     }
     return 0;
+  }
+
+  Future<void> addNewContragent(BuildContext context) async {
+    final newContragentController = TextEditingController();
+
+    var res = await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Yangi buyurtmachi qo'shish"),
+          content: Padding(
+            padding: EdgeInsets.all(8),
+            child: CustomInput(
+              hint: "Buyurtmachi nomi",
+              controller: newContragentController,
+            ),
+          ),
+          actions: [
+            TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                foregroundColor: Colors.red,
+              ),
+              onPressed: () {
+                Navigator.pop(context, false);
+              },
+              child: Text("Bekor qilish"),
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: primary.withValues(alpha: 0.1),
+                foregroundColor: primary,
+              ),
+              onPressed: () {
+                Navigator.pop(context, true);
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Text("Qo'shish"),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (res) {
+      orderProvider.contragents.add({
+        "id": 0,
+        "name": newContragentController.text,
+      });
+      contragents = orderProvider.contragents;
+
+      selectedContragent = contragents.firstWhere((e) => e['id'] == 0) ?? {};
+    }
   }
 
   Future<bool?> createOrder(BuildContext context) async {
@@ -271,6 +389,7 @@ class AddOrderProvider extends ChangeNotifier {
       },
       "recipes": [
         ...recipes.map((e) => {
+              "id": e['id'],
               "submodel_id": e['submodel']['id'],
               "item_id": e['item']['id'],
               "quantity": double.tryParse(e['quantity'].text) ?? 0,
@@ -278,50 +397,31 @@ class AddOrderProvider extends ChangeNotifier {
       ],
     };
 
-    var res = await HttpService.post(order, data);
+    inspect(data);
+
+    Map<String, dynamic> res;
+
+    int? orderId = StorageService.read('order_id');
+
+    if (orderId != null) {
+      res = await HttpService.patch(
+        "$order/$orderId",
+        data,
+      );
+    } else {
+      res = await HttpService.post(order, data);
+    }
 
     if (res['status'] == Result.success) {
-      CustomSnackbars(context).success("Buyurtma muvaffaqiyatli yaratildi!");
+      CustomSnackbars(context).success("Buyurtma muvaffaqiyatli ${orderId != null ? "yangilandi" : "yaratildi"}!");
       return true;
     }
     notifyListeners();
 
     return false;
   }
-}
 
-/*
-{
-  "name": "OrderName",
-  "quantity": 100,
-  "start_date": "2021-01-01",
-  "end_date": "2021-01-02",
-  "rasxod": 0.1,
-  "final_product_name": "POLNOTA 1",
-  "comment": "Order Comment",
-  "contragent_id": 1,
-  "contragent_name": "Contragent Name",
-  "instructions": [
-      {
-          "title": "Instruction Name",
-          "description": "Instruction Description"
-      }
-  ],
-  "model": {
-      "id": 1,
-      "material_id": 1,
-      "submodel": [
-          1,
-          2,
-          3,
-          4
-      ],
-      "sizes": [
-          {
-              "id": 1,
-              "quantity": 10
-          }
-      ]
+  void refreshUI() {
+    notifyListeners();
   }
 }
-*/

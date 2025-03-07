@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+import 'package:supervisor/services/storage_service.dart';
 import 'package:supervisor/ui/order/provider/add_order_provider.dart';
 import 'package:supervisor/ui/order/provider/order_provider.dart';
 import 'package:supervisor/utils/extensions/datetime_extension.dart';
@@ -13,19 +14,54 @@ import 'package:supervisor/utils/widgets/custom_dropdown.dart';
 import 'package:supervisor/utils/widgets/custom_input.dart';
 import 'package:supervisor/utils/widgets/custom_snackbars.dart';
 
-class AddOrder extends StatelessWidget {
-  const AddOrder({super.key});
+class AddOrder extends StatefulWidget {
+  const AddOrder({
+    super.key,
+    this.order,
+  });
+
+  final Map? order;
+
+  @override
+  State<AddOrder> createState() => _AddOrderState();
+}
+
+class _AddOrderState extends State<AddOrder> {
+  Map get order => widget.order ?? {};
+  bool get isUpdate => order.isNotEmpty;
+
+  bool get canChangeMainFields {
+    if (!isUpdate) return true;
+
+    List statuses = ["active", "inactive", "cutting", "printing"];
+
+    return statuses.contains(order['status']);
+  }
+
+  @override
+  void initState() {
+    if (order.isNotEmpty) {
+      StorageService.write("order_id", order['id']);
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<OrderProvider>(builder: (context, orderProvider, _) {
       return ChangeNotifierProvider(
-        create: (_) => AddOrderProvider(orderProvider),
+        create: (_) => AddOrderProvider()
+          ..initialize(
+            orderProvider,
+            order: widget.order,
+          ),
         child: Consumer<AddOrderProvider>(
           builder: (context, provider, _) {
             return Scaffold(
               appBar: AppBar(
-                title: const Text("Buyurtma qo'shish"),
+                title: Text(
+                  "Buyurtma${isUpdate ? "ni yangilash" : " qo'shish"}",
+                ),
               ),
               body: Padding(
                 padding: const EdgeInsets.all(0.0),
@@ -44,6 +80,7 @@ class AddOrder extends StatelessWidget {
                             Row(
                               spacing: 8,
                               children: [
+                                // Order Name
                                 Expanded(
                                   flex: 2,
                                   child: CustomInput(
@@ -51,23 +88,34 @@ class AddOrder extends StatelessWidget {
                                     hint: "Buyurtma nomi",
                                   ),
                                 ),
+                                // Contragent
                                 Expanded(
                                   flex: 2,
-                                  child: CustomDropdown(
-                                    tooltip: "Buyurtmachini tanlang",
-                                    hint: "Kontragent tanlang",
-                                    items: provider.contragents.map((e) {
-                                      return DropdownMenuItem(
-                                        value: e['id'],
-                                        child: Text(e['name']),
-                                      );
-                                    }).toList(),
-                                    onChanged: (id) {
-                                      provider.selectedContragent = provider.contragents.firstWhere((e) => e['id'] == id);
-                                    },
-                                    value: provider.selectedContragent['id'],
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: CustomDropdown(
+                                          tooltip: "Buyurtmachini tanlang",
+                                          hint: "Kontragent tanlang",
+                                          items: provider.contragents.map((e) {
+                                            return DropdownMenuItem(
+                                              value: e['id'] ?? 0,
+                                              child: Text(e['name'] ?? "Nomalum"),
+                                            );
+                                          }).toList(),
+                                          value: provider.selectedContragent['id'],
+                                          onChanged: (id) {
+                                            provider.selectedContragent = provider.contragents.firstWhere((e) => e['id'] == id);
+                                          },
+                                          onTapTrailing: () {
+                                            provider.addNewContragent(context);
+                                          },
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
+                                // Rasxod
                                 Expanded(
                                   child: CustomInput(
                                     controller: provider.orderRasxodController,
@@ -79,6 +127,7 @@ class AddOrder extends StatelessWidget {
                                     ],
                                   ),
                                 ),
+                                // Deadline
                                 Expanded(
                                   flex: 2,
                                   child: Tooltip(
@@ -95,7 +144,7 @@ class AddOrder extends StatelessWidget {
                                           firstDate: DateTime.now().subtract(const Duration(days: 14)),
                                           lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
                                           anchorPoint: Offset(1, 6),
-                                          initialDateRange: provider.deadline.isNotEmpty
+                                          initialDateRange: provider.deadline.isNotEmpty && provider.deadline.length == 2
                                               ? DateTimeRange(
                                                   start: provider.deadline[0],
                                                   end: provider.deadline[1],
@@ -116,7 +165,11 @@ class AddOrder extends StatelessWidget {
                                         });
                                       },
                                       child: Text(
-                                        provider.deadline.isNotEmpty ? "${provider.deadline[0].format} - ${provider.deadline[1].format}" : "Buyurtma muddati",
+                                        provider.deadline.isEmpty
+                                            ? "Sana tanlang"
+                                            : provider.deadline.length == 1
+                                                ? provider.deadline[0].format ?? "Nomalum"
+                                                : "${provider.deadline[0].format} — ${provider.deadline[1].format}",
                                         style: TextStyle(
                                           color: provider.deadline.isNotEmpty ? null : Colors.grey,
                                         ),
@@ -133,6 +186,7 @@ class AddOrder extends StatelessWidget {
                                 Column(
                                   spacing: 8,
                                   children: [
+                                    // Model
                                     CustomDropdown(
                                       tooltip: "Buyurtma qilingan modelni tanlang",
                                       width: 300,
@@ -140,10 +194,18 @@ class AddOrder extends StatelessWidget {
                                       items: provider.models.map((e) {
                                         return DropdownMenuItem(
                                           value: e['id'],
-                                          child: Text(e['name']),
+                                          enabled: !isUpdate,
+                                          child: Text(
+                                            e['name'] ?? "Nomalum",
+                                          ),
                                         );
                                       }).toList(),
                                       onChanged: (id) {
+                                        if (isUpdate) {
+                                          CustomSnackbars(context).warning("Modelni o'zgartirish mumkin emas!");
+                                          return;
+                                        }
+
                                         provider.selectedModel = provider.models.firstWhere((e) => e['id'] == id);
                                       },
                                       value: provider.selectedModel['id'],
@@ -170,7 +232,7 @@ class AddOrder extends StatelessWidget {
                                               spacing: 8,
                                               children: [
                                                 ...provider.submodels.map((submodel) {
-                                                  bool isSelected = provider.selectedSubmodels.contains(submodel);
+                                                  bool isSelected = provider.selectedSubmodels.any((e) => e['submodel']?['id'] == submodel['id']);
 
                                                   return ChoiceChip(
                                                     label: Text(
@@ -247,7 +309,7 @@ class AddOrder extends StatelessWidget {
                                               spacing: 8,
                                               children: [
                                                 ...provider.sizes.map((size) {
-                                                  bool isSelected = provider.selectedSizes.where((e) => e['size'] == size).isNotEmpty;
+                                                  bool isSelected = provider.selectedSizes.where((e) => e['size']?['id'] == size['id']).isNotEmpty;
 
                                                   return ChoiceChip(
                                                     label: Text(
@@ -704,8 +766,9 @@ class AddOrder extends StatelessWidget {
                                           child: ListView.builder(
                                             itemCount: provider.selectedSubmodels.length,
                                             itemBuilder: (context, index) {
-                                              Map submodel = provider.selectedSubmodels[index];
-                                              List recipes = provider.recipes.qaysiki(['submodel'], submodel);
+                                              Map orderSubmodel = provider.selectedSubmodels[index];
+
+                                              List recipes = provider.recipes.qaysiki(['submodel'], orderSubmodel);
 
                                               return Column(
                                                 children: [
@@ -728,7 +791,7 @@ class AddOrder extends StatelessWidget {
                                                       mainAxisAlignment: MainAxisAlignment.center,
                                                       children: [
                                                         Text(
-                                                          "${submodel['name']}",
+                                                          "${orderSubmodel['submodel']?['name'] ?? "Unknown"}",
                                                           style: TextTheme.of(context).titleMedium,
                                                         ),
                                                       ],
@@ -790,7 +853,7 @@ class AddOrder extends StatelessWidget {
                                                                 ],
                                                                 onChanged: (value) {
                                                                   provider.selectItemForRecipe(
-                                                                    submodel: submodel,
+                                                                    submodel: orderSubmodel,
                                                                     item: provider.items.firstWhere((e) => e['id'] == value),
                                                                     index: index,
                                                                   );
@@ -856,10 +919,10 @@ class AddOrder extends StatelessWidget {
                                                     mainAxisAlignment: MainAxisAlignment.start,
                                                     children: [
                                                       Tooltip(
-                                                        message: "${submodel['name']} uchun qo'shish",
+                                                        message: "${orderSubmodel['submodel']?['name'] ?? "Unknown"} uchun qo'shish",
                                                         child: InkWell(
                                                           onTap: () {
-                                                            var res = provider.addRecipe(submodel);
+                                                            var res = provider.addRecipe(orderSubmodel);
                                                             if (!res) {
                                                               CustomSnackbars(context).warning("Avvalgi maxsulotni tanlang!");
                                                             }
@@ -967,7 +1030,7 @@ class AddOrder extends StatelessWidget {
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                                     child: Text(
-                                      "Buyurtmani yaratish",
+                                      "Buyurtmani ${isUpdate ? "yangilash" : "yaratish"}",
                                       style: TextStyle(
                                         color: Colors.white,
                                       ),

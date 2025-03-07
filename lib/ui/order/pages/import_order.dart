@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supervisor/services/storage_service.dart';
@@ -181,7 +179,7 @@ class ImportOrder extends StatelessWidget {
                                     dimension: 24,
                                     child: CircularProgressIndicator(
                                       valueColor: AlwaysStoppedAnimation(primary),
-                                      value: provider.seconds / 20,
+                                      // value: provider.seconds / 20,
                                     ),
                                   ),
                                   SizedBox(height: 8),
@@ -199,7 +197,7 @@ class ImportOrder extends StatelessWidget {
                                             dimension: 24,
                                             child: CircularProgressIndicator(
                                               valueColor: AlwaysStoppedAnimation(primary),
-                                              value: provider.currentIndex / provider.importOrderList.length,
+                                              // value: provider.currentIndex / provider.importOrderList.length,
                                               semanticsLabel: 'Yuklanmoqda...',
                                               semanticsValue: '${provider.currentIndex} / ${provider.importOrderList.length}',
                                             ),

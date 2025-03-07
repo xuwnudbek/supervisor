@@ -1,3 +1,4 @@
+import 'package:desktop_updater/updater_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -14,6 +15,18 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
+  // check update
+
+  Future<void> _checkUpdate() async {
+    DesktopUpdaterController desktopUpdaterController = DesktopUpdaterController(
+      appArchiveUrl: Uri.parse(
+        "https://www.yoursite.com/app-archive.json",
+      ),
+    );
+
+    await desktopUpdaterController.checkVersion();
+  }
+
   Future<void> _splashTime() async {
     await Future.delayed(const Duration(milliseconds: 0));
 
@@ -56,7 +69,7 @@ class _SplashPageState extends State<SplashPage> {
             ],
           ),
           child: LoadingAnimationWidget.inkDrop(
-            color: Colors.blue,
+            color: primary,
             size: 75,
           ),
         ),

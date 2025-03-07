@@ -37,7 +37,7 @@ class _CustomSidebarState extends State<CustomSidebar> {
 
                       return TextButton(
                         style: TextButton.styleFrom(
-                          backgroundColor: isActive ? primary : secondary,
+                          backgroundColor: isActive ? primary : light,
                           foregroundColor: isActive ? Colors.white : dark,
                         ),
                         onPressed: () {

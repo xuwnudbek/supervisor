@@ -29,6 +29,13 @@ dependencies:
   dropdown_search: ^6.0.1
   file_picker: ^9.0.0
   image: ^4.5.2
+  
+  desktop_updater: ^1.1.1
+  carousel_slider: ^5.0.0
+  timelines_plus: ^1.0.6
+  font_awesome_flutter: ^10.8.0
+
+  
 
 
 dev_dependencies:
@@ -45,7 +52,9 @@ flutter:
   assets:
     - assets/images/
     - assets/images/models/
+    - assets/images/statuses/
     - assets/fonts/
+    - assets/files/
   
 
   fonts:
