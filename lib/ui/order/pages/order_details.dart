@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:supervisor/services/http_service.dart';
 import 'package:supervisor/ui/order/provider/order_detail_provider.dart';
 import 'package:supervisor/utils/extensions/num_extension.dart';
 import 'package:supervisor/utils/themes/app_colors.dart';
@@ -40,7 +39,7 @@ class OrderDetails extends StatelessWidget {
                           : provider.orderData['status'] == "printing"
                               ? "Chop etish"
                               : provider.orderData['status'] == "tailoring"
-                                  ? "Tayyorlash"
+                                  ? "Tikilmoqda"
                                   : "Nomalum";
 
           return Scaffold(
@@ -334,27 +333,39 @@ class OrderDetails extends StatelessWidget {
                                                         ),
                                                         margin: EdgeInsets.only(right: 8),
                                                         padding: EdgeInsets.all(8),
-                                                        child: Wrap(
-                                                          spacing: 8,
-                                                          runSpacing: 8,
-                                                          children: [
-                                                            ...(provider.orderModel['submodels'] ?? []).map((submodel) {
-                                                              return Container(
-                                                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                                                decoration: BoxDecoration(
-                                                                  color: light,
-                                                                  borderRadius: BorderRadius.circular(8),
+                                                        child: (provider.orderModel['submodels'] ?? []).isEmpty
+                                                            ? SizedBox(
+                                                                height: 40,
+                                                                child: Center(
+                                                                  child: Text(
+                                                                    "Submodel mavjud emas",
+                                                                    style: textTheme.titleSmall?.copyWith(
+                                                                      color: dark.withValues(alpha: 0.6),
+                                                                    ),
+                                                                  ),
                                                                 ),
-                                                                child: Text(
-                                                                  submodel['submodel']?['name'] ?? "Unknown",
-                                                                  style: TextTheme.of(context).titleMedium?.copyWith(
-                                                                        fontWeight: FontWeight.w600,
+                                                              )
+                                                            : Wrap(
+                                                                spacing: 8,
+                                                                runSpacing: 8,
+                                                                children: [
+                                                                  ...(provider.orderModel['submodels'] ?? []).map((submodel) {
+                                                                    return Container(
+                                                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                                                      decoration: BoxDecoration(
+                                                                        color: light,
+                                                                        borderRadius: BorderRadius.circular(8),
                                                                       ),
-                                                                ),
-                                                              );
-                                                            }).toList(),
-                                                          ],
-                                                        ),
+                                                                      child: Text(
+                                                                        submodel['submodel']?['name'] ?? "Unknown",
+                                                                        style: TextTheme.of(context).titleMedium?.copyWith(
+                                                                              fontWeight: FontWeight.w600,
+                                                                            ),
+                                                                      ),
+                                                                    );
+                                                                  }).toList(),
+                                                                ],
+                                                              ),
                                                       ),
                                                     ],
                                                   ),
@@ -431,68 +442,36 @@ class OrderDetails extends StatelessWidget {
                                                 ),
                                               ],
                                             ),
-                                            const CustomDivider(),
-                                            Row(
-                                              children: [
-                                                Expanded(
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      Text(
-                                                        'Buyurtma instruksiyalari',
-                                                        style: TextTheme.of(context).bodyMedium,
-                                                      ),
-                                                      SizedBox(height: 8),
-                                                      Table(
-                                                        border: TableBorder.all(
-                                                          color: dark.withValues(alpha: 0.2),
+                                            if (((provider.orderData['instructions'] ?? []) as List).isNotEmpty) ...[
+                                              const CustomDivider(),
+                                              Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        Text(
+                                                          'Buyurtma instruksiyalari',
+                                                          style: TextTheme.of(context).bodyMedium,
                                                         ),
-                                                        columnWidths: {
-                                                          0: FixedColumnWidth(50),
-                                                          1: IntrinsicColumnWidth(flex: 1),
-                                                          2: IntrinsicColumnWidth(flex: 2),
-                                                        },
-                                                        defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                                                        children: [
-                                                          TableRow(
-                                                            children: [
-                                                              TableCell(
-                                                                child: Center(
-                                                                  child: Text(
-                                                                    "#",
-                                                                    style: TextTheme.of(context).titleSmall,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              TableCell(
-                                                                child: Padding(
-                                                                  padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
-                                                                  child: Text(
-                                                                    "Instruksiya nomi",
-                                                                    style: TextTheme.of(context).titleSmall,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              TableCell(
-                                                                child: Padding(
-                                                                  padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
-                                                                  child: Text(
-                                                                    "Instruksiya matni",
-                                                                    style: TextTheme.of(context).titleSmall,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ],
+                                                        SizedBox(height: 8),
+                                                        Table(
+                                                          border: TableBorder.all(
+                                                            color: dark.withValues(alpha: 0.2),
                                                           ),
-                                                          ...(provider.orderData['instructions'] ?? []).map((instruction) {
-                                                            int index = (provider.orderData['instructions'] ?? []).indexOf(instruction);
-
-                                                            return TableRow(
+                                                          columnWidths: {
+                                                            0: FixedColumnWidth(50),
+                                                            1: IntrinsicColumnWidth(flex: 1),
+                                                            2: IntrinsicColumnWidth(flex: 2),
+                                                          },
+                                                          defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                                                          children: [
+                                                            TableRow(
                                                               children: [
                                                                 TableCell(
                                                                   child: Center(
                                                                     child: Text(
-                                                                      "${index + 1}",
+                                                                      "#",
                                                                       style: TextTheme.of(context).titleSmall,
                                                                     ),
                                                                   ),
@@ -501,7 +480,7 @@ class OrderDetails extends StatelessWidget {
                                                                   child: Padding(
                                                                     padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
                                                                     child: Text(
-                                                                      instruction['title'] ?? "N/A",
+                                                                      "Instruksiya nomi",
                                                                       style: TextTheme.of(context).titleSmall,
                                                                     ),
                                                                   ),
@@ -510,21 +489,55 @@ class OrderDetails extends StatelessWidget {
                                                                   child: Padding(
                                                                     padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
                                                                     child: Text(
-                                                                      instruction['description'] ?? "N/A",
+                                                                      "Instruksiya matni",
                                                                       style: TextTheme.of(context).titleSmall,
                                                                     ),
                                                                   ),
                                                                 ),
                                                               ],
-                                                            );
-                                                          }),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
+                                                            ),
+                                                            ...((provider.orderData['instructions'] ?? []) as List).map((instruction) {
+                                                              int index = ((provider.orderData['instructions'] ?? []) as List).indexOf(instruction);
+
+                                                              return TableRow(
+                                                                children: [
+                                                                  TableCell(
+                                                                    child: Center(
+                                                                      child: Text(
+                                                                        "${index + 1}",
+                                                                        style: TextTheme.of(context).titleSmall,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  TableCell(
+                                                                    child: Padding(
+                                                                      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
+                                                                      child: Text(
+                                                                        instruction['title'] ?? "N/A",
+                                                                        style: TextTheme.of(context).titleSmall,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  TableCell(
+                                                                    child: Padding(
+                                                                      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
+                                                                      child: Text(
+                                                                        instruction['description'] ?? "N/A",
+                                                                        style: TextTheme.of(context).titleSmall,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              );
+                                                            }),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            ],
                                             if ((provider.orderData['comment'] ?? []).isNotEmpty) ...[
                                               const CustomDivider(),
                                               Row(

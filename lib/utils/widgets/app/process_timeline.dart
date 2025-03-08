@@ -25,15 +25,45 @@ class ProcessTimelinePage extends StatefulWidget {
 class _ProcessTimelinePageState extends State<ProcessTimelinePage> {
   Map get order => widget.order;
 
-  List statuses = [
+  List disabledStatuses = [
+    "inactive",
     "active",
-    "printing",
-    "cutting",
-    "sewing",
-    "quality_checking",
   ];
 
-  final int _processIndex = 2;
+  List statuses = [
+    "printing",
+    "cutting",
+    "pending",
+    "tailoring",
+    "tailored",
+    "checking",
+    "packaging",
+  ];
+
+  int get _processIndex {
+    String orderStatus = order["status"];
+
+    if (disabledStatuses.contains(orderStatus)) {
+      return 0;
+    }
+
+    switch (orderStatus) {
+      case "printing":
+        return 0;
+      case "cutting" || "pending":
+        return 1;
+      case "tailoring" || "tailored":
+        return 2;
+      case "checking":
+        return 3;
+      case "packaging":
+        return 4;
+      case "shipping" || "shipped" || "completed":
+        return 5;
+    }
+
+    return 0;
+  }
 
   Color getColor(int index) {
     if (index == _processIndex) {
@@ -67,8 +97,8 @@ class _ProcessTimelinePageState extends State<ProcessTimelinePage> {
           return contents[index];
         },
         indicatorBuilder: (_, index) {
-          var color;
-          var child;
+          Color color;
+          late Widget child;
           if (index == _processIndex) {
             color = inProgressColor;
             child = Icon(
@@ -96,6 +126,9 @@ class _ProcessTimelinePageState extends State<ProcessTimelinePage> {
               if (orderPrintingTime.isEmpty) {
                 message = TextSpan(
                   text: "Ma'lumot yo'q",
+                  style: textTheme.titleSmall?.copyWith(
+                    color: dark.withValues(alpha: 0.5),
+                  ),
                 );
                 break;
               }
@@ -104,7 +137,7 @@ class _ProcessTimelinePageState extends State<ProcessTimelinePage> {
                 children: [
                   TextSpan(
                     text: "Reja: ",
-                    style: textTheme.titleMedium,
+                    style: textTheme.titleSmall,
                     children: [
                       TextSpan(
                         text: "${DateTime.parse(orderPrintingTime['planned_time']).toLocal().toYMDHM}",
@@ -114,7 +147,7 @@ class _ProcessTimelinePageState extends State<ProcessTimelinePage> {
                   ),
                   TextSpan(
                     text: "\nBajarilgan: ",
-                    style: textTheme.titleMedium,
+                    style: textTheme.titleSmall,
                     children: [
                       TextSpan(
                         text: "${DateTime.parse(orderPrintingTime['actual_time'] ?? "").toLocal().toYMDHM}",
@@ -125,7 +158,7 @@ class _ProcessTimelinePageState extends State<ProcessTimelinePage> {
                   // user
                   TextSpan(
                     text: "\nIshchi: ",
-                    style: textTheme.titleMedium,
+                    style: textTheme.titleSmall,
                     children: [
                       TextSpan(
                         text: "${orderPrintingTime['user']?['employee']?['name'] ?? "Noma'lum"}",
@@ -137,7 +170,7 @@ class _ProcessTimelinePageState extends State<ProcessTimelinePage> {
                   if (orderPrintingTime['comment'] != null)
                     TextSpan(
                       text: "\nIzoh: ",
-                      style: textTheme.titleMedium,
+                      style: textTheme.titleSmall,
                       children: [
                         TextSpan(
                           text: "${orderPrintingTime['comment'] ?? "Noma'lum"}",
@@ -154,6 +187,9 @@ class _ProcessTimelinePageState extends State<ProcessTimelinePage> {
               if (specificationCategories.isEmpty) {
                 message = TextSpan(
                   text: "Ma'lumot yo'q",
+                  style: textTheme.titleSmall?.copyWith(
+                    color: dark.withValues(alpha: 0.5),
+                  ),
                 );
                 break;
               }
@@ -236,7 +272,7 @@ class _ProcessTimelinePageState extends State<ProcessTimelinePage> {
                                                 padding: EdgeInsets.all(4),
                                                 decoration: BoxDecoration(
                                                   borderRadius: BorderRadius.circular(4),
-                                                  color: Colors.green.withValues(alpha: 0.1),
+                                                  color: Colors.green.withValues(alpha: 0.3),
                                                 ),
                                                 child: Text(
                                                   "Qabul qilingan",
@@ -255,7 +291,7 @@ class _ProcessTimelinePageState extends State<ProcessTimelinePage> {
                                                 padding: EdgeInsets.all(4),
                                                 decoration: BoxDecoration(
                                                   borderRadius: BorderRadius.circular(4),
-                                                  color: Colors.red.withValues(alpha: 0.1),
+                                                  color: Colors.red.withValues(alpha: 0.3),
                                                 ),
                                                 child: Text(
                                                   "Qabul qilinmagan",
@@ -286,24 +322,166 @@ class _ProcessTimelinePageState extends State<ProcessTimelinePage> {
 
               break;
             case 2:
+              List submodels = order["order_model"]?['submodels'] ?? [];
+
+              if (submodels.isEmpty) {
+                message = TextSpan(
+                  text: "Ma'lumot yo'q",
+                  style: textTheme.titleSmall?.copyWith(
+                    color: dark.withValues(alpha: 0.5),
+                  ),
+                );
+                break;
+              }
+
               message = TextSpan(
-                children: [],
+                children: [
+                  WidgetSpan(
+                    child: Column(
+                      children: [
+                        ...submodels.map((submodel) {
+                          int quantity = ((submodel['sewingOutputs'] ?? []) as List).fold<int>(0, (previousValue, element) => int.parse("${element['quantity'] ?? "0"}") + previousValue);
+                          return Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                "${submodel['submodel']?['name'] ?? "Noma'lum"}",
+                                style: textTheme.titleMedium,
+                              ),
+                              // space
+                              Text(
+                                " — ",
+                                style: textTheme.bodyMedium,
+                              ),
+                              Text(
+                                "$quantity ta",
+                                style: textTheme.bodyMedium,
+                              ),
+                            ],
+                          );
+                        }),
+                      ],
+                    ),
+                  ),
+                ],
               );
 
               break;
             case 3:
-              message = TextSpan(
-                children: [],
-              );
+              List submodels = order["order_model"]?['submodels'] ?? [];
 
+              if (submodels.isEmpty) {
+                message = TextSpan(
+                  text: "Ma'lumot yo'q",
+                  style: textTheme.titleSmall?.copyWith(
+                    color: dark.withValues(alpha: 0.5),
+                  ),
+                );
+                break;
+              }
+
+              message = TextSpan(
+                children: [
+                  WidgetSpan(
+                    child: SizedBox(
+                      width: 200,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ...submodels.map((submodel) {
+                            int acceptedCount = submodel['qualityChecks_status_count']?['true'] ?? 0;
+                            int rejectedCount = submodel['qualityChecks_status_count']?['false'] ?? 0;
+
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  // mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      "${submodel['submodel']?['name'] ?? "Noma'lum"}",
+                                      style: textTheme.titleMedium,
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 4,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      "Qabul qilingan: ",
+                                      style: textTheme.bodySmall?.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        color: success,
+                                      ),
+                                    ),
+                                    Text(
+                                      "$acceptedCount ta",
+                                      style: textTheme.bodyMedium,
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      "Qaytarilgan: ",
+                                      style: textTheme.bodySmall?.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        color: danger,
+                                      ),
+                                    ),
+                                    Text(
+                                      "$rejectedCount ta",
+                                      style: textTheme.bodyMedium,
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 4),
+                                CustomDivider(),
+                                SizedBox(height: 4),
+                              ],
+                            );
+                          }),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              );
               break;
             case 4:
+              if (true) {
+                message = TextSpan(
+                  text: "Ma'lumot yo'q",
+                  style: textTheme.titleSmall?.copyWith(
+                    color: dark.withValues(alpha: 0.5),
+                  ),
+                );
+                break;
+              }
+
               message = TextSpan(
                 children: [],
               );
 
               break;
             case 5:
+              if (true) {
+                message = TextSpan(
+                  text: "Ma'lumot yo'q",
+                  style: textTheme.titleSmall?.copyWith(
+                    color: dark.withValues(alpha: 0.5),
+                  ),
+                );
+                break;
+              }
+
               message = TextSpan(
                 children: [],
               );
@@ -314,7 +492,7 @@ class _ProcessTimelinePageState extends State<ProcessTimelinePage> {
           return Tooltip(
             richMessage: message,
             // height: 100,
-            padding: EdgeInsets.all(16.0),
+            padding: EdgeInsets.only(left: 16.0, right: 16, top: 8, bottom: 8),
             margin: EdgeInsets.all(8.0),
             preferBelow: false,
             decoration: BoxDecoration(color: light, borderRadius: BorderRadius.circular(8.0), boxShadow: [
@@ -529,11 +707,11 @@ class _BezierPainter extends CustomPainter {
 
     final radius = size.width / 2;
 
-    var angle;
-    var offset1;
-    var offset2;
+    double angle;
+    Offset offset1;
+    Offset offset2;
 
-    var path;
+    Path path;
 
     if (drawStart) {
       angle = 3 * pi / 4;
