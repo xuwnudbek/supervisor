@@ -54,8 +54,6 @@ class OrderDetailProvider extends ChangeNotifier {
     if (response['status'] == Result.success) {
       orderData = response['data'] ?? {};
       orderModel = orderData['order_model'] ?? {};
-
-      inspect(orderData);
     }
   }
 }

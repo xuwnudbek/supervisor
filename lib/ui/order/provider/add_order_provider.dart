@@ -113,8 +113,6 @@ class AddOrderProvider extends ChangeNotifier {
         selectedMaterial = materials.qaysiki(['id'], orderData['order_model']?['material']?['id']).firstOrNull ?? {};
         selectedContragent = contragents.qaysiki(['id'], orderData['contragent']?['id']).firstOrNull ?? {};
 
-        inspect(orderData);
-
         deadline = [
           if (orderData['start_date'] != null) DateTime.parse(orderData['start_date']),
           if (orderData['end_date'] != null) DateTime.parse(orderData['end_date']),
@@ -167,7 +165,6 @@ class AddOrderProvider extends ChangeNotifier {
         }),
     });
 
-    inspect(recipes);
     notifyListeners();
     return true;
   }

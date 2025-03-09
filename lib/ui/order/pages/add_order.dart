@@ -248,6 +248,11 @@ class _AddOrderState extends State<AddOrder> {
                                                     selectedColor: primary,
                                                     selected: isSelected,
                                                     onSelected: (selected) {
+                                                      if (isUpdate) {
+                                                        CustomSnackbars(context).warning("Submodelni o'zgartirish mumkin emas!");
+                                                        return;
+                                                      }
+
                                                       if (selected) {
                                                         provider.selectSubmodel(submodel);
                                                       } else {
