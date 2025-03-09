@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -15,7 +16,9 @@ class AddOrderProvider extends ChangeNotifier {
   final TextEditingController orderRasxodController = TextEditingController();
 
   final TextEditingController instructionTitleController = TextEditingController();
+  final FocusNode instructionTitleFocusNode = FocusNode();
   final TextEditingController instructionBodyController = TextEditingController();
+  final FocusNode instructionBodyFocusNode = FocusNode();
   final TextEditingController orderCommentController = TextEditingController();
 
   List models = [];
@@ -86,59 +89,70 @@ class AddOrderProvider extends ChangeNotifier {
 
   late OrderProvider orderProvider;
 
-  void initialize(OrderProvider orderProvider, {Map? order}) {
+  void initialize(OrderProvider orderProvider, {int? orderId}) async {
     this.orderProvider = orderProvider;
     models = orderProvider.models;
     contragents = orderProvider.contragents;
     items = orderProvider.items;
     materials = orderProvider.materials;
 
-    if (order != null) {
-      orderNameController.text = order['name'] ?? "";
-      orderRasxodController.text = (order['rasxod'] ?? 0).toString();
-      orderCommentController.text = order['comment'] ?? "";
+    Map? orderData;
 
-      selectedModel = models.qaysiki(['id'], order['order_model']?['model']?['id']).firstOrNull ?? {};
-      selectedMaterial = materials.qaysiki(['id'], order['order_model']?['material']?['id']).firstOrNull ?? {};
-      selectedContragent = contragents.qaysiki(['id'], order['contragent']?['id']).firstOrNull ?? {};
-
-      deadline = [
-        if (order['start_date'] != null) DateTime.parse(order['start_date']),
-        if (order['end_date'] != null) DateTime.parse(order['end_date']),
-      ];
-
-      for (var instruction in order['instructions'] ?? []) {
-        instructions.add({
-          "id": instruction['id'],
-          "title": instruction['title'],
-          "description": instruction['description'],
-        });
+    if (orderId != null) {
+      var res = await HttpService.get("$order/$orderId");
+      if (res['status'] == Result.success) {
+        orderData = res['data'];
       }
 
-      for (var e in ((order['order_model']?['submodels'] ?? []) as List)) {
-        selectSubmodel(e);
+      if (orderData != null && orderData.isNotEmpty) {
+        orderNameController.text = orderData['name'] ?? "";
+        orderRasxodController.text = (orderData['rasxod'] ?? 0).toString();
+        orderCommentController.text = orderData['comment'] ?? "";
 
-        for (var orderRecipe in e['order_recipes'] ?? []) {
-          addRecipe(
-            e ?? {},
-            id: orderRecipe['id'],
-            item: orderRecipe['item'] ?? {},
-            quantity: orderRecipe['quantity'] ?? 0,
+        selectedModel = models.qaysiki(['id'], orderData['order_model']?['model']?['id']).firstOrNull ?? {};
+        selectedMaterial = materials.qaysiki(['id'], orderData['order_model']?['material']?['id']).firstOrNull ?? {};
+        selectedContragent = contragents.qaysiki(['id'], orderData['contragent']?['id']).firstOrNull ?? {};
+
+        inspect(orderData);
+
+        deadline = [
+          if (orderData['start_date'] != null) DateTime.parse(orderData['start_date']),
+          if (orderData['end_date'] != null) DateTime.parse(orderData['end_date']),
+        ];
+
+        for (var instruction in orderData['instructions'] ?? []) {
+          instructions.add({
+            "id": instruction['id'],
+            "title": instruction['title'],
+            "description": instruction['description'],
+          });
+        }
+
+        for (var orderSubmodel in ((orderData['order_model']?['submodels'] ?? []) as List)) {
+          selectSubmodel(orderSubmodel['submodel']);
+
+          for (var orderRecipe in orderSubmodel['submodel']?['order_recipes'] ?? []) {
+            addRecipe(
+              id: orderRecipe['id'],
+              orderSubmodel['submodel'] ?? {},
+              item: orderRecipe['item'] ?? {},
+              quantity: orderRecipe['quantity'] ?? 0,
+            );
+          }
+        }
+
+        for (var e in ((orderData['order_model']?['sizes'] ?? []) as List)) {
+          selectSize(
+            e['size'],
+            id: e['id'],
+            quantity: e['quantity'],
           );
         }
-      }
 
-      for (var e in ((order['order_model']?['sizes'] ?? []) as List)) {
-        selectSize(
-          e['size'],
-          id: e['id'],
-          quantity: e['quantity'],
-        );
+        Future.delayed(Duration(milliseconds: 1000), () {
+          notifyListeners();
+        });
       }
-
-      Future.delayed(Duration(milliseconds: 1000), () {
-        notifyListeners();
-      });
     }
   }
 
@@ -152,6 +166,8 @@ class AddOrderProvider extends ChangeNotifier {
           notifyListeners();
         }),
     });
+
+    inspect(recipes);
     notifyListeners();
     return true;
   }
@@ -173,27 +189,29 @@ class AddOrderProvider extends ChangeNotifier {
     required Map item,
     required index,
   }) {
-    var submodelRecipes = recipes.where((e) => e['submodel']?['id'] == submodel['id']).toList();
+    List submodelRecipes = recipes.qaysiki(['submodel'], submodel);
 
-    if (submodelRecipes.isEmpty) {
-      addRecipe(submodel);
-      submodelRecipes = recipes.where((e) => e['id'] == submodel['id']).toList();
+    if (submodelRecipes.isNotEmpty) {
+      submodelRecipes[index]['item'] = item;
+      notifyListeners();
+      return;
     }
 
-    submodelRecipes[index]['item'] = item;
     notifyListeners();
   }
 
-  void selectSubmodel(value) {
+  void selectSubmodel(Map value) {
+    if (selectedSubmodels.where((e) => e['id'] == value['id']).isNotEmpty) {
+      return;
+    }
+
     selectedSubmodels.add(value);
     notifyListeners();
   }
 
-  void removeSelectedSubmodel(value) {
-    selectedSubmodels.remove(value);
-
-    recipes.removeWhere((e) => e['submodel'] == value);
-
+  void removeSelectedSubmodel(Map value) {
+    selectedSubmodels.removeWhere((e) => e['id'] == value['id']);
+    recipes.removeWhere((e) => e['submodel']?['id'] == value['id']);
     notifyListeners();
   }
 
@@ -236,6 +254,9 @@ class AddOrderProvider extends ChangeNotifier {
       "title": title,
       "description": body,
     });
+
+    instructionBodyFocusNode.unfocus();
+    instructionTitleFocusNode.requestFocus();
 
     instructions = instructions.reversed.toList();
     notifyListeners();
@@ -390,24 +411,19 @@ class AddOrderProvider extends ChangeNotifier {
       "recipes": [
         ...recipes.map((e) => {
               "id": e['id'],
-              "submodel_id": e['submodel']['id'],
+              "submodel_id": e['submodel']?['id'],
               "item_id": e['item']['id'],
               "quantity": double.tryParse(e['quantity'].text) ?? 0,
             }),
       ],
     };
 
-    inspect(data);
-
     Map<String, dynamic> res;
 
     int? orderId = StorageService.read('order_id');
 
     if (orderId != null) {
-      res = await HttpService.patch(
-        "$order/$orderId",
-        data,
-      );
+      res = await HttpService.patch("$order/$orderId", data);
     } else {
       res = await HttpService.post(order, data);
     }

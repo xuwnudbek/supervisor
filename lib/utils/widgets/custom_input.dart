@@ -14,6 +14,7 @@ class CustomInput extends StatefulWidget {
     this.size,
     this.padding,
     this.color,
+    this.focusNode,
     this.trailing,
     this.onTrailingTap,
     this.onEnter,
@@ -26,6 +27,7 @@ class CustomInput extends StatefulWidget {
   final TextAlign? textAlign;
   final String? tooltip;
   final bool? enabled;
+  final FocusNode? focusNode;
   final TextEditingController? controller;
   final List<TextInputFormatter>? formatters;
   final void Function(dynamic)? onChanged;
@@ -60,7 +62,7 @@ class _CustomInputState extends State<CustomInput> {
     });
   }
 
-  final FocusNode focusNode = FocusNode();
+  FocusNode get focusNode => widget.focusNode ?? FocusNode();
 
   @override
   Widget build(BuildContext context) {

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -53,7 +55,7 @@ class _AddOrderState extends State<AddOrder> {
         create: (_) => AddOrderProvider()
           ..initialize(
             orderProvider,
-            order: widget.order,
+            orderId: widget.order?['id'],
           ),
         child: Consumer<AddOrderProvider>(
           builder: (context, provider, _) {
@@ -232,7 +234,7 @@ class _AddOrderState extends State<AddOrder> {
                                               spacing: 8,
                                               children: [
                                                 ...provider.submodels.map((submodel) {
-                                                  bool isSelected = provider.selectedSubmodels.any((e) => e['submodel']?['id'] == submodel['id']);
+                                                  bool isSelected = provider.selectedSubmodels.any((e) => e['id'] == submodel['id']);
 
                                                   return ChoiceChip(
                                                     label: Text(
@@ -377,14 +379,12 @@ class _AddOrderState extends State<AddOrder> {
                                                             SizedBox(width: 8),
                                                             Text(
                                                               "${index + 1}.",
-                                                              style: TextStyle(
-                                                                fontSize: 16,
-                                                              ),
+                                                              style: TextStyle(fontSize: 16),
                                                             ),
                                                             SizedBox(width: 8),
                                                             SizedBox(
                                                               child: Text(
-                                                                "${size['size']['name']}",
+                                                                "${size['size']?['name'] ?? "Nomalum"}",
                                                                 style: TextStyle(
                                                                   fontSize: 16,
                                                                   fontWeight: FontWeight.w600,
@@ -455,7 +455,7 @@ class _AddOrderState extends State<AddOrder> {
                                     children: [
                                       SizedBox(width: 8),
                                       Text(
-                                        "Instruksiya",
+                                        "Instruksiyalar",
                                         style: TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.w500,
@@ -467,9 +467,9 @@ class _AddOrderState extends State<AddOrder> {
                                     child: Container(
                                       decoration: BoxDecoration(
                                         color: light,
-                                        border: Border.all(
-                                          color: dark.withValues(alpha: 0.2),
-                                        ),
+                                        // border: Border.all(
+                                        //     color: dark.withValues(alpha: 0.2),
+                                        //     ),
                                         borderRadius: BorderRadius.circular(12),
                                       ),
                                       padding: EdgeInsets.all(4),
@@ -486,7 +486,7 @@ class _AddOrderState extends State<AddOrder> {
                                                     // color: light,
                                                   ),
                                                   child: Row(
-                                                    spacing: 8,
+                                                    spacing: 4,
                                                     children: [
                                                       Expanded(
                                                         flex: 2,
@@ -494,6 +494,10 @@ class _AddOrderState extends State<AddOrder> {
                                                           color: light,
                                                           hint: "Instruksiya nomi",
                                                           controller: provider.instructionTitleController,
+                                                          focusNode: provider.instructionTitleFocusNode,
+                                                          onEnter: () {
+                                                            provider.addInstruction(context);
+                                                          },
                                                         ),
                                                       ),
                                                       Expanded(
@@ -502,21 +506,25 @@ class _AddOrderState extends State<AddOrder> {
                                                           color: light,
                                                           hint: "Instruksiya izohi",
                                                           controller: provider.instructionBodyController,
+                                                          focusNode: provider.instructionBodyFocusNode,
+                                                          onEnter: () {
+                                                            provider.addInstruction(context);
+                                                          },
                                                         ),
                                                       ),
-                                                      IconButton(
-                                                        style: IconButton.styleFrom(
-                                                          backgroundColor: primary,
-                                                          foregroundColor: light,
-                                                        ),
-                                                        onPressed: () {
-                                                          provider.addInstruction(context);
-                                                        },
-                                                        icon: Icon(
-                                                          Icons.add_rounded,
-                                                        ),
-                                                      ),
-                                                      SizedBox.shrink()
+                                                      // IconButton(
+                                                      //   style: IconButton.styleFrom(
+                                                      //     backgroundColor: primary,
+                                                      //     foregroundColor: light,
+                                                      //   ),
+                                                      //   onPressed: () {
+                                                      //     provider.addInstruction(context);
+                                                      //   },
+                                                      //   icon: Icon(
+                                                      //     Icons.add_rounded,
+                                                      //   ),
+                                                      // ),
+                                                      // SizedBox.shrink()
                                                     ],
                                                   ),
                                                 ),
@@ -534,7 +542,10 @@ class _AddOrderState extends State<AddOrder> {
                                                     outside: BorderSide(
                                                       color: dark.withValues(alpha: 0.1),
                                                     ),
-                                                    // borderRadius: BorderRadius.circular(8),
+                                                    borderRadius: BorderRadius.only(
+                                                      topLeft: Radius.circular(8),
+                                                      topRight: Radius.circular(8),
+                                                    ),
                                                   ),
                                                   columnWidths: {
                                                     0: FixedColumnWidth(50),
@@ -558,7 +569,7 @@ class _AddOrderState extends State<AddOrder> {
                                                           child: Padding(
                                                             padding: const EdgeInsets.all(8.0),
                                                             child: Text(
-                                                              "Instruction Title",
+                                                              "Nomi",
                                                               style: TextTheme.of(context).titleSmall,
                                                             ),
                                                           ),
@@ -567,7 +578,7 @@ class _AddOrderState extends State<AddOrder> {
                                                           child: Padding(
                                                             padding: const EdgeInsets.all(8.0),
                                                             child: Text(
-                                                              "Instruction Body",
+                                                              "Izohi",
                                                               style: TextTheme.of(context).titleSmall,
                                                             ),
                                                           ),
@@ -592,7 +603,10 @@ class _AddOrderState extends State<AddOrder> {
                                                     child: Table(
                                                       border: TableBorder.all(
                                                         color: dark.withValues(alpha: 0.1),
-                                                        // borderRadius: BorderRadius.circular(8),
+                                                        borderRadius: BorderRadius.only(
+                                                          bottomLeft: Radius.circular(8),
+                                                          bottomRight: Radius.circular(8),
+                                                        ),
                                                       ),
                                                       columnWidths: {
                                                         0: FixedColumnWidth(50),
@@ -622,7 +636,7 @@ class _AddOrderState extends State<AddOrder> {
                                                                 padding: EdgeInsets.all(8),
                                                                 child: IconButton(
                                                                   style: IconButton.styleFrom(
-                                                                    backgroundColor: danger.withValues(alpha: 0.1),
+                                                                    backgroundColor: danger.withValues(alpha: 0.0),
                                                                     foregroundColor: danger,
                                                                   ),
                                                                   onPressed: () {
@@ -659,14 +673,15 @@ class _AddOrderState extends State<AddOrder> {
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
                                   borderSide: BorderSide(
-                                    color: dark.withValues(alpha: 0.3),
+                                    width: 1,
+                                    color: dark.withValues(alpha: 0.2),
                                   ),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
                                   borderSide: BorderSide(
                                     color: primary,
-                                    width: 1.5,
+                                    width: 2,
                                   ),
                                 ),
                               ),
@@ -766,9 +781,9 @@ class _AddOrderState extends State<AddOrder> {
                                           child: ListView.builder(
                                             itemCount: provider.selectedSubmodels.length,
                                             itemBuilder: (context, index) {
-                                              Map orderSubmodel = provider.selectedSubmodels[index];
+                                              Map submodel = provider.selectedSubmodels[index];
 
-                                              List recipes = provider.recipes.qaysiki(['submodel'], orderSubmodel);
+                                              List recipes = provider.recipes.qaysiki(['submodel'], submodel);
 
                                               return Column(
                                                 children: [
@@ -791,7 +806,7 @@ class _AddOrderState extends State<AddOrder> {
                                                       mainAxisAlignment: MainAxisAlignment.center,
                                                       children: [
                                                         Text(
-                                                          "${orderSubmodel['submodel']?['name'] ?? "Unknown"}",
+                                                          "${submodel['name'] ?? "Nomalum"}",
                                                           style: TextTheme.of(context).titleMedium,
                                                         ),
                                                       ],
@@ -853,7 +868,7 @@ class _AddOrderState extends State<AddOrder> {
                                                                 ],
                                                                 onChanged: (value) {
                                                                   provider.selectItemForRecipe(
-                                                                    submodel: orderSubmodel,
+                                                                    submodel: submodel,
                                                                     item: provider.items.firstWhere((e) => e['id'] == value),
                                                                     index: index,
                                                                   );
@@ -919,10 +934,10 @@ class _AddOrderState extends State<AddOrder> {
                                                     mainAxisAlignment: MainAxisAlignment.start,
                                                     children: [
                                                       Tooltip(
-                                                        message: "${orderSubmodel['submodel']?['name'] ?? "Unknown"} uchun qo'shish",
+                                                        message: "${submodel['submodel']?['name'] ?? "Unknown"} uchun qo'shish",
                                                         child: InkWell(
                                                           onTap: () {
-                                                            var res = provider.addRecipe(orderSubmodel);
+                                                            var res = provider.addRecipe(submodel);
                                                             if (!res) {
                                                               CustomSnackbars(context).warning("Avvalgi maxsulotni tanlang!");
                                                             }

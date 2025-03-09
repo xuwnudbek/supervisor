@@ -689,8 +689,8 @@ class OrderDetails extends StatelessWidget {
                                                                 ),
                                                               ],
                                                             ),
-                                                            ...(submodel['order_recipes'] ?? []).map((recipe) {
-                                                              int index = (submodel['order_recipes'] ?? []).indexOf(recipe);
+                                                            ...(submodel['submodel']?['order_recipes'] ?? []).map((recipe) {
+                                                              int index = (submodel['submodel']['order_recipes'] ?? []).indexOf(recipe);
                                                               Map item = recipe['item'];
 
                                                               return TableRow(

@@ -63,6 +63,8 @@ class _OrderPageState extends State<OrderPage> {
                           CustomSnackbars(context).warning("Ma'lumotlar yuklanmoqda, iltimos kuting");
                           return;
                         }
+
+                        StorageService.remove('order_id');
                         await Get.to(
                           () => ChangeNotifierProvider.value(
                             value: context.read<OrderProvider>(),
