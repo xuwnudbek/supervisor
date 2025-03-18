@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:supervisor/services/http_service.dart';
 
@@ -72,7 +71,9 @@ class ModelProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> createModel(Map<String, dynamic> data) async {
+  Future<bool> createModel(
+    Map<String, dynamic> data,
+  ) async {
     isCreatingModel = true;
 
     var res = await HttpService.uploadWithImages(model, body: data);
@@ -85,7 +86,10 @@ class ModelProvider extends ChangeNotifier {
     return false;
   }
 
-  Future<bool> updateModel(int id, Map<String, dynamic> data) async {
+  Future<bool> updateModel(
+    int id,
+    Map<String, dynamic> data,
+  ) async {
     isUpdatingModel = true;
 
     var res = await HttpService.uploadWithImages(

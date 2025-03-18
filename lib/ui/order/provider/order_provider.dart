@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:supervisor/services/http_service.dart';
+import 'package:supervisor/utils/extensions/list_extension.dart';
 import 'package:supervisor/utils/widgets/custom_snackbars.dart';
 
 class OrderProvider extends ChangeNotifier {
+  final TextEditingController searchController = TextEditingController();
+  final FocusNode searchFocus = FocusNode();
+
   List _orders = [];
   List _models = [];
   List _items = [];
@@ -11,7 +15,7 @@ class OrderProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool _isUpdating = false;
 
-  List get orders => _orders;
+  List get orders => _orders.qaysiki(['name'], searchController.text);
   set orders(List value) {
     _orders = value;
     notifyListeners();
@@ -54,6 +58,10 @@ class OrderProvider extends ChangeNotifier {
   }
 
   OrderProvider() {
+    searchController.addListener(() {
+      notifyListeners();
+    });
+
     initialize();
   }
 

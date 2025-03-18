@@ -62,8 +62,6 @@ class _CustomInputState extends State<CustomInput> {
     });
   }
 
-  FocusNode get focusNode => widget.focusNode ?? FocusNode();
-
   @override
   Widget build(BuildContext context) {
     return Tooltip(
@@ -86,14 +84,13 @@ class _CustomInputState extends State<CustomInput> {
             Expanded(
               child: TextFormField(
                 enabled: widget.enabled ?? true,
-                focusNode: focusNode, // Fokus tugmasi ulandi
+                focusNode: widget.focusNode, // Fokus tugmasi ulandi
                 controller: widget.controller,
                 inputFormatters: widget.formatters ?? [],
                 textInputAction: TextInputAction.done,
-
                 onFieldSubmitted: (_) {
                   widget.onEnter?.call();
-                  focusNode.requestFocus();
+                  widget.focusNode?.requestFocus();
                 },
                 textAlign: widget.textAlign ?? TextAlign.start,
                 cursorWidth: 1,
@@ -101,7 +98,6 @@ class _CustomInputState extends State<CustomInput> {
                 style: TextStyle(
                   overflow: TextOverflow.ellipsis,
                 ),
-
                 decoration: InputDecoration(
                   floatingLabelAlignment: FloatingLabelAlignment.start,
                   contentPadding: widget.padding ?? EdgeInsets.symmetric(horizontal: 16, vertical: 0.0),

@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:supervisor/services/http_service.dart';
 import 'package:supervisor/services/storage_service.dart';
@@ -171,9 +168,9 @@ class AddOrderProvider extends ChangeNotifier {
 
   void removeRecipe(Map recipe) {
     if (recipes.qaysiki(['submodel'], recipe['submodel']).length == 1) {
-      recipes.qaysiki(['submodel'], recipe['submodel'])[0]['item'] = {};
-      recipes.qaysiki(['submodel'], recipe['submodel'])[0]['quantity'] = TextEditingController(text: "");
-      notifyListeners();
+      // recipes.qaysiki(['submodel'], recipe['submodel'])[0]['item'] = {};
+      // recipes.qaysiki(['submodel'], recipe['submodel'])[0]['quantity'] = TextEditingController(text: "");
+      // notifyListeners();
       return;
     }
 
@@ -215,6 +212,7 @@ class AddOrderProvider extends ChangeNotifier {
   void selectSize(value, {int quantity = 0, int? id}) {
     selectedSizes.add({
       if (id != null) "id": id,
+      "focusNode": FocusNode(),
       "size": value,
       "quantity": TextEditingController(text: "$quantity")
         ..addListener(() {

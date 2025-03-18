@@ -57,12 +57,12 @@ class HttpService {
         };
       } else {
         print("Error [GET]: ${response.body}\nCode: ${response.statusCode}\nURL: $url");
-        return {
-          'status': Result.error,
-        };
+        sendToBot("Error [GET]: ${response.body}");
+        return {'status': Result.error};
       }
     } catch (e) {
       print("Error: $e");
+      sendToBot("Error: $e");
       return {
         'status': Result.error,
       };
@@ -98,6 +98,7 @@ class HttpService {
         };
       } else {
         print("Error [POST]: ${response.body}");
+        sendToBot("Error [POST]: ${response.body}");
 
         return {
           'status': Result.error,
@@ -105,6 +106,7 @@ class HttpService {
       }
     } catch (e) {
       print("Error: $e");
+      sendToBot("Error: $e");
       return {
         'status': Result.error,
       };
@@ -138,12 +140,14 @@ class HttpService {
         };
       } else {
         print("Error [PUT]: ${response.body}");
+        sendToBot("Error [PUT]: ${response.body}");
         return {
           'status': Result.error,
         };
       }
     } catch (e) {
       print("Error: $e");
+      sendToBot("Error: $e");
       return {
         'status': Result.error,
       };
@@ -171,20 +175,20 @@ class HttpService {
         body: jsonEncode(body),
       );
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        
         return {
           'data': jsonDecode(response.body),
           'status': Result.success,
         };
       } else {
         print("Error [PATCH]: ${response.body}");
-
+        sendToBot("Error [PATCH]: ${response.body}");
         return {
           'status': Result.error,
         };
       }
     } catch (e) {
       print("Error: $e");
+      sendToBot("Error: $e");
       return {
         'status': Result.error,
       };
@@ -213,12 +217,14 @@ class HttpService {
         };
       } else {
         print("Error [DELETE]: ${response.body}");
+        sendToBot("Error [DELETE]: ${response.body}");
         return {
           'status': Result.error,
         };
       }
     } catch (e) {
       print("Error: $e");
+      sendToBot("Error: $e");
       return {
         'status': Result.error,
       };
@@ -301,6 +307,7 @@ class HttpService {
         };
       } else {
         log("Error: ${await res.stream.bytesToString()}");
+        sendToBot("Error: ${await res.stream.bytesToString()}");
         return {
           'status': Result.error,
           "data": await res.stream.bytesToString(),
@@ -308,6 +315,7 @@ class HttpService {
       }
     } catch (e) {
       log('Error: $e');
+      sendToBot("Error: $e");
       return {
         'status': Result.error,
         "data": "$e",
@@ -352,12 +360,15 @@ class HttpService {
           'status': Result.success,
         };
       } else {
-        log(await res.stream.bytesToString());
+        log("Error: ${await res.stream.bytesToString()}");
+        sendToBot("Error: ${await res.stream.bytesToString()}");
         return {
           'status': Result.error,
         };
       }
     } catch (e) {
+      sendToBot("Error: $e");
+
       print('Error: $e');
       return {
         'status': Result.error,
@@ -366,19 +377,21 @@ class HttpService {
   }
 
   static Future<void> sendToBot(msg) async {
-    String TOKEN = "8006772372:AAF1Ms8bC9-YA0mMW6tADZrQ8nloLcvbsTI";
+    String token = "8006772372:AAF1Ms8bC9-YA0mMW6tADZrQ8nloLcvbsTI";
 
     Uri uri = Uri.https(
       "api.telegram.org",
-      "bot$TOKEN/sendMessage",
+      "bot$token/sendMessage",
       {
         "chat_id": "5422334594",
-        "text": "$msg",
+        "text": "${msg.toString().length > 4096 ? msg.toString().substring(0, 4096) : msg}",
       },
     );
 
     try {
       await http.get(uri);
-    } catch (e) {}
+    } catch (e) {
+      print("Error: $e");
+    }
   }
 }

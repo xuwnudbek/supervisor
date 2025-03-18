@@ -226,8 +226,29 @@ class OrderDetails extends StatelessWidget {
                                                         'Rasxodi',
                                                         style: TextTheme.of(context).bodyMedium,
                                                       ),
-                                                      Text(
-                                                        "${provider.orderData['rasxod']}\$",
+                                                      Text.rich(
+                                                        TextSpan(children: [
+                                                          TextSpan(
+                                                            text: "${provider.orderData['quantity']}",
+                                                            style: TextTheme.of(context).titleMedium,
+                                                          ),
+                                                          TextSpan(
+                                                            text: " x ",
+                                                            style: TextTheme.of(context).titleMedium,
+                                                          ),
+                                                          TextSpan(
+                                                            text: "${provider.orderData['rasxod']}\$",
+                                                            style: TextTheme.of(context).titleMedium,
+                                                          ),
+                                                          TextSpan(
+                                                            text: " = ",
+                                                            style: TextTheme.of(context).titleMedium,
+                                                          ),
+                                                          TextSpan(
+                                                            text: "${(num.parse("${provider.orderData['quantity']}") * num.parse(provider.orderData['rasxod'])).toCurrency}\$",
+                                                            style: TextTheme.of(context).titleMedium,
+                                                          ),
+                                                        ]),
                                                         style: TextTheme.of(context).titleMedium?.copyWith(
                                                               fontWeight: FontWeight.w600,
                                                             ),
@@ -252,7 +273,7 @@ class OrderDetails extends StatelessWidget {
                                                       Text.rich(
                                                         TextSpan(children: [
                                                           TextSpan(
-                                                            text: "${provider.orderData['quantity']}",
+                                                            text: "(${provider.orderData['quantity']}",
                                                             style: TextTheme.of(context).titleMedium,
                                                           ),
                                                           TextSpan(
@@ -260,7 +281,15 @@ class OrderDetails extends StatelessWidget {
                                                             style: TextTheme.of(context).titleMedium,
                                                           ),
                                                           TextSpan(
-                                                            text: "${provider.getRecipesTotalPrice.toStringAsFixed(2)}\$",
+                                                            text: "${provider.getRecipesTotalPrice.toStringAsFixed(2)}\$)",
+                                                            style: TextTheme.of(context).titleMedium,
+                                                          ),
+                                                          TextSpan(
+                                                            text: " + ",
+                                                            style: TextTheme.of(context).titleMedium,
+                                                          ),
+                                                          TextSpan(
+                                                            text: "${(num.parse("${provider.orderData['quantity']}") * num.parse(provider.orderData['rasxod'])).toCurrency}\$",
                                                             style: TextTheme.of(context).titleMedium,
                                                           ),
                                                           TextSpan(
@@ -268,7 +297,7 @@ class OrderDetails extends StatelessWidget {
                                                             style: TextTheme.of(context).titleMedium,
                                                           ),
                                                           TextSpan(
-                                                            text: "${((provider.orderData['quantity'] as int) * provider.getRecipesTotalPrice).toCurrency}\$",
+                                                            text: "${((provider.orderData['quantity'] as int) * provider.getRecipesTotalPrice + num.parse("${provider.orderData['quantity']}") * num.parse(provider.orderData['rasxod'])).toInt().toCurrency}\$",
                                                             style: TextTheme.of(context).titleMedium?.copyWith(
                                                                   fontWeight: FontWeight.w600,
                                                                 ),
@@ -318,8 +347,8 @@ class OrderDetails extends StatelessWidget {
                                                 Expanded(
                                                   child: Column(
                                                     mainAxisAlignment: MainAxisAlignment.start,
-                                                    spacing: 6,
                                                     crossAxisAlignment: CrossAxisAlignment.start,
+                                                    spacing: 6,
                                                     children: [
                                                       Text(
                                                         'Submodellar',
@@ -328,7 +357,7 @@ class OrderDetails extends StatelessWidget {
                                                       Container(
                                                         width: double.infinity,
                                                         decoration: BoxDecoration(
-                                                          color: secondary,
+                                                          color: light,
                                                           borderRadius: BorderRadius.circular(8),
                                                         ),
                                                         margin: EdgeInsets.only(right: 8),
@@ -353,7 +382,7 @@ class OrderDetails extends StatelessWidget {
                                                                     return Container(
                                                                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                                                                       decoration: BoxDecoration(
-                                                                        color: light,
+                                                                        color: secondary,
                                                                         borderRadius: BorderRadius.circular(8),
                                                                       ),
                                                                       child: Text(
@@ -382,7 +411,7 @@ class OrderDetails extends StatelessWidget {
                                                       Container(
                                                         width: double.infinity,
                                                         decoration: BoxDecoration(
-                                                          color: secondary,
+                                                          color: light,
                                                           borderRadius: BorderRadius.circular(8),
                                                         ),
                                                         margin: EdgeInsets.only(right: 8),
@@ -407,7 +436,7 @@ class OrderDetails extends StatelessWidget {
                                                                     return Container(
                                                                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                                                                       decoration: BoxDecoration(
-                                                                        color: light,
+                                                                        color: secondary,
                                                                         borderRadius: BorderRadius.circular(8),
                                                                       ),
                                                                       child: Text.rich(

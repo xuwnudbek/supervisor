@@ -1,3 +1,4 @@
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -461,6 +462,7 @@ class _AddModelState extends State<AddModel> {
       "images": images,
     };
 
+    debugPrint(jsonEncode(body));
 
     if (widget.model != null) {
       await widget.provider.updateModel(widget.model!['id'], body).then((value) {

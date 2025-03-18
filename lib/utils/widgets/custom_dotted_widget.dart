@@ -13,7 +13,7 @@ class CustomDottedWidget extends StatelessWidget {
           painter: DottedLinePainter(
             lineThickness: 1.0,
             dashGap: 5.0,
-            gapColor: Colors.grey,
+            gapColor: Colors.grey.shade300,
           ),
         ),
       ),
