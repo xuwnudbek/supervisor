@@ -45,7 +45,24 @@ class OrderDetails extends StatelessWidget {
           return Scaffold(
             appBar: AppBar(
               title: const Text('Buyurtma haqida ma\'lumot'),
+              elevation: 0,
               actions: [
+                provider.isOrderCopying
+                    ? const Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      )
+                    : IconButton(
+                        tooltip: "Buyurtmani nusxasini olish",
+                        icon: const Icon(Icons.copy),
+                        onPressed: () async {
+                          await provider.copyOrder(context);
+                        },
+                      ),
+                SizedBox(width: 8),
                 IconButton(
                   icon: const Icon(Icons.refresh),
                   onPressed: () {

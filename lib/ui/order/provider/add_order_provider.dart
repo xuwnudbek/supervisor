@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:supervisor/services/http_service.dart';
 import 'package:supervisor/services/storage_service.dart';
 import 'package:supervisor/ui/order/provider/order_provider.dart';
@@ -88,7 +91,7 @@ class AddOrderProvider extends ChangeNotifier {
 
   late OrderProvider orderProvider;
 
-  void initialize(OrderProvider orderProvider, {int? orderId}) async {
+  void initialize(OrderProvider orderProvider, {int? orderId, bool hasCopy = false}) async {
     this.orderProvider = orderProvider;
     models = orderProvider.models;
     contragents = orderProvider.contragents;
@@ -102,54 +105,71 @@ class AddOrderProvider extends ChangeNotifier {
       if (res['status'] == Result.success) {
         orderData = res['data'];
       }
+    }
 
-      if (orderData != null && orderData.isNotEmpty) {
-        orderNameController.text = orderData['name'] ?? "";
-        orderRasxodController.text = (orderData['rasxod'] ?? 0).toString();
-        orderCommentController.text = orderData['comment'] ?? "";
-
-        selectedModel = models.qaysiki(['id'], orderData['order_model']?['model']?['id']).firstOrNull ?? {};
-        selectedMaterial = materials.qaysiki(['id'], orderData['order_model']?['material']?['id']).firstOrNull ?? {};
-        selectedContragent = contragents.qaysiki(['id'], orderData['contragent']?['id']).firstOrNull ?? {};
-
-        deadline = [
-          if (orderData['start_date'] != null) DateTime.parse(orderData['start_date']),
-          if (orderData['end_date'] != null) DateTime.parse(orderData['end_date']),
-        ];
-
-        for (var instruction in orderData['instructions'] ?? []) {
-          instructions.add({
-            "id": instruction['id'],
-            "title": instruction['title'],
-            "description": instruction['description'],
-          });
+    if (hasCopy) {
+      // read order from Clipboard
+      try {
+        if (selectedModel.isNotEmpty) {
+          Clipboard.setData(ClipboardData(text: "{}"));
+          return;
         }
 
-        for (var orderSubmodel in ((orderData['order_model']?['submodels'] ?? []) as List)) {
-          selectSubmodel(orderSubmodel['submodel']);
-
-          for (var orderRecipe in orderSubmodel['submodel']?['order_recipes'] ?? []) {
-            addRecipe(
-              id: orderRecipe['id'],
-              orderSubmodel['submodel'] ?? {},
-              item: orderRecipe['item'] ?? {},
-              quantity: orderRecipe['quantity'] ?? 0,
-            );
-          }
+        Map? orderCopy = json.decode((await Clipboard.getData('text/plain'))?.text ?? "{}");
+        if (orderCopy != null) {
+          orderData = orderCopy;
         }
+      } catch (e) {
+        print(e);
+      }
+    }
 
-        for (var e in ((orderData['order_model']?['sizes'] ?? []) as List)) {
-          selectSize(
-            e['size'],
-            id: e['id'],
-            quantity: e['quantity'],
-          );
-        }
+    if (orderData != null && orderData.isNotEmpty) {
+      orderNameController.text = orderData['name'] ?? "";
+      orderRasxodController.text = (orderData['rasxod'] ?? 0).toString();
+      orderCommentController.text = orderData['comment'] ?? "";
 
-        Future.delayed(Duration(milliseconds: 1000), () {
-          notifyListeners();
+      selectedModel = models.qaysiki(['id'], orderData['order_model']?['model']?['id']).firstOrNull ?? {};
+      selectedMaterial = materials.qaysiki(['id'], orderData['order_model']?['material']?['id']).firstOrNull ?? {};
+      selectedContragent = contragents.qaysiki(['id'], orderData['contragent']?['id']).firstOrNull ?? {};
+
+      deadline = [
+        if (orderData['start_date'] != null) DateTime.parse(orderData['start_date']),
+        if (orderData['end_date'] != null) DateTime.parse(orderData['end_date']),
+      ];
+
+      for (var instruction in orderData['instructions'] ?? []) {
+        instructions.add({
+          "id": instruction['id'],
+          "title": instruction['title'],
+          "description": instruction['description'],
         });
       }
+
+      for (var orderSubmodel in ((orderData['order_model']?['submodels'] ?? []) as List)) {
+        selectSubmodel(orderSubmodel['submodel']);
+
+        for (var orderRecipe in orderSubmodel['submodel']?['order_recipes'] ?? []) {
+          addRecipe(
+            id: orderRecipe['id'],
+            orderSubmodel['submodel'] ?? {},
+            item: orderRecipe['item'] ?? {},
+            quantity: orderRecipe['quantity'] ?? 0,
+          );
+        }
+      }
+
+      for (var e in ((orderData['order_model']?['sizes'] ?? []) as List)) {
+        selectSize(
+          e['size'],
+          id: e['id'],
+          quantity: e['quantity'],
+        );
+      }
+
+      Future.delayed(Duration(milliseconds: 1000), () {
+        notifyListeners();
+      });
     }
   }
 
@@ -227,7 +247,7 @@ class AddOrderProvider extends ChangeNotifier {
   }
 
   void removeSelectedSize(value) {
-    selectedSizes.removeWhere((e) => e['size'] == value);
+    selectedSizes.removeWhere((e) => e['size']?['id'] == value['id']);
     notifyListeners();
   }
 

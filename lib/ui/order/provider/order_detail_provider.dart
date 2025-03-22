@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:supervisor/services/http_service.dart';
+import 'package:supervisor/utils/widgets/custom_snackbars.dart';
 
 class OrderDetailProvider extends ChangeNotifier {
   final int orderId;
@@ -38,6 +42,26 @@ class OrderDetailProvider extends ChangeNotifier {
   }
 
   OrderDetailProvider(this.orderId);
+
+  bool _isOrderCopying = false;
+  bool get isOrderCopying => _isOrderCopying;
+  set isOrderCopying(bool value) {
+    _isOrderCopying = value;
+    notifyListeners();
+  }
+
+  Future<void> copyOrder(BuildContext context) async {
+    isOrderCopying = true;
+
+    var res = await HttpService.get("$order/$orderId");
+
+    if (res['status'] == Result.success) {
+      Clipboard.setData(ClipboardData(text: jsonEncode(res['data'])));
+      CustomSnackbars(context).success("Buyurtma nusxasi olindi ✅");
+    }
+
+    isOrderCopying = false;
+  }
 
   Future<void> initialize() async {
     isLoading = true;

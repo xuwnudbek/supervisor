@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -68,6 +67,18 @@ class _AddOrderState extends State<AddOrder> {
                     title: Text(
                       "Buyurtma${isUpdate ? "ni yangilash" : " qo'shish"}",
                     ),
+                    actions: [
+                      IconButton(
+                        onPressed: () async {
+                          provider.initialize(
+                            orderProvider,
+                            hasCopy: true,
+                          );
+                        },
+                        icon: Icon(Icons.paste_rounded),
+                      ),
+                      SizedBox(width: 16),
+                    ],
                   ),
                   body: Padding(
                     padding: const EdgeInsets.all(0.0),

@@ -140,7 +140,7 @@ class _ProcessTimelinePageState extends State<ProcessTimelinePage> {
                     style: textTheme.titleSmall,
                     children: [
                       TextSpan(
-                        text: "${DateTime.parse(orderPrintingTime['planned_time']).toLocal().toYMDHM}",
+                        text: "${DateTime.tryParse(orderPrintingTime['planned_time']).toYMDHM}",
                         style: textTheme.bodyMedium,
                       ),
                     ],
@@ -150,7 +150,7 @@ class _ProcessTimelinePageState extends State<ProcessTimelinePage> {
                     style: textTheme.titleSmall,
                     children: [
                       TextSpan(
-                        text: "${DateTime.parse(orderPrintingTime['actual_time'] ?? "").toLocal().toYMDHM}",
+                        text: "${DateTime.tryParse(orderPrintingTime['actual_time'] ?? "").toYMDHM}",
                         style: textTheme.bodyMedium,
                       ),
                     ],
