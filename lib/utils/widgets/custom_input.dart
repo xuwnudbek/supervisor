@@ -90,7 +90,7 @@ class _CustomInputState extends State<CustomInput> {
                 textInputAction: TextInputAction.done,
                 onFieldSubmitted: (_) {
                   widget.onEnter?.call();
-                  widget.focusNode?.requestFocus();
+                  // widget.focusNode?.requestFocus();
                 },
                 textAlign: widget.textAlign ?? TextAlign.start,
                 cursorWidth: 1,

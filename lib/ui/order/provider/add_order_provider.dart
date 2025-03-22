@@ -17,6 +17,8 @@ class AddOrderProvider extends ChangeNotifier {
   final TextEditingController instructionBodyController = TextEditingController();
   final FocusNode instructionBodyFocusNode = FocusNode();
   final TextEditingController orderCommentController = TextEditingController();
+  final FocusScopeNode sizeScopeNodes = FocusScopeNode();
+  final FocusScopeNode instructionScopeNodes = FocusScopeNode();
 
   List models = [];
   List submodels = [];
@@ -210,9 +212,11 @@ class AddOrderProvider extends ChangeNotifier {
   }
 
   void selectSize(value, {int quantity = 0, int? id}) {
+    final FocusNode focusNode = FocusNode();
+
     selectedSizes.add({
       if (id != null) "id": id,
-      "focusNode": FocusNode(),
+      "focusNode": focusNode,
       "size": value,
       "quantity": TextEditingController(text: "$quantity")
         ..addListener(() {
@@ -250,11 +254,11 @@ class AddOrderProvider extends ChangeNotifier {
       "description": body,
     });
 
-    instructionBodyFocusNode.unfocus();
-    instructionTitleFocusNode.requestFocus();
-
     instructions = instructions.reversed.toList();
     notifyListeners();
+
+    // Change focus to the first instruction title field
+    instructionScopeNodes.requestFocus(instructionTitleFocusNode);
   }
 
   void removeInstruction(Map value) {
@@ -326,7 +330,7 @@ class AddOrderProvider extends ChangeNotifier {
       },
     );
 
-    if (res) {
+    if (res == true) {
       orderProvider.contragents.add({
         "id": 0,
         "name": newContragentController.text,

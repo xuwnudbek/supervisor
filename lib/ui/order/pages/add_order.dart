@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -58,7 +59,6 @@ class _AddOrderState extends State<AddOrder> {
             ChangeNotifierProvider(
               create: (_) => CustomInput2Provider(),
             ),
-            
           ],
           builder: (context, snapshot) {
             return Consumer<AddOrderProvider>(
@@ -275,7 +275,7 @@ class _AddOrderState extends State<AddOrder> {
                                     Column(
                                       spacing: 8,
                                       children: [
-                                        CustomDropdown2(
+                                        CustomDropdown(
                                           tooltip: "Buyurtma qilingan mato turini tanlang",
                                           width: 300,
                                           hint: "Matoni tanlang",
@@ -352,34 +352,38 @@ class _AddOrderState extends State<AddOrder> {
                                       ],
                                     ),
                                     Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            height: 208,
-                                            decoration: BoxDecoration(
-                                              color: secondary,
-                                              borderRadius: BorderRadius.circular(8),
-                                            ),
-                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                                            child: provider.selectedSizes.isEmpty
-                                                ? Center(
-                                                    child: Text(
-                                                      "Bo'sh",
-                                                      style: TextTheme.of(context).bodySmall?.copyWith(
-                                                            color: Colors.grey,
-                                                          ),
-                                                    ),
-                                                  )
-                                                : SingleChildScrollView(
-                                                    child: Column(
-                                                      spacing: 8,
-                                                      children: [
-                                                        ...provider.selectedSizes.map((size) {
-                                                          int index = provider.selectedSizes.indexOf(size);
+                                      child: FocusScope(
+                                        node: provider.sizeScopeNodes,
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              height: 208,
+                                              decoration: BoxDecoration(
+                                                color: secondary,
+                                                borderRadius: BorderRadius.circular(8),
+                                              ),
+                                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                                              child: provider.selectedSizes.isEmpty
+                                                  ? Center(
+                                                      child: Text(
+                                                        "Bo'sh",
+                                                        style: TextTheme.of(context).bodySmall?.copyWith(
+                                                              color: Colors.grey,
+                                                            ),
+                                                      ),
+                                                    )
+                                                  : SingleChildScrollView(
+                                                      child: Column(
+                                                        spacing: 8,
+                                                        children: [
+                                                          ...provider.selectedSizes.map((size) {
+                                                            int index = provider.selectedSizes.indexOf(size);
 
-                                                          return FocusScope(
-                                                            child: Container(
+                                                            final FocusNode currentFocusNode = size['focusNode'] as FocusNode;
+                                                            FocusNode? nextFocusNode = index + 1 < provider.selectedSizes.length ? provider.selectedSizes[index + 1]['focusNode'] as FocusNode : null;
+
+                                                            return Container(
                                                               height: 45,
                                                               decoration: BoxDecoration(
                                                                 color: light,
@@ -414,12 +418,12 @@ class _AddOrderState extends State<AddOrder> {
                                                                       textAlign: TextAlign.center,
                                                                       controller: size['quantity'],
                                                                       hint: "soni",
-                                                                      focusNode: size['focusNode'],
+                                                                      focusNode: currentFocusNode,
                                                                       onEnter: () {
-                                                                        if (index + 1 < provider.selectedSizes.length) {
-                                                                          size['focusNode']?.unfocus();
-                                                                          (provider.selectedSizes[index + 1]?['focusNode'] as FocusNode).requestFocus();
-                                                                          print("Focus requested");
+                                                                        if (provider.sizeScopeNodes.focusedChild == provider.sizeScopeNodes.children.last) {
+                                                                          provider.sizeScopeNodes.unfocus();
+                                                                        } else {
+                                                                          nextFocusNode?.requestFocus();
                                                                         }
                                                                       },
                                                                       formatters: [
@@ -428,7 +432,6 @@ class _AddOrderState extends State<AddOrder> {
                                                                           if (newValue.text.startsWith("0")) {
                                                                             return oldValue;
                                                                           }
-
                                                                           if (newValue.text.length > 5) {
                                                                             return oldValue;
                                                                           }
@@ -440,249 +443,249 @@ class _AddOrderState extends State<AddOrder> {
                                                                   )
                                                                 ],
                                                               ),
-                                                            ),
-                                                          );
-                                                        }),
-                                                      ],
+                                                            );
+                                                          }),
+                                                        ],
+                                                      ),
                                                     ),
-                                                  ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(left: 8.0, top: 8.0),
-                                            child: Text.rich(
-                                              TextSpan(children: [
-                                                TextSpan(
-                                                  text: "Jami soni: ",
-                                                  style: TextTheme.of(context).titleSmall,
-                                                ),
-                                                TextSpan(
-                                                  text: "${provider.getSizesQuantity}",
-                                                  style: TextTheme.of(context).titleMedium,
-                                                ),
-                                                TextSpan(
-                                                  text: " ta",
-                                                  style: TextTheme.of(context).titleSmall,
-                                                ),
-                                              ]),
                                             ),
-                                          ),
-                                        ],
+                                            Padding(
+                                              padding: const EdgeInsets.only(left: 8.0, top: 8.0),
+                                              child: Text.rich(
+                                                TextSpan(children: [
+                                                  TextSpan(
+                                                    text: "Jami soni: ",
+                                                    style: TextTheme.of(context).titleSmall,
+                                                  ),
+                                                  TextSpan(
+                                                    text: "${provider.getSizesQuantity}",
+                                                    style: TextTheme.of(context).titleMedium,
+                                                  ),
+                                                  TextSpan(
+                                                    text: " ta",
+                                                    style: TextTheme.of(context).titleSmall,
+                                                  ),
+                                                ]),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ],
                                 ),
                                 Expanded(
-                                  child: Column(
-                                    children: [
-                                      Row(
-                                        children: [
-                                          SizedBox(width: 8),
-                                          Text(
-                                            "Instruksiyalar",
-                                            style: TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Expanded(
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            color: light,
-                                            // border: Border.all(
-                                            //     color: dark.withValues(alpha: 0.2),
-                                            //     ),
-                                            borderRadius: BorderRadius.circular(12),
-                                          ),
-                                          padding: EdgeInsets.all(4),
-                                          child: Column(
-                                            spacing: 8,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Expanded(
-                                                    child: Container(
-                                                      height: 50,
-                                                      decoration: BoxDecoration(
-                                                        borderRadius: BorderRadius.circular(8),
-                                                        // color: light,
-                                                      ),
-                                                      child: Row(
-                                                        spacing: 4,
-                                                        children: [
-                                                          Expanded(
-                                                            flex: 2,
-                                                            child: CustomInput(
-                                                              color: light,
-                                                              hint: "Instruksiya nomi",
-                                                              controller: provider.instructionTitleController,
-                                                              focusNode: provider.instructionTitleFocusNode,
-                                                              onEnter: () {
-                                                                provider.addInstruction(context);
-                                                              },
-                                                            ),
-                                                          ),
-                                                          Expanded(
-                                                            flex: 3,
-                                                            child: CustomInput(
-                                                              color: light,
-                                                              hint: "Instruksiya izohi",
-                                                              controller: provider.instructionBodyController,
-                                                              focusNode: provider.instructionBodyFocusNode,
-                                                              onEnter: () {
-                                                                provider.addInstruction(context);
-                                                              },
-                                                            ),
-                                                          ),
-                                                          // IconButton(
-                                                          //   style: IconButton.styleFrom(
-                                                          //     backgroundColor: primary,
-                                                          //     foregroundColor: light,
-                                                          //   ),
-                                                          //   onPressed: () {
-                                                          //     provider.addInstruction(context);
-                                                          //   },
-                                                          //   icon: Icon(
-                                                          //     Icons.add_rounded,
-                                                          //   ),
-                                                          // ),
-                                                          // SizedBox.shrink()
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
+                                  child: FocusScope(
+                                    node: provider.instructionScopeNodes,
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          children: [
+                                            SizedBox(width: 8),
+                                            Text(
+                                              "Instruksiyalar",
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w500,
                                               ),
-                                              Expanded(
-                                                child: Column(
+                                            ),
+                                          ],
+                                        ),
+                                        Expanded(
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              color: light,
+                                              borderRadius: BorderRadius.circular(12),
+                                            ),
+                                            padding: EdgeInsets.all(4),
+                                            child: Column(
+                                              spacing: 8,
+                                              children: [
+                                                Row(
                                                   children: [
-                                                    Table(
-                                                      border: TableBorder.symmetric(
-                                                        inside: BorderSide(
-                                                          color: dark.withValues(alpha: 0.1),
-                                                        ),
-                                                        outside: BorderSide(
-                                                          color: dark.withValues(alpha: 0.1),
-                                                        ),
-                                                        borderRadius: BorderRadius.only(
-                                                          topLeft: Radius.circular(8),
-                                                          topRight: Radius.circular(8),
-                                                        ),
-                                                      ),
-                                                      columnWidths: {
-                                                        0: FixedColumnWidth(50),
-                                                        1: IntrinsicColumnWidth(flex: 1),
-                                                        2: IntrinsicColumnWidth(flex: 2),
-                                                        3: FixedColumnWidth(56),
-                                                      },
-                                                      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                                                      children: [
-                                                        TableRow(
-                                                          children: [
-                                                            TableCell(
-                                                              child: Center(
-                                                                child: Text(
-                                                                  "ID",
-                                                                  style: TextTheme.of(context).titleSmall,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            TableCell(
-                                                              child: Padding(
-                                                                padding: const EdgeInsets.all(8.0),
-                                                                child: Text(
-                                                                  "Nomi",
-                                                                  style: TextTheme.of(context).titleSmall,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            TableCell(
-                                                              child: Padding(
-                                                                padding: const EdgeInsets.all(8.0),
-                                                                child: Text(
-                                                                  "Izohi",
-                                                                  style: TextTheme.of(context).titleSmall,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            TableCell(
-                                                              child: Padding(
-                                                                padding: const EdgeInsets.all(8.0),
-                                                                child: Center(
-                                                                  child: Text(
-                                                                    "#",
-                                                                    style: TextTheme.of(context).titleSmall,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ],
-                                                    ),
                                                     Expanded(
-                                                      child: SingleChildScrollView(
-                                                        child: Table(
-                                                          border: TableBorder.all(
-                                                            color: dark.withValues(alpha: 0.1),
-                                                            borderRadius: BorderRadius.only(
-                                                              bottomLeft: Radius.circular(8),
-                                                              bottomRight: Radius.circular(8),
-                                                            ),
-                                                          ),
-                                                          columnWidths: {
-                                                            0: FixedColumnWidth(50),
-                                                            1: IntrinsicColumnWidth(flex: 1),
-                                                            2: IntrinsicColumnWidth(flex: 2),
-                                                            3: FixedColumnWidth(56),
-                                                          },
-                                                          defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                                                      child: Container(
+                                                        height: 50,
+                                                        decoration: BoxDecoration(
+                                                          borderRadius: BorderRadius.circular(8),
+                                                          // color: light,
+                                                        ),
+                                                        child: Row(
+                                                          spacing: 4,
                                                           children: [
-                                                            ...provider.instructions.map<TableRow>((instruction) {
-                                                              int index = provider.instructions.indexOf(instruction);
-
-                                                              return TableRow(
-                                                                children: [
-                                                                  Center(
-                                                                    child: Text("${index + 1}"),
-                                                                  ),
-                                                                  Padding(
-                                                                    padding: EdgeInsets.all(8),
-                                                                    child: Text("${instruction['title']}"),
-                                                                  ),
-                                                                  Padding(
-                                                                    padding: EdgeInsets.all(8),
-                                                                    child: Text("${instruction['description']}"),
-                                                                  ),
-                                                                  Padding(
-                                                                    padding: EdgeInsets.all(8),
-                                                                    child: IconButton(
-                                                                      style: IconButton.styleFrom(
-                                                                        backgroundColor: danger.withValues(alpha: 0.0),
-                                                                        foregroundColor: danger,
-                                                                      ),
-                                                                      onPressed: () {
-                                                                        provider.removeInstruction(instruction);
-                                                                      },
-                                                                      icon: Icon(Icons.delete),
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              );
-                                                            }),
+                                                            Expanded(
+                                                              flex: 2,
+                                                              child: CustomInput(
+                                                                color: light,
+                                                                hint: "Nomi",
+                                                                controller: provider.instructionTitleController,
+                                                                focusNode: provider.instructionTitleFocusNode,
+                                                                onEnter: () {
+                                                                  provider.addInstruction(context);
+                                                                },
+                                                              ),
+                                                            ),
+                                                            Expanded(
+                                                              flex: 3,
+                                                              child: CustomInput(
+                                                                color: light,
+                                                                hint: "Izoh",
+                                                                controller: provider.instructionBodyController,
+                                                                focusNode: provider.instructionBodyFocusNode,
+                                                                onEnter: () {
+                                                                  provider.addInstruction(context);
+                                                                },
+                                                              ),
+                                                            ),
+                                                            // IconButton(
+                                                            //   style: IconButton.styleFrom(
+                                                            //     backgroundColor: primary,
+                                                            //     foregroundColor: light,
+                                                            //   ),
+                                                            //   onPressed: () {
+                                                            //     provider.addInstruction(context);
+                                                            //   },
+                                                            //   icon: Icon(
+                                                            //     Icons.add_rounded,
+                                                            //   ),
+                                                            // ),
+                                                            // SizedBox.shrink()
                                                           ],
                                                         ),
                                                       ),
                                                     ),
                                                   ],
                                                 ),
-                                              ),
-                                            ],
+                                                Expanded(
+                                                  child: Column(
+                                                    children: [
+                                                      Table(
+                                                        border: TableBorder.symmetric(
+                                                          inside: BorderSide(
+                                                            color: dark.withValues(alpha: 0.1),
+                                                          ),
+                                                          outside: BorderSide(
+                                                            color: dark.withValues(alpha: 0.1),
+                                                          ),
+                                                          borderRadius: BorderRadius.only(
+                                                            topLeft: Radius.circular(8),
+                                                            topRight: Radius.circular(8),
+                                                          ),
+                                                        ),
+                                                        columnWidths: {
+                                                          0: FixedColumnWidth(50),
+                                                          1: IntrinsicColumnWidth(flex: 1),
+                                                          2: IntrinsicColumnWidth(flex: 2),
+                                                          3: FixedColumnWidth(56),
+                                                        },
+                                                        defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                                                        children: [
+                                                          TableRow(
+                                                            children: [
+                                                              TableCell(
+                                                                child: Center(
+                                                                  child: Text(
+                                                                    "ID",
+                                                                    style: TextTheme.of(context).titleSmall,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              TableCell(
+                                                                child: Padding(
+                                                                  padding: const EdgeInsets.all(8.0),
+                                                                  child: Text(
+                                                                    "Nomi",
+                                                                    style: TextTheme.of(context).titleSmall,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              TableCell(
+                                                                child: Padding(
+                                                                  padding: const EdgeInsets.all(8.0),
+                                                                  child: Text(
+                                                                    "Izohi",
+                                                                    style: TextTheme.of(context).titleSmall,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              TableCell(
+                                                                child: Padding(
+                                                                  padding: const EdgeInsets.all(8.0),
+                                                                  child: Center(
+                                                                    child: Text(
+                                                                      "#",
+                                                                      style: TextTheme.of(context).titleSmall,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Expanded(
+                                                        child: SingleChildScrollView(
+                                                          child: Table(
+                                                            border: TableBorder.all(
+                                                              color: dark.withValues(alpha: 0.1),
+                                                              borderRadius: BorderRadius.only(
+                                                                bottomLeft: Radius.circular(8),
+                                                                bottomRight: Radius.circular(8),
+                                                              ),
+                                                            ),
+                                                            columnWidths: {
+                                                              0: FixedColumnWidth(50),
+                                                              1: IntrinsicColumnWidth(flex: 1),
+                                                              2: IntrinsicColumnWidth(flex: 2),
+                                                              3: FixedColumnWidth(56),
+                                                            },
+                                                            defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                                                            children: [
+                                                              ...provider.instructions.map<TableRow>((instruction) {
+                                                                int index = provider.instructions.indexOf(instruction);
+
+                                                                return TableRow(
+                                                                  children: [
+                                                                    Center(
+                                                                      child: Text("${index + 1}"),
+                                                                    ),
+                                                                    Padding(
+                                                                      padding: EdgeInsets.all(8),
+                                                                      child: Text("${instruction['title']}"),
+                                                                    ),
+                                                                    Padding(
+                                                                      padding: EdgeInsets.all(8),
+                                                                      child: Text("${instruction['description']}"),
+                                                                    ),
+                                                                    Padding(
+                                                                      padding: EdgeInsets.all(8),
+                                                                      child: IconButton(
+                                                                        style: IconButton.styleFrom(
+                                                                          backgroundColor: danger.withValues(alpha: 0.0),
+                                                                          foregroundColor: danger,
+                                                                        ),
+                                                                        onPressed: () {
+                                                                          provider.removeInstruction(instruction);
+                                                                        },
+                                                                        icon: Icon(Icons.delete),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                );
+                                                              }),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
                                 TextFormField(

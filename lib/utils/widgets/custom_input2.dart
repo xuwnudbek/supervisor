@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:supervisor/utils/extensions/list_extension.dart';
 import 'package:supervisor/utils/themes/app_colors.dart';
 import 'package:supervisor/utils/widgets/custom_input.dart';
 
@@ -48,7 +47,6 @@ class _CustomDropdown2State extends State<CustomDropdown2> {
 
   List<DropdownMenuItem> get filteredItems {
     return (widget.items ?? []).where((item) {
-      print(item.child);
       return (item.child as Text).data.toString().toLowerCase().contains(searchText.toLowerCase());
     }).toList();
   }

@@ -46,7 +46,6 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Supervisior',
-      
       theme: AppTheme.lightTheme,
       home: const SplashPage(),
     );

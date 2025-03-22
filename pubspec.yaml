@@ -51,10 +51,8 @@ flutter:
 
   assets:
     - assets/images/
-    - assets/images/models/
     - assets/images/statuses/
     - assets/fonts/
-    - assets/files/
   
 
   fonts:
