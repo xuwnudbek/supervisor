@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,6 +15,7 @@ import 'package:supervisor/utils/widgets/custom_snackbars.dart';
 class AddOrderProvider extends ChangeNotifier {
   final TextEditingController orderNameController = TextEditingController();
   final TextEditingController orderRasxodController = TextEditingController();
+  final TextEditingController modelSummaController = TextEditingController();
 
   final TextEditingController instructionTitleController = TextEditingController();
   final FocusNode instructionTitleFocusNode = FocusNode();
@@ -108,7 +110,6 @@ class AddOrderProvider extends ChangeNotifier {
     }
 
     if (hasCopy) {
-      // read order from Clipboard
       try {
         if (selectedModel.isNotEmpty) {
           Clipboard.setData(ClipboardData(text: "{}"));
@@ -125,8 +126,11 @@ class AddOrderProvider extends ChangeNotifier {
     }
 
     if (orderData != null && orderData.isNotEmpty) {
+      inspect(orderData);
+
       orderNameController.text = orderData['name'] ?? "";
       orderRasxodController.text = (orderData['rasxod'] ?? 0).toString();
+      modelSummaController.text = (orderData['price'] ?? 0).toString();
       orderCommentController.text = orderData['comment'] ?? "";
 
       selectedModel = models.qaysiki(['id'], orderData['order_model']?['model']?['id']).firstOrNull ?? {};
@@ -410,6 +414,7 @@ class AddOrderProvider extends ChangeNotifier {
       "start_date": deadline.firstOrNull.toString(),
       "end_date": deadline.lastOrNull.toString(),
       "rasxod": double.tryParse(orderRasxodController.text),
+      "price": double.tryParse(modelSummaController.text),
       "comment": orderCommentController.text,
       "contragent_id": selectedContragent['id'] == 0 ? null : selectedContragent['id'],
       "contragent_name": selectedContragent['name'],
@@ -436,6 +441,8 @@ class AddOrderProvider extends ChangeNotifier {
             }),
       ],
     };
+
+    inspect(data);
 
     Map<String, dynamic> res;
 

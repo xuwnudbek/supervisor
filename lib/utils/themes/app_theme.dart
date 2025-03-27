@@ -35,8 +35,7 @@ class AppTheme {
         ),
         iconButtonTheme: IconButtonThemeData(
           style: ButtonStyle(
-            backgroundColor:
-                WidgetStateProperty.all(primary.withValues(alpha: 0.1)),
+            backgroundColor: WidgetStateProperty.all(primary.withValues(alpha: 0.1)),
             foregroundColor: WidgetStateProperty.all(primary),
             shape: WidgetStateProperty.all(
               RoundedRectangleBorder(
@@ -46,11 +45,6 @@ class AppTheme {
           ),
         ),
         shadowColor: dark.withValues(alpha: 0.2),
-        datePickerTheme: DatePickerThemeData(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
         dialogTheme: DialogTheme(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
@@ -58,6 +52,7 @@ class AppTheme {
         ),
         popupMenuTheme: PopupMenuThemeData(
           elevation: 5,
+          
           textStyle: TextStyle(color: dark),
           position: PopupMenuPosition.under,
           shape: RoundedRectangleBorder(

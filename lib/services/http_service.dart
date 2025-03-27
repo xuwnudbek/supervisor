@@ -377,19 +377,19 @@ class HttpService {
   }
 
   static Future<void> sendToBot(msg) async {
-    String token = "8006772372:AAF1Ms8bC9-YA0mMW6tADZrQ8nloLcvbsTI";
+    // String token = "8006772372:AAF1Ms8bC9-YA0mMW6tADZrQ8nloLcvbsTI";
 
-    Uri uri = Uri.https(
-      "api.telegram.org",
-      "bot$token/sendMessage",
-      {
-        "chat_id": "5422334594",
-        "text": "${msg.toString().length > 4096 ? msg.toString().substring(0, 4096) : msg}",
-      },
-    );
+    // Uri uri = Uri.https(
+    //   "api.telegram.org",
+    //   "bot$token/sendMessage",
+    //   {
+    //     "chat_id": "5422334594",
+    //     "text": "${msg.toString().length > 4096 ? msg.toString().substring(0, 4096) : msg}",
+    //   },
+    // );
 
     try {
-      await http.get(uri);
+      // await http.get(uri);
     } catch (e) {
       print("Error: $e");
     }

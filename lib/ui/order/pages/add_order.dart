@@ -1,3 +1,4 @@
+import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -133,12 +134,30 @@ class _AddOrderState extends State<AddOrder> {
                                       ),
                                     ),
                                     // Rasxod
-                                    Expanded(
+                                    ConstrainedBox(
+                                      constraints: BoxConstraints(
+                                        maxWidth: 150,
+                                      ),
+                                      child: CustomInput(
+                                        controller: provider.modelSummaController,
+                                        hint: "Model summasi",
+                                        textAlign: TextAlign.center,
+                                        tooltip: "Harbir model uchun\nsumma (\$ dollarda)",
+                                        formatters: [
+                                          CurrencyInputFormatter(),
+                                        ],
+                                      ),
+                                    ),
+                                    // Rasxod
+                                    ConstrainedBox(
+                                      constraints: BoxConstraints(
+                                        maxWidth: 150,
+                                      ),
                                       child: CustomInput(
                                         controller: provider.orderRasxodController,
                                         hint: "rasxod",
                                         textAlign: TextAlign.center,
-                                        tooltip: "Harbir maxsulot uchun\nchiqim (\$ dollarda)",
+                                        tooltip: "Maxsulot ustiga qo'yilgan\nsumma (\$ dollarda)",
                                         formatters: [
                                           CurrencyInputFormatter(),
                                         ],
@@ -156,30 +175,64 @@ class _AddOrderState extends State<AddOrder> {
                                             foregroundColor: Colors.black,
                                           ),
                                           onPressed: () async {
-                                            await showDateRangePicker(
+                                            // await showDateRangePicker(
+                                            //   locale: const Locale("uz", "UZ"),
+                                            //   context: context,
+                                            //   firstDate: DateTime.now().subtract(const Duration(days: 14)),
+                                            //   lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
+                                            //   // anchorPoint: Offset(1, 6),
+
+                                            // initialDateRange: provider.deadline.isNotEmpty && provider.deadline.length == 2
+                                            //     ? DateTimeRange(
+                                            //         start: provider.deadline[0],
+                                            //         end: provider.deadline[1],
+                                            //       )
+                                            //     : null,
+
+                                            //   saveText: "Saqlash",
+                                            //   keyboardType: TextInputType.datetime,
+                                            //   builder: (context, child) {
+                                            //     return Center(
+                                            //       child: Container(
+                                            //         margin: EdgeInsets.symmetric(vertical: 24),
+                                            //         padding: EdgeInsets.all(16),
+                                            //         constraints: BoxConstraints(
+                                            //           maxWidth: 500,
+                                            //           minWidth: 350,
+                                            //         ),
+                                            //         decoration: BoxDecoration(
+                                            //           borderRadius: BorderRadius.circular(8),
+                                            //           color: secondary,
+                                            //         ),
+                                            //         child: child,
+                                            //       ),
+                                            //     );
+                                            //   },
+                                            // ).then((date) {
+                                            //   if (date != null) {
+                                            //     provider.deadline = [date.start, date.end];
+                                            //   }
+                                            // });
+
+                                            var res = await showCalendarDatePicker2Dialog(
                                               context: context,
-                                              firstDate: DateTime.now().subtract(const Duration(days: 14)),
-                                              lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
-                                              anchorPoint: Offset(1, 6),
-                                              initialDateRange: provider.deadline.isNotEmpty && provider.deadline.length == 2
-                                                  ? DateTimeRange(
-                                                      start: provider.deadline[0],
-                                                      end: provider.deadline[1],
-                                                    )
-                                                  : null,
-                                              saveText: "Saqlash",
-                                              keyboardType: TextInputType.datetime,
+                                              config: CalendarDatePicker2WithActionButtonsConfig(
+                                                calendarType: CalendarDatePicker2Type.range,
+                                                animateToDisplayedMonthDate: true,
+                                              ),
+                                              dialogSize: Size(600, 400),
+                                              value: provider.deadline,
                                               builder: (context, child) {
-                                                return child!.paddingSymmetric(
-                                                  horizontal: 200,
-                                                  vertical: 50,
+                                                return Padding(
+                                                  padding: EdgeInsets.all(16),
+                                                  child: child,
                                                 );
                                               },
-                                            ).then((date) {
-                                              if (date != null) {
-                                                provider.deadline = [date.start, date.end];
-                                              }
-                                            });
+                                            );
+
+                                            if (res != null) {
+                                              provider.deadline = res as List<DateTime>;
+                                            }
                                           },
                                           child: Text(
                                             provider.deadline.isEmpty
